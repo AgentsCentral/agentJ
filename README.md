@@ -15,7 +15,7 @@ Build and install agentJ in your local maven repo
 ## Developing your own multi-agent system
 Using maven
 
-Add Dependencies
+### Add Dependencies
 
 ```
     <dependencies>
@@ -34,7 +34,7 @@ Add Dependencies
 
 
 
-Add your local maven repo to the `pom.xml`
+### Configure local maven repo
 
 
 ```
@@ -47,6 +47,7 @@ Add your local maven repo to the `pom.xml`
 </repositories>
 ```
 
+### Example path
 `~/.m2/repository`
 
 
