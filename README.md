@@ -56,10 +56,14 @@ Using maven
 </repositories>
 ```
 
-#### Example path
+#### Example local maven repo path
 `~/.m2/repository`
 
 
+## Code Examples
+
+Code Examples can be found here
+https://github.com/AgentsCentral/agentj-examples
 
 
 
