@@ -5,8 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.replaceEach;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * TrailingRequestPathConversationIdExtractor
@@ -29,7 +28,8 @@ public class TrailingRequestPathConversationIdExtractor implements ConversationI
     }
 
     private Optional<String> extractConversationId(String requestUri) {
-        return Optional.ofNullable(requestUri)
+        final String uri = endsWith(requestUri, SLASH)? requestUri : requestUri + SLASH;
+        return Optional.ofNullable(uri)
                 .map(this::removePath)
                 .map(this::removeSlash)
                 .filter(StringUtils::isNotBlank);

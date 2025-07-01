@@ -4,10 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static ai.agentscentral.core.tool.ResultOrError.ofError;
 import static ai.agentscentral.core.tool.ResultOrError.ofResult;
@@ -16,7 +14,6 @@ import static ai.agentscentral.core.tool.ResultOrError.ofResult;
  * DefaultToolExecutor
  *
  * @param <T>
- *
  * @author Rizwan Idrees
  */
 public class DefaultToolExecutor<T> implements ToolCallExecutor<T> {
@@ -28,8 +25,12 @@ public class DefaultToolExecutor<T> implements ToolCallExecutor<T> {
         final String toolCallId = instruction.id();
         final ToolCall toolCall = instruction.toolCall();
         try {
-            final Object result = toolCall.method().invoke(toolCall.toolBag(), parameters(instruction));
-            return ofResult(new DefaultToolCallResult(instruction, result, toolCall.method().getReturnType()));
+            final Method method = toolCall.method();
+            method.setAccessible(true);
+
+            final Object result = method.invoke(toolCall.toolBag(), parameters(instruction));
+            return ofResult(new DefaultToolCallResult(instruction, result, method.getReturnType()));
+
         } catch (IllegalAccessException e) {
             logger.error("Failed to execute tool due to method access level. Tool info {}", instruction.toolCall());
             return ofError(new ToolCallExecutionError(toolCallId, toolCall.name(), "Unable to access the tool " + toolCall.name()));
@@ -46,12 +47,12 @@ public class DefaultToolExecutor<T> implements ToolCallExecutor<T> {
 
     private Object[] parameters(ToolCallInstruction instruction) {
         final ToolCall toolCall = instruction.toolCall();
-        final List<ToolParameter> toolCallParameters = toolCall.parameters();
 
-        if (Objects.isNull(toolCallParameters)) {
+        if (Objects.isNull(toolCall.parameters())) {
             return null;
         }
 
+        final List<ToolParameter> toolCallParameters = new ArrayList<>(toolCall.parameters());
 
         final Map<String, Object> properties = instruction.arguments();
         final Object[] parameters = new Object[toolCallParameters.size()];
