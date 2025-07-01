@@ -1,5 +1,5 @@
-# agentJ - Java multi agent development kit
+# agentJ - Java Multi Agent Development Kit
 
 
-AgentJ - Java multi agent development kit
+AgentJ - Java Multi Agent Development Kit
 
