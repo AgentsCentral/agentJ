@@ -7,6 +7,10 @@ AgentJ - Java Multi Agent Development Kit
 JDK 21+ is required
 
 ## Getting started (Preview version)
+
+### Setup OPENAI Key as environment variable
+`export OPEN_AI_KEY=<YOUR_KEY>`
+
 Build and install agentJ in your local maven repo
 
 `$ ./mvn clean install`
