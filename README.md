@@ -59,8 +59,7 @@ Using maven
 </repositories>
 ```
 
-#### Example local maven repo path
-`~/.m2/repository`
+Example local maven repo path  `~/.m2/repository`
 
 
 ## Code Examples
