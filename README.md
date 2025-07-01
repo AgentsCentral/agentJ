@@ -9,8 +9,10 @@ JDK 21+ is required
 ## Getting started (Preview version)
 
 ### Setup OPENAI Key as environment variable
-This is required for unit tests. You can skip tests to avoid it by using `-DskipTests`.
+This is required for unit tests. 
 `export OPEN_AI_KEY=<YOUR_KEY>`
+
+You can skip tests to avoid it by using `-DskipTests`.
 
 Build and install agentJ in your local maven repo
 
