@@ -62,6 +62,8 @@ public class OpenAISimpleAgentExecutor implements AgentExecutor {
     }
 
     public List<AssistantMessage> process(String contextId, String user, List<Message> messages) {
+
+
         final DeveloperMessage agentMessage = new DeveloperMessage(contextId, "",
                 new TextPart[]{new TextPart(text, agentInstructions(agent))}, System.currentTimeMillis());
 
