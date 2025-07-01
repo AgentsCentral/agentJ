@@ -47,7 +47,7 @@ Using maven
 </repositories>
 ```
 
-### Example path
+#### Example path
 `~/.m2/repository`
 
 
