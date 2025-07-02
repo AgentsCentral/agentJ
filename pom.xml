@@ -16,6 +16,31 @@
         <module>agentj-http</module>
     </modules>
     <version>1.0-SNAPSHOT</version>
+    <name>agentJ</name>
+    <description>agentJ: Java multi-agent development kit</description>
+    <url>https://www.agentscentral.ai</url>
+
+
+    <developers>
+        <developer>
+            <name>Rizwan Idrees</name>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:AgentsCentral/agentJ.git</connection>
+        <developerConnection>scm:git:git@github.com:AgentsCentral/agentJ.git</developerConnection>
+        <url>https://github.com/AgentsCentral/agentJ.git</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
