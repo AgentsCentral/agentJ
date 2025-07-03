@@ -47,8 +47,20 @@ or skip tests
         </dependency>        
     </dependencies>
 ```
+### Configure local maven repo
 
 
+```
+<repositories>
+    <repository>
+    <id>local-repo</id>
+    <name>Local Repository</name>
+    <url>YOUR_LOCAL_REP_PATH_HERE</url> 
+    </repository>
+</repositories>
+```
+
+Example local maven repo path  `~/.m2/repository`
 
 
 ### Create a stub weatherAPI
@@ -168,23 +180,6 @@ curl --location 'http://localhost:8181/chat/cv_f66cc4ab8c6346f6bfdd898c255dcd2c'
     ]
 }
 ```
-
-
-
-### Configure local maven repo
-
-
-```
-<repositories>
-    <repository>
-    <id>local-repo</id>
-    <name>Local Repository</name>
-    <url>YOUR_LOCAL_REP_PATH_HERE</url> 
-    </repository>
-</repositories>
-```
-
-Example local maven repo path  `~/.m2/repository`
 
 
 ## Full code examples are available on
