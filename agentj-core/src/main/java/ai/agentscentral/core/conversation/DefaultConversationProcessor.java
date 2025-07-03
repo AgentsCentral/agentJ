@@ -11,6 +11,8 @@ import ai.agentscentral.core.handoff.HandoffInstruction;
 import ai.agentscentral.core.tool.*;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.*;
@@ -28,6 +30,8 @@ import static java.util.Optional.ofNullable;
  * @author Rizwan Idrees
  */
 public class DefaultConversationProcessor implements ConversationProcessor {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultConversationProcessor.class);
 
     private final AgentExecutorInitializer executorInitializer = new AgentExecutorInitializer();
     private final Agent defaultAgent;
@@ -108,7 +112,6 @@ public class DefaultConversationProcessor implements ConversationProcessor {
                                                    MessageContext messageContext,
                                                    AgentExecutor executor) {
 
-
         final List<AssistantMessage> assistantMessages = executor.process(conversationId, null, context);
         final boolean hasHandOffs = assistantMessages.stream().anyMatch(AssistantMessage::hasHandOffs);
         final boolean hasToolCalls = assistantMessages.stream().anyMatch(AssistantMessage::hasToolCalls);
@@ -121,17 +124,13 @@ public class DefaultConversationProcessor implements ConversationProcessor {
             final Optional<HandoffInstruction> handoffInstruction = assistantMessages.stream().filter(AssistantMessage::hasHandOffs)
                     .flatMap(m -> m.handoffs().stream()).findFirst();
 
-
-           final Optional<Handoff> handoff = handoffInstruction.map(HandoffInstruction::handoff);
+            final Optional<Handoff> handoff = handoffInstruction.map(HandoffInstruction::handoff);
 
             handoff.map(h -> new DefaultConversationState(conversationId, h.agentName()))
                     .ifPresent(stateManager::updateState);
 
             final AgentExecutor handOffAgentExecutor = handoff.map(h -> findAgentExecutor(h.agentName()))
                     .orElse(agentExecutors.get(defaultAgent.name()));
-
-            final List<Message> handOffContext = handoff.map(Handoff::handoff)
-                    .map(func -> func.apply(context)).orElse(context);
 
 
             final String handOffId = handoffInstruction.map(HandoffInstruction::callId).orElse(null);
@@ -147,6 +146,9 @@ public class DefaultConversationProcessor implements ConversationProcessor {
             context.add(handOffMessage);
 
             messageContext.incrementHandOffCount();
+
+            final List<Message> handOffContext = handoff.map(Handoff::handoff)
+                    .map(func -> func.apply(context)).orElse(context);
 
             return doExecution(conversationId, handOffContext, messageContext, handOffAgentExecutor);
 

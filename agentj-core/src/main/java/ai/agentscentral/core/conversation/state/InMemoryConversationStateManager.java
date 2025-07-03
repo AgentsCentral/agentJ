@@ -9,14 +9,16 @@ import java.util.Optional;
  */
 public class InMemoryConversationStateManager implements ConversationStateManager {
 
+    private ConversationState currentState;
 
     @Override
     public Optional<ConversationState> getCurrentState(String conversationId) {
-        return Optional.empty();
+        return Optional.ofNullable(currentState);
     }
 
     @Override
     public ConversationState updateState(ConversationState newState) {
-        return null;
+        this.currentState = newState;
+        return newState;
     }
 }
