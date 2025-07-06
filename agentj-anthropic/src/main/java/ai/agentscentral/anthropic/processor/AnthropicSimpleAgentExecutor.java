@@ -4,7 +4,6 @@ import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.MessagesRequest;
 import ai.agentscentral.anthropic.client.request.attributes.*;
 import ai.agentscentral.anthropic.client.response.MessagesResponse;
-import ai.agentscentral.anthropic.client.response.attributes.ResponseContent;
 import ai.agentscentral.anthropic.config.AnthropicConfig;
 import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.agent.AgentExecutor;
