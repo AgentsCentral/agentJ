@@ -5,6 +5,8 @@ import ai.agentscentral.anthropic.client.response.MessagesResponse;
 import ai.agentscentral.anthropic.config.AnthropicConfig;
 import ai.agentscentral.core.model.ProviderClient;
 import org.apache.hc.client5.http.HttpResponseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -19,6 +21,8 @@ import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
  * @author Rizwan Idrees
  */
 public class AnthropicClient implements ProviderClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(AnthropicClient.class);
 
     public static final String HEADER_ANTHROPIC_VERSION = "anthropic-version";
     public static final String HEADER_X_API_KEY = "x-api-key";
@@ -51,8 +55,8 @@ public class AnthropicClient implements ProviderClient {
             return Jsonify.asObject(responseAsString, MessagesResponse.class);
 
         } catch (HttpResponseException e) {
-            e.printStackTrace();
-            //todo:: better error handling
+            logger.error("Http error while processing. error {} content {}", e.getMessage(),
+                    new String(e.getContentBytes()), e);
             throw new RuntimeException(e);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
