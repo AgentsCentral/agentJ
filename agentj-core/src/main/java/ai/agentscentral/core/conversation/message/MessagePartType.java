@@ -6,5 +6,5 @@ package ai.agentscentral.core.conversation.message;
  * @author Rizwan Idrees
  */
 public enum MessagePartType {
-    text
+    text, thinking
 }

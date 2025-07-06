@@ -30,11 +30,11 @@ class AnthropicToolConvertor {
             return null;
         }
 
-        final Map<String, AnthropicTool> openAIToolMap = new HashMap<>();
+        final Map<String, AnthropicTool> toolMap = new HashMap<>();
 
-        tools.forEach((key, value) -> openAIToolMap.put(key, toAnthropicTool(value)));
+        tools.forEach((key, value) -> toolMap.put(key, toAnthropicTool(value)));
 
-        return openAIToolMap;
+        return toolMap;
     }
 
 
@@ -44,11 +44,11 @@ class AnthropicToolConvertor {
             return null;
         }
 
-        final Map<String, AnthropicTool> anthropicHandoffMap = new HashMap<>();
+        final Map<String, AnthropicTool> handoffMap = new HashMap<>();
 
-        handOffs.forEach((key, value) -> anthropicHandoffMap.put(key, toAnthropicTool(value)));
+        handOffs.forEach((key, value) -> handoffMap.put(key, toAnthropicTool(value)));
 
-        return anthropicHandoffMap;
+        return handoffMap;
     }
 
     private static AnthropicTool toAnthropicTool(ToolCall toolCall) {
@@ -98,16 +98,4 @@ class AnthropicToolConvertor {
         }
     }
 
-//    static AnthropicTool toOpenAIToolCall(ToolCallInstruction toolCallInstruction) {
-//        final String id = toolCallInstruction.id();
-//        final String name = toolCallInstruction.toolCall().name();
-//        final String arguments = toolCallInstruction.rawArguments();
-//        return new OpenAIToolCall(id, FUNCTION, new ToolCallFunction(name, arguments));
-//    }
-
-//    static AnthropicTool toOpenAIToolCall(HandoffInstruction handoffInstruction) {
-//        final String id = handoffInstruction.callId();
-//        final String name = handoffInstruction.handoff().id();
-//        return new OpenAIToolCall(id, FUNCTION, new ToolCallFunction(name, "{}"));
-//    }
 }

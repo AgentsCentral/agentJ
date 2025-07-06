@@ -1,6 +1,7 @@
 package ai.agentscentral.anthropic.client.response;
 
 import ai.agentscentral.anthropic.client.common.Role;
+import ai.agentscentral.anthropic.client.request.attributes.ToolResultContentPart;
 import ai.agentscentral.anthropic.client.response.attributes.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -29,4 +30,7 @@ public record MessagesResponse(String id,
                                @JsonProperty("stop_sequence") String stopSequence,
                                Container container,
                                Usage usage) {
+    public boolean hasToolCalls() {
+        return content.stream().anyMatch(c -> c instanceof ToolUseResponseContent);
+    }
 }

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @param name
  * @param model
- * @param instructor
+ * @param instructors
  * @param toolBags
  * @param handoffs
  *
