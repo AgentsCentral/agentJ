@@ -65,7 +65,7 @@ public class OpenAISimpleAgentExecutor implements AgentExecutor {
 
 
         final DeveloperMessage agentMessage = new DeveloperMessage(contextId, "",
-                new TextPart[]{new TextPart(text, agentInstructions(agent))}, System.currentTimeMillis());
+                new TextPart[]{new TextPart(text, agentInstructions())}, System.currentTimeMillis());
 
         final CompletionRequest request = CompletionRequest.from(modelName, config, null,
                 List.copyOf(openAITools.values()), messageConvert.toOpenAIMessages(agentMessage, messages));
@@ -81,7 +81,7 @@ public class OpenAISimpleAgentExecutor implements AgentExecutor {
                 .toList();
     }
 
-    private String agentInstructions(SimpleAgent agent) {
+    private String agentInstructions() {
         if (Objects.isNull(agent.instructors())) {
             return "You are an assistant";
         }

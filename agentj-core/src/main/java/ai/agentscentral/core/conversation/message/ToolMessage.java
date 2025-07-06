@@ -2,13 +2,13 @@ package ai.agentscentral.core.conversation.message;
 
 /**
  * ToolMessage
+ *
  * @param contextId
  * @param messageId
  * @param toolCallId
  * @param toolName
  * @param parts
  * @param timestamp
- *
  * @author Rizwan Idrees
  */
 public record ToolMessage(String contextId,
