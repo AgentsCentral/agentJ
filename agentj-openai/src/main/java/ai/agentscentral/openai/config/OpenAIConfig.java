@@ -5,9 +5,9 @@ import ai.agentscentral.core.model.ModelConfig;
 import ai.agentscentral.core.model.ProviderClient;
 import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.openai.client.OpenAIClient;
-import ai.agentscentral.openai.client.request.parameters.ResponseFormat;
-import ai.agentscentral.openai.client.request.parameters.ToolChoice;
-import ai.agentscentral.openai.client.request.parameters.WebSearchOptions;
+import ai.agentscentral.openai.client.request.attributes.ResponseFormat;
+import ai.agentscentral.openai.client.request.attributes.ToolChoice;
+import ai.agentscentral.openai.client.request.attributes.WebSearchOptions;
 import ai.agentscentral.openai.factory.OpenAIFactory;
 
 import java.util.List;

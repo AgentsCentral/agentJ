@@ -6,14 +6,14 @@ import ai.agentscentral.core.tool.EnumToolParameter;
 import ai.agentscentral.core.tool.ToolCall;
 import ai.agentscentral.core.tool.ToolCallInstruction;
 import ai.agentscentral.core.tool.ToolParameter;
-import ai.agentscentral.openai.client.request.parameters.*;
+import ai.agentscentral.openai.client.request.attributes.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 
 import java.util.*;
 
-import static ai.agentscentral.openai.client.request.parameters.OpenAITool.FUNCTION;
+import static ai.agentscentral.openai.client.request.attributes.OpenAITool.FUNCTION;
 import static java.util.stream.Collectors.toSet;
 
 /**

@@ -101,7 +101,6 @@ public class WeatherSystem {
 
         @Tool(name = "weather_tool", description = "Provides weather information about the city")
         public String weatherInformation(@ToolParam(name = "city", description = "City") String city) {
-            System.out.println("calling weather info");
 
             return api.getWeatherInformation(city);
         }

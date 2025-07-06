@@ -13,7 +13,7 @@ import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.tool.ToolCall;
 import ai.agentscentral.openai.client.OpenAIClient;
 import ai.agentscentral.openai.client.request.CompletionRequest;
-import ai.agentscentral.openai.client.request.parameters.OpenAITool;
+import ai.agentscentral.openai.client.request.attributes.OpenAITool;
 import ai.agentscentral.openai.client.response.CompletionResponse;
 import ai.agentscentral.openai.client.response.parameters.Choice;
 import ai.agentscentral.openai.config.OpenAIConfig;

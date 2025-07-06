@@ -8,12 +8,12 @@ import ai.agentscentral.core.conversation.state.ConversationStateManager;
 import ai.agentscentral.core.conversation.state.DefaultConversationState;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;
-import ai.agentscentral.core.tool.*;
+import ai.agentscentral.core.tool.ToolCallExecutor;
+import ai.agentscentral.core.tool.ToolCallInstruction;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.util.*;
 
@@ -147,10 +147,7 @@ public class DefaultConversationProcessor implements ConversationProcessor {
 
             messageContext.incrementHandOffCount();
 
-            final List<Message> handOffContext = handoff.map(Handoff::handoff)
-                    .map(func -> func.apply(context)).orElse(context);
-
-            return doExecution(conversationId, handOffContext, messageContext, handOffAgentExecutor);
+            return doExecution(conversationId, context, messageContext, handOffAgentExecutor);
 
         } else if (hasToolCalls) {
 
