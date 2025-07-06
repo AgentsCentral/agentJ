@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * ResponseContent
  * @author Rizwan Idrees
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TextResponseContent.class, name = "text"),
         @JsonSubTypes.Type(value = ThinkingResponseContent.class, name = "thinking"),
