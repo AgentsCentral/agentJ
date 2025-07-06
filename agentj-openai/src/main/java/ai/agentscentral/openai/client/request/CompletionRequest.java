@@ -1,12 +1,11 @@
 package ai.agentscentral.openai.client.request;
 
-import ai.agentscentral.openai.client.request.parameters.*;
+import ai.agentscentral.openai.client.request.attributes.*;
 import ai.agentscentral.openai.config.OpenAIConfig;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.annotation.Nonnull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 

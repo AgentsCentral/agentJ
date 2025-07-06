@@ -1,7 +1,7 @@
 package ai.agentscentral.openai.client;
 
 import ai.agentscentral.openai.client.request.CompletionRequest;
-import ai.agentscentral.openai.client.request.parameters.*;
+import ai.agentscentral.openai.client.request.attributes.*;
 import ai.agentscentral.openai.client.response.CompletionResponse;
 import ai.agentscentral.openai.client.response.parameters.Function;
 import ai.agentscentral.openai.client.response.parameters.ToolCall;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ai.agentscentral.openai.client.request.parameters.OpenAITool.FUNCTION;
-import static ai.agentscentral.openai.client.request.parameters.OpenAIUserMessage.USER;
+import static ai.agentscentral.openai.client.request.attributes.OpenAITool.FUNCTION;
+import static ai.agentscentral.openai.client.request.attributes.OpenAIUserMessage.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OpenAIClientTest {
