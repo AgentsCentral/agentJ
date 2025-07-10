@@ -1,10 +1,10 @@
 package ai.agentscentral.openai.factory;
 
-import ai.agentscentral.core.agent.SimpleAgent;
 import ai.agentscentral.core.agent.Agent;
+import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.openai.client.OpenAIClient;
-import ai.agentscentral.openai.processor.OpenAISimpleAgentExecutor;
+import ai.agentscentral.openai.processor.OpenAIAgentExecutor;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
  *
  * @author Rizwan Idrees
  */
-public class OpenAIFactory implements ProviderFactory<OpenAISimpleAgentExecutor, OpenAIClient> {
+public class OpenAIFactory implements ProviderFactory<OpenAIAgentExecutor, OpenAIClient> {
 
     private final OpenAIClient client;
 
@@ -23,11 +23,11 @@ public class OpenAIFactory implements ProviderFactory<OpenAISimpleAgentExecutor,
 
 
     @Override
-    public OpenAISimpleAgentExecutor createAgentExecutor(Agent agent) {
-        final SimpleAgent simpleAgent = agent instanceof SimpleAgent a ? a : null;
+    public OpenAIAgentExecutor createAgentExecutor(Agentic agentic) {
+        final Agent simpleAgent = agentic instanceof Agent a ? a : null;
         return Optional.ofNullable(simpleAgent)
-                .map(a -> new OpenAISimpleAgentExecutor(a, client))
-                .orElseThrow(() -> new RuntimeException("Cannot process agent of type " + agent.getClass()));
+                .map(a -> new OpenAIAgentExecutor(a, client))
+                .orElseThrow(() -> new RuntimeException("Cannot process agent of type " + agentic.getClass()));
     }
 
 }

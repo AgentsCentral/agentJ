@@ -1,8 +1,8 @@
 package ai.agentscentral.core.tool.convertors;
 
-import ai.agentscentral.core.conversation.message.MessagePartType;
-import ai.agentscentral.core.conversation.message.TextPart;
-import ai.agentscentral.core.conversation.message.ToolMessage;
+import ai.agentscentral.core.session.message.MessagePartType;
+import ai.agentscentral.core.session.message.TextPart;
+import ai.agentscentral.core.session.message.ToolMessage;
 import ai.agentscentral.core.convertors.TriConvertor;
 import ai.agentscentral.core.tool.ToolCallExecutionError;
 import ai.agentscentral.core.tool.ToolCallResult;

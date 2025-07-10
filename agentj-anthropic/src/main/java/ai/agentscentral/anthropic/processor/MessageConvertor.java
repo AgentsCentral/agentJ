@@ -6,7 +6,7 @@ import ai.agentscentral.anthropic.client.response.attributes.ResponseContent;
 import ai.agentscentral.anthropic.client.response.attributes.TextResponseContent;
 import ai.agentscentral.anthropic.client.response.attributes.ThinkingResponseContent;
 import ai.agentscentral.anthropic.client.response.attributes.ToolUseResponseContent;
-import ai.agentscentral.core.conversation.message.*;
+import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.handoff.DefaultHandoffInstruction;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;

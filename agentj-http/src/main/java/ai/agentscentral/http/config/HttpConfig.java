@@ -1,13 +1,13 @@
 package ai.agentscentral.http.config;
 
-import ai.agentscentral.core.agent.AgentSystem;
+import ai.agentscentral.core.team.Team;
 
 /**
  * HttpConfig
  *
  * @param path
- * @param agentSystem
+ * @param team
  * @author Rizwan Idrees
  */
-public record HttpConfig(String path, AgentSystem agentSystem) {
+public record HttpConfig(String path, Team team) {
 }
