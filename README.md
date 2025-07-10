@@ -24,7 +24,7 @@ or skip tests
 `$./mvnw clean install-DskipTests`
 
 
-## Setting up a standalone weather agent
+## Setting up a standalone weather agentic
 
 ### Add Dependencies
 
@@ -64,7 +64,7 @@ Example local maven repo path  `~/.m2/repository`
 
 
 ### Create a stub weatherAPI
-Weather API to be used by LLM agent to retrieve current weather information
+Weather API to be used by LLM agentic to retrieve current weather information
 ```
 public class WeatherAPI {
 
@@ -95,7 +95,7 @@ public class WeatherSystem {
     //Configure the OpenAIConfig(temperature, API_KEY). Make sure the temperature is supported by the model 
     private static final OpenAIConfig config = new OpenAIConfig(1D, System.getenv("OPEN_AI_KEY"));
 
-   //Setup the tool bag of the weather agent
+   //Setup the tool bag of the weather agentic
     private static final ToolBag weatherTools = new ToolBag() {
         private final WeatherAPI api = new WeatherAPI();
 
@@ -106,7 +106,7 @@ public class WeatherSystem {
         }
     };
 
-    //Initialize the weather agent
+    //Initialize the weather agentic
     private static final SimpleAgent weatherAgent = new SimpleAgent("weather_agent", //name 
             new Model("o4-mini", config), //model with OpenAIConfig
             List.of(stringInstructor("You are a weather assistant. You are responsible for telling current weather information about the city.")), //instructions
@@ -114,15 +114,15 @@ public class WeatherSystem {
             List.of() //handoffs
     );
 
-    //Initialize agent system
-    public static AgentSystem getWeatherSystem(){
-        return new AgentSystem("Weather Agent System", weatherAgent, List.of());
+    //Initialize agentic system
+    public static Team getTeam(){
+        return new Team("Weather Agent System", weatherAgent, List.of());
     }
 
 }
 
 ```
-### Running the standalone agent using HTTP
+### Running the standalone agentic using HTTP
 
 Setup the `StandaloneWeatherAgent` to run it using `JettyHttpRunner` . Default port is `8181`
 
@@ -132,7 +132,7 @@ public class StandaloneWeatherAgent {
 
     public static void main(String[] args) throws Exception {
 
-        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", getWeatherSystem());
+        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherSystem.getTeam());
         final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig));
 
         AgentJStarter.run(new JettyHttpRunner(defaultJettyConfig(), agentJConfig));

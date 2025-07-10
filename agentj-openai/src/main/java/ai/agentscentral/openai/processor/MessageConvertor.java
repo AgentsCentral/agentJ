@@ -1,7 +1,7 @@
 package ai.agentscentral.openai.processor;
 
-import ai.agentscentral.core.conversation.message.AssistantMessage;
-import ai.agentscentral.core.conversation.message.*;
+import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.handoff.DefaultHandoffInstruction;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static ai.agentscentral.core.conversation.message.MessagePartType.text;
+import static ai.agentscentral.core.session.message.MessagePartType.text;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIAssistantMessage.ASSISTANT;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIDeveloperMessage.DEVELOPER;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIToolMessage.TOOL;

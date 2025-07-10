@@ -3,7 +3,7 @@ package ai.agentscentral.anthropic.config;
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.attributes.ServiceTier;
 import ai.agentscentral.anthropic.factory.AnthropicFactory;
-import ai.agentscentral.core.agent.AgentExecutor;
+import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 import ai.agentscentral.core.model.ModelConfig;
 import ai.agentscentral.core.model.ProviderClient;
 import ai.agentscentral.core.model.ProviderFactory;
@@ -130,7 +130,7 @@ public class AnthropicConfig implements ModelConfig {
     }
 
     @Override
-    public ProviderFactory<? extends AgentExecutor, ? extends ProviderClient> getFactory() {
+    public ProviderFactory<? extends AgenticExecutor, ? extends ProviderClient> getFactory() {
         factory = ofNullable(factory)
                 .orElseGet(() -> new AnthropicFactory(new AnthropicClient(url, apiKey, anthropicVersion)));
         return factory;

@@ -1,11 +1,11 @@
 package ai.agentscentral.http.servlet;
 
-import ai.agentscentral.core.conversation.ConversationIdGenerator;
-import ai.agentscentral.core.conversation.ConversationProcessor;
-import ai.agentscentral.core.conversation.MessageIdGenerator;
-import ai.agentscentral.core.conversation.message.AssistantMessage;
-import ai.agentscentral.core.conversation.message.TextPart;
-import ai.agentscentral.core.conversation.message.UserMessage;
+import ai.agentscentral.core.session.id.SessionIdGenerator;
+import ai.agentscentral.core.session.processor.SessionProcessor;
+import ai.agentscentral.core.session.id.MessageIdGenerator;
+import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.TextPart;
+import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.http.request.ConversationIdExtractor;
 import ai.agentscentral.http.request.MessageRequest;
 import ai.agentscentral.http.request.RequestExtractor;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static ai.agentscentral.core.conversation.message.MessagePartType.text;
+import static ai.agentscentral.core.session.message.MessagePartType.text;
 import static java.lang.System.currentTimeMillis;
 
 
@@ -32,24 +32,24 @@ import static java.lang.System.currentTimeMillis;
  */
 public class AgentJServlet extends HttpServlet {
 
-    private final ConversationProcessor processor;
+    private final SessionProcessor processor;
     private final RequestExtractor requestExtractor;
     private final ResponseSender responseSender;
     private final ConversationIdExtractor conversationIdExtractor;
-    private final ConversationIdGenerator conversationIdGenerator;
+    private final SessionIdGenerator sessionIdGenerator;
     private final MessageIdGenerator messageIdGenerator;
 
-    public AgentJServlet(ConversationProcessor processor,
+    public AgentJServlet(SessionProcessor processor,
                          RequestExtractor requestExtractor,
                          ResponseSender responseSender,
                          ConversationIdExtractor conversationIdExtractor,
-                         ConversationIdGenerator conversationIdGenerator,
+                         SessionIdGenerator sessionIdGenerator,
                          MessageIdGenerator messageIdGenerator) {
         this.processor = processor;
         this.requestExtractor = requestExtractor;
         this.responseSender = responseSender;
         this.conversationIdExtractor = conversationIdExtractor;
-        this.conversationIdGenerator = conversationIdGenerator;
+        this.sessionIdGenerator = sessionIdGenerator;
         this.messageIdGenerator = messageIdGenerator;
     }
 
@@ -57,11 +57,11 @@ public class AgentJServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final MessageRequest messageRequest = requestExtractor.extract(request);
         final String conversationId = conversationIdExtractor.extract(request)
-                .orElse(conversationIdGenerator.generate());
+                .orElse(sessionIdGenerator.generate());
 
         final List<AssistantMessage> assistantMessages = Optional.of(messageRequest)
                 .map(r -> new UserMessage(conversationId, messageId(), toTextParts(r), currentTimeMillis()))
-                .map(um -> processor.process(conversationId, um)).orElse(List.of());
+                .map(um -> processor.process(conversationId, um, null)).orElse(List.of());
 
         final List<String> messages = assistantMessages.stream()
                 .flatMap(am -> Stream.of(am.parts()))

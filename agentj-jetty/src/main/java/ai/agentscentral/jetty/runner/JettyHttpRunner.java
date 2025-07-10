@@ -1,10 +1,10 @@
 package ai.agentscentral.jetty.runner;
 
-import ai.agentscentral.core.conversation.DefaultConversationIdGenerator;
-import ai.agentscentral.core.conversation.DefaultConversationProcessor;
-import ai.agentscentral.core.conversation.DefaultMessageIdGenerator;
-import ai.agentscentral.core.conversation.context.InMemoryConversationContextManager;
-import ai.agentscentral.core.conversation.state.InMemoryConversationStateManager;
+import ai.agentscentral.core.session.id.DefaultSessionIdGenerator;
+import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
+import ai.agentscentral.core.session.id.DefaultMessageIdGenerator;
+import ai.agentscentral.core.session.context.InMemorySessionContextManager;
+import ai.agentscentral.core.session.state.InMemoryConversationStateManager;
 import ai.agentscentral.core.tool.DefaultToolExecutor;
 import ai.agentscentral.http.config.AgentJConfig;
 import ai.agentscentral.http.config.HttpConfig;
@@ -29,7 +29,7 @@ import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
-import static ai.agentscentral.core.conversation.config.MessageLimits.defaultMessageLimits;
+import static ai.agentscentral.core.session.config.MessageLimits.defaultMessageLimits;
 
 /**
  * JettyHttpRunner
@@ -92,16 +92,16 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     private void addHttpAgentSystems(ServletContextHandler servletContextHandler) {
 
         for (HttpConfig httpConfig : agentJConfig.httpConfigs()) {
-            final DefaultConversationProcessor processor = new DefaultConversationProcessor(httpConfig.agentSystem(),
+            final DefaultSessionProcessor processor = new DefaultSessionProcessor(httpConfig.team(),
                     new InMemoryConversationStateManager(),
-                    new InMemoryConversationContextManager(), new DefaultMessageIdGenerator(), new DefaultToolExecutor<>(), defaultMessageLimits());
+                    new InMemorySessionContextManager(), new DefaultMessageIdGenerator(), new DefaultToolExecutor<>(), defaultMessageLimits());
 
             final ObjectMapper objectMapper = new ObjectMapper(); //TODO use singleton object mapper
             final AgentJServlet servlet = new AgentJServlet(processor,
                     new JsonRequestExtractor(objectMapper),
                     new JsonResponseSender(objectMapper),
                     new TrailingRequestPathConversationIdExtractor(httpConfig.path()),
-                    new DefaultConversationIdGenerator(),
+                    new DefaultSessionIdGenerator(),
                     new DefaultMessageIdGenerator());
 
             servletContextHandler.addServlet(servlet, httpConfig.path());

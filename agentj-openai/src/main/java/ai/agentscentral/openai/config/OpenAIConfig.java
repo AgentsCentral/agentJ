@@ -1,6 +1,6 @@
 package ai.agentscentral.openai.config;
 
-import ai.agentscentral.core.agent.AgentExecutor;
+import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 import ai.agentscentral.core.model.ModelConfig;
 import ai.agentscentral.core.model.ProviderClient;
 import ai.agentscentral.core.model.ProviderFactory;
@@ -238,7 +238,7 @@ public class OpenAIConfig implements ModelConfig {
     }
 
     @Override
-    public ProviderFactory<? extends AgentExecutor, ? extends ProviderClient> getFactory() {
+    public ProviderFactory<? extends AgenticExecutor, ? extends ProviderClient> getFactory() {
         factory = ofNullable(factory).orElseGet(() -> new OpenAIFactory(new OpenAIClient(this.url, this.apiKey)));
         return factory;
     }

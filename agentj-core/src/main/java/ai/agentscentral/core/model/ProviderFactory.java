@@ -1,7 +1,7 @@
 package ai.agentscentral.core.model;
 
-import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.agent.AgentExecutor;
+import ai.agentscentral.core.agentic.Agentic;
+import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 
 /**
  * ProviderFactory
@@ -10,8 +10,8 @@ import ai.agentscentral.core.agent.AgentExecutor;
  * @param <C>
  * @author Rizwan Idrees
  */
-public interface ProviderFactory<P extends AgentExecutor, C extends ProviderClient> {
+public interface ProviderFactory<P extends AgenticExecutor, C extends ProviderClient> {
 
-    P createAgentExecutor(Agent agent);
+    P createAgentExecutor(Agentic agentic);
 
 }

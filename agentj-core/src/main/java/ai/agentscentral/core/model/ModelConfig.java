@@ -1,6 +1,6 @@
 package ai.agentscentral.core.model;
 
-import ai.agentscentral.core.agent.AgentExecutor;
+import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 
 /**
  * ModelConfig
@@ -9,5 +9,5 @@ import ai.agentscentral.core.agent.AgentExecutor;
  */
 public interface ModelConfig {
 
-    ProviderFactory<? extends AgentExecutor, ? extends ProviderClient> getFactory();
+    ProviderFactory<? extends AgenticExecutor, ? extends ProviderClient> getFactory();
 }
