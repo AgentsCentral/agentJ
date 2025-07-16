@@ -5,11 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * ConversationIdExtractor
+ * SessionIdExtractor
  *
  * @author Rizwan Idrees
  */
-public interface ConversationIdExtractor {
+public interface SessionIdExtractor {
 
 
     Optional<String> extract(HttpServletRequest request);

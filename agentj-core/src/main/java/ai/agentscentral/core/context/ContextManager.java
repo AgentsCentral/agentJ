@@ -1,15 +1,15 @@
-package ai.agentscentral.core.session.context;
+package ai.agentscentral.core.context;
 
 import ai.agentscentral.core.session.message.Message;
 
 import java.util.List;
 
 /**
- * ConversationContextManager
+ * ContextManager
  *
  * @author Rizwan Idrees
  */
-public interface SessionContextManager {
+public interface ContextManager {
 
 
     List<Message> getContext(String contextId);

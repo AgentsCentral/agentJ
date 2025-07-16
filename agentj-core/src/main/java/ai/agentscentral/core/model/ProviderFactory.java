@@ -1,17 +1,18 @@
 package ai.agentscentral.core.model;
 
-import ai.agentscentral.core.agentic.Agentic;
-import ai.agentscentral.core.agentic.executor.AgenticExecutor;
+import ai.agentscentral.core.agent.Agent;
+import ai.agentscentral.core.factory.AgentJFactory;
+import ai.agentscentral.core.provider.ProviderAgentExecutor;
+import jakarta.annotation.Nonnull;
 
 /**
  * ProviderFactory
  *
  * @param <P>
- * @param <C>
  * @author Rizwan Idrees
  */
-public interface ProviderFactory<P extends AgenticExecutor, C extends ProviderClient> {
+public interface ProviderFactory<P extends ProviderAgentExecutor> {
 
-    P createAgentExecutor(Agentic agentic);
+    P createAgentExecutor(@Nonnull Agent agent, @Nonnull AgentJFactory agentJFactory);
 
 }

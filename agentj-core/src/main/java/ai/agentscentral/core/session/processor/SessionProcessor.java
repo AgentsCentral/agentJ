@@ -9,11 +9,11 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
- * ConversationProcessor
+ * SessionProcessor
  *
  * @author Rizwan Idrees
  */
 public interface SessionProcessor {
 
-    List<AssistantMessage> process(@Nullable String sessionId, @Nonnull UserMessage message, @Nullable User user);
+    List<AssistantMessage> process(@Nonnull String sessionId, @Nonnull UserMessage message, @Nullable User user);
 }

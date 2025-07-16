@@ -6,19 +6,18 @@ import ai.agentscentral.anthropic.client.request.attributes.*;
 import ai.agentscentral.anthropic.client.response.MessagesResponse;
 import ai.agentscentral.anthropic.config.AnthropicConfig;
 import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 import ai.agentscentral.core.agent.instructor.Instructor;
-import ai.agentscentral.core.session.message.AssistantMessage;
-import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
+import ai.agentscentral.core.provider.ProviderAgentExecutor;
+import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.user.User;
 import ai.agentscentral.core.tool.ToolCall;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static ai.agentscentral.anthropic.client.request.attributes.TextPrompt.TYPE;
 import static ai.agentscentral.anthropic.processor.AnthropicToolConvertor.handOffsToAnthropicTool;
@@ -30,9 +29,8 @@ import static java.util.Optional.ofNullable;
  *
  * @author Rizwan Idrees
  */
-public class AnthropicAgentExecutor implements AgenticExecutor<Agent>{
+public class AnthropicAgentExecutor implements ProviderAgentExecutor {
 
-    private static final AgentJFactory agentJFactory = AgentJFactory.getInstance();
 
     private final Agent agent;
     private final Map<String, AnthropicTool> anthropicTools = new HashMap<>();
@@ -41,11 +39,12 @@ public class AnthropicAgentExecutor implements AgenticExecutor<Agent>{
     private final AnthropicClient client;
     private final MessageConvertor messageConvert;
 
-    public AnthropicAgentExecutor(Agent agent, AnthropicClient client) {
+    public AnthropicAgentExecutor(Agent agent, AgentJFactory agentJFactory, AnthropicClient client) {
         this.agent = agent;
-        this.modelName = agent.model().getModel();
-        this.config = agent.model().getConfig() instanceof AnthropicConfig c ? c : null;
+        this.modelName = agent.model().name();
+        this.config = agent.model().config() instanceof AnthropicConfig c ? c : null;
         this.client = client;
+
         final Map<String, ToolCall> tools = agentJFactory.getToolBagToolsExtractor().extractTools(agent.toolBags());
         final Map<String, Handoff> handOffs = agentJFactory.getHandoffsExtractor().extractHandOffs(agent.handoffs());
         final Map<String, AnthropicTool> mappedTools = toolsToAnthropicTool(tools);
@@ -57,7 +56,7 @@ public class AnthropicAgentExecutor implements AgenticExecutor<Agent>{
         this.messageConvert = new MessageConvertor(tools, handOffs);
     }
 
-    public List<AssistantMessage> process(String contextId, User user, List<Message> messages) {
+    public List<AssistantMessage> execute(String contextId, User user, List<Message> messages) {
 
 
         final SystemPrompt systemPrompt = systemPrompts();
@@ -78,8 +77,8 @@ public class AnthropicAgentExecutor implements AgenticExecutor<Agent>{
     }
 
     private SystemPrompt systemPrompts() {
-        if (Objects.isNull(agent.instructors())) {
-            return new TextSystemPrompt("You are an assistant");
+        if (agent.instructors().isEmpty()) {
+            return new TextSystemPrompt("You are a helpful assistant");
         }
 
         final List<TextPrompt> textPrompts = agent.instructors().stream()
@@ -91,7 +90,7 @@ public class AnthropicAgentExecutor implements AgenticExecutor<Agent>{
     }
 
     @Override
-    public Agent getAgentic() {
+    public Agent getAgent() {
         return this.agent;
     }
 }

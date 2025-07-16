@@ -3,10 +3,9 @@ package ai.agentscentral.anthropic.config;
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.attributes.ServiceTier;
 import ai.agentscentral.anthropic.factory.AnthropicFactory;
-import ai.agentscentral.core.agentic.executor.AgenticExecutor;
 import ai.agentscentral.core.model.ModelConfig;
-import ai.agentscentral.core.model.ProviderClient;
 import ai.agentscentral.core.model.ProviderFactory;
+import ai.agentscentral.core.provider.ProviderAgentExecutor;
 import jakarta.annotation.Nonnull;
 
 import java.util.Set;
@@ -130,7 +129,7 @@ public class AnthropicConfig implements ModelConfig {
     }
 
     @Override
-    public ProviderFactory<? extends AgenticExecutor, ? extends ProviderClient> getFactory() {
+    public ProviderFactory<? extends ProviderAgentExecutor> getFactory() {
         factory = ofNullable(factory)
                 .orElseGet(() -> new AnthropicFactory(new AnthropicClient(url, apiKey, anthropicVersion)));
         return factory;

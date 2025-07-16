@@ -1,10 +1,9 @@
 package ai.agentscentral.openai.processor;
 
-import ai.agentscentral.core.session.message.AssistantMessage;
-import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.handoff.DefaultHandoffInstruction;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;
+import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.tool.DefaultToolCallInstruction;
 import ai.agentscentral.core.tool.ToolCallInstruction;
 import ai.agentscentral.openai.client.request.attributes.*;
@@ -12,6 +11,7 @@ import ai.agentscentral.openai.client.response.parameters.ChoiceMessage;
 import ai.agentscentral.openai.client.response.parameters.Function;
 import ai.agentscentral.openai.client.response.parameters.ToolCall;
 import jakarta.annotation.Nonnull;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,6 @@ import static ai.agentscentral.openai.client.request.attributes.OpenAIUserMessag
 import static ai.agentscentral.openai.processor.ArgumentExtractor.extractFromJson;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * MessageConvertor
@@ -56,16 +55,25 @@ class MessageConvertor {
         return fullContext;
     }
 
+    AssistantMessage toAssistantMessage(String contextId, String responseId, List<ChoiceMessage> messages, Long created) {
+        final List<ChoiceMessage> assistantMessages = messages.stream().filter(m -> m.role().equals("assistant"))
+                .toList();
 
-    AssistantMessage toAssistantMessage(String contextId, String responseId, ChoiceMessage message, Long created) {
+        final List<TextPart> textParts = assistantMessages.stream().map(ChoiceMessage::content).filter(StringUtils::isNotBlank)
+                .map(c -> new TextPart(text, c)).toList();
 
-        if (!"assistant".equals(message.role())) {
-            throw new UnsupportedOperationException("Message for role " + message.role() + "is not support");
-        }
+        final TextPart[] parts = textParts.isEmpty() ? null : textParts.toArray(new TextPart[0]);
 
-        final TextPart[] parts = isBlank(message.content()) ? null : new TextPart[]{new TextPart(text, message.content())};
-        final List<ToolCallInstruction> toolCalls = message.hasToolCalls() ? toToolCallInstructions(message.toolCalls()) : List.of();
-        final List<HandoffInstruction> handoffCalls = message.hasToolCalls() ? toHandOffs(message.toolCalls()) : List.of();
+        final List<ToolCall> choiceToolCalls = assistantMessages.stream().filter(ChoiceMessage::hasToolCalls)
+                .flatMap(m -> m.toolCalls().stream())
+                .toList();
+
+        final List<ToolCallInstruction> toolCalls = choiceToolCalls.isEmpty() ?
+                List.of() : toToolCallInstructions(choiceToolCalls);
+
+        final List<HandoffInstruction> handoffCalls = choiceToolCalls.isEmpty() ?
+                List.of() : toHandOffs(choiceToolCalls);
+
         return new AssistantMessage(contextId, responseId, parts, toolCalls, handoffCalls, System.currentTimeMillis());
     }
 
@@ -95,10 +103,11 @@ class MessageConvertor {
     private HandoffInstruction toHandffInstruction(ToolCall toolCall) {
         return new DefaultHandoffInstruction(toolCall.id(), handOffs.get(toolCall.function().name()));
     }
+
     private OpenAIMessage toOpenAIMessage(@Nonnull Message message) {
 
         return switch (message) {
-            case DeveloperMessage dm ->  new OpenAIDeveloperMessage(DEVELOPER, null, toMessageContent(dm.parts()));
+            case DeveloperMessage dm -> new OpenAIDeveloperMessage(DEVELOPER, null, toMessageContent(dm.parts()));
             case UserMessage um -> new OpenAIUserMessage(USER, null, toMessageContent(um.parts()));
             case AssistantMessage am -> new OpenAIAssistantMessage(ASSISTANT, toMessageContent(am.parts()), null,
                     null, toolCalls(am));

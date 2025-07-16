@@ -6,6 +6,7 @@ import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.Model;
 import ai.agentscentral.core.tool.ToolBag;
+import jakarta.annotation.Nonnull;
 
 import java.util.List;
 
@@ -20,9 +21,9 @@ import java.util.List;
  *
  * @author Rizwan Idrees
  */
-public record Agent(String name,
-                    Model model,
-                    List<Instructor> instructors,
+public record Agent(@Nonnull String name,
+                    @Nonnull Model model,
+                    @Nonnull List<Instructor> instructors,
                     List<ToolBag> toolBags,
                     List<Handoff> handoffs) implements Agentic {
 }

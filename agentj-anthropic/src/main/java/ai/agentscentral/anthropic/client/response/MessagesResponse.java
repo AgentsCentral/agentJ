@@ -1,7 +1,6 @@
 package ai.agentscentral.anthropic.client.response;
 
 import ai.agentscentral.anthropic.client.common.Role;
-import ai.agentscentral.anthropic.client.request.attributes.ToolResultContentPart;
 import ai.agentscentral.anthropic.client.response.attributes.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

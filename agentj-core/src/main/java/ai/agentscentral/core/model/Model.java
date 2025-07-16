@@ -1,25 +1,14 @@
 package ai.agentscentral.core.model;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Model
  *
+ * @param name
+ * @param config
  * @author Rizwan Idrees
  */
-public class Model {
+public record Model(@Nonnull String name, @Nonnull ModelConfig config) {
 
-    private final String model;
-    private final ModelConfig config;
-
-    public Model(String model, ModelConfig config) {
-        this.model = model;
-        this.config = config;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public ModelConfig getConfig() {
-        return config;
-    }
 }

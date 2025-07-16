@@ -12,7 +12,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  *
  * @author Rizwan Idrees
  */
-public class TrailingRequestPathConversationIdExtractor implements ConversationIdExtractor {
+public class TrailingRequestPathConversationIdExtractor implements SessionIdExtractor {
 
     private static final String WILDCARD = "*";
     private static final String SLASH = "/";

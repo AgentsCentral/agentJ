@@ -1,13 +1,13 @@
 package ai.agentscentral.http.config;
 
-import ai.agentscentral.core.team.Team;
+import ai.agentscentral.core.agentic.Agentic;
 
 /**
  * HttpConfig
  *
  * @param path
- * @param team
+ * @param agentic
  * @author Rizwan Idrees
  */
-public record HttpConfig(String path, Team team) {
+public record HttpConfig(String path, Agentic agentic) {
 }
