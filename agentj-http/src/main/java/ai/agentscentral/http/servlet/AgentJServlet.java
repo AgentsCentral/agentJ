@@ -1,22 +1,20 @@
 package ai.agentscentral.http.servlet;
 
-import ai.agentscentral.core.session.id.SessionIdGenerator;
-import ai.agentscentral.core.session.processor.SessionProcessor;
 import ai.agentscentral.core.session.id.MessageIdGenerator;
+import ai.agentscentral.core.session.id.SessionIdGenerator;
 import ai.agentscentral.core.session.message.AssistantMessage;
 import ai.agentscentral.core.session.message.TextPart;
 import ai.agentscentral.core.session.message.UserMessage;
-import ai.agentscentral.http.request.ConversationIdExtractor;
+import ai.agentscentral.core.session.processor.SessionProcessor;
 import ai.agentscentral.http.request.MessageRequest;
 import ai.agentscentral.http.request.RequestExtractor;
+import ai.agentscentral.http.request.SessionIdExtractor;
 import ai.agentscentral.http.response.MessageResponse;
 import ai.agentscentral.http.response.ResponseSender;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -35,14 +33,14 @@ public class AgentJServlet extends HttpServlet {
     private final SessionProcessor processor;
     private final RequestExtractor requestExtractor;
     private final ResponseSender responseSender;
-    private final ConversationIdExtractor conversationIdExtractor;
+    private final SessionIdExtractor conversationIdExtractor;
     private final SessionIdGenerator sessionIdGenerator;
     private final MessageIdGenerator messageIdGenerator;
 
     public AgentJServlet(SessionProcessor processor,
                          RequestExtractor requestExtractor,
                          ResponseSender responseSender,
-                         ConversationIdExtractor conversationIdExtractor,
+                         SessionIdExtractor conversationIdExtractor,
                          SessionIdGenerator sessionIdGenerator,
                          MessageIdGenerator messageIdGenerator) {
         this.processor = processor;
@@ -54,7 +52,7 @@ public class AgentJServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         final MessageRequest messageRequest = requestExtractor.extract(request);
         final String conversationId = conversationIdExtractor.extract(request)
                 .orElse(sessionIdGenerator.generate());

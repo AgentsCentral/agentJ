@@ -13,12 +13,11 @@ import static ai.agentscentral.core.tool.ResultOrError.ofResult;
 /**
  * DefaultToolExecutor
  *
- * @param <T>
  * @author Rizwan Idrees
  */
-public class DefaultToolExecutor<T> implements ToolCallExecutor<T> {
+public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultToolExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallExecutor.class);
 
     @Override
     public ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction) {

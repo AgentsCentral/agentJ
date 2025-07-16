@@ -1,4 +1,4 @@
-package ai.agentscentral.core.session.context;
+package ai.agentscentral.core.context;
 
 import ai.agentscentral.core.session.message.Message;
 
@@ -11,17 +11,17 @@ import static java.util.Collections.synchronizedList;
 import static java.util.Comparator.comparing;
 
 /**
- * InMemoryConversationContextManager
+ * InMemoryContextManager
  *
  * @author Rizwan Idrees
  */
-public class InMemorySessionContextManager implements SessionContextManager {
+public class InMemoryContextManager implements ContextManager {
 
-    final Map<String, List<Message>> conversations = new ConcurrentHashMap<>();
+    final Map<String, List<Message>> contexts = new ConcurrentHashMap<>();
 
     @Override
     public List<Message> getContext(String contextId) {
-        final List<Message> context = conversations.getOrDefault(contextId, synchronizedList(new ArrayList<>()));
+        final List<Message> context = contexts.getOrDefault(contextId, synchronizedList(new ArrayList<>()));
         context.sort(comparing(Message::timestamp));
         return context;
     }
