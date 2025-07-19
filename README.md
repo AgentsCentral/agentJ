@@ -172,7 +172,7 @@ curl --location 'http://localhost:8181/chat/cv_f66cc4ab8c6346f6bfdd898c255dcd2c'
 {
     "sessionId": "cv_f66cc4ab8c6346f6bfdd898c255dcd2c",
     "messages": [
-        "The current temperature in Paris is approximately 13.7 Â°C."
+        "The current temperature in Paris is approximately 13.7°C."
     ]
 }
 ```
