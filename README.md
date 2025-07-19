@@ -24,8 +24,6 @@ or skip tests
 `$./mvnw clean install-DskipTests`
 
 
-## Setting up a standalone weather agentic
-
 ### Add Dependencies
 
 ```
@@ -62,6 +60,7 @@ or skip tests
 
 Example local maven repo path  `~/.m2/repository`
 
+## Setting up a standalone weather agentic
 
 ### Create a stub weatherAPI
 Weather API to be used by LLM agentic to retrieve current weather information
@@ -86,53 +85,51 @@ public class WeatherAPI {
 
 }
 ```
-### Create Weather Agent System
+### Create Weather Agent 
 
 ```
-public class WeatherSystem {
 
+public class WeatherAgent {
 
-    //Configure the OpenAIConfig(temperature, API_KEY). Make sure the temperature is supported by the model 
     private static final OpenAIConfig config = new OpenAIConfig(1D, System.getenv("OPEN_AI_KEY"));
 
-   //Setup the tool bag of the weather agentic
     private static final ToolBag weatherTools = new ToolBag() {
         private final WeatherAPI api = new WeatherAPI();
 
         @Tool(name = "weather_tool", description = "Provides weather information about the city")
         public String weatherInformation(@ToolParam(name = "city", description = "City") String city) {
+            System.out.println("calling weather info");
 
             return api.getWeatherInformation(city);
         }
     };
 
-    //Initialize the weather agentic
-    private static final SimpleAgent weatherAgent = new SimpleAgent("weather_agent", //name 
-            new Model("o4-mini", config), //model with OpenAIConfig
-            List.of(stringInstructor("You are a weather assistant. You are responsible for telling current weather information about the city.")), //instructions
-            List.of(weatherTools), //tools
-            List.of() //handoffs
+    private static final Agent weatherAgent = new Agent("weather_agent",
+            new Model("o4-mini", config),
+            List.of(stringInstructor("You are a weather assistant. You are responsible for telling current weather information about the city.")),
+            List.of(weatherTools),
+            List.of()
     );
 
-    //Initialize agentic system
-    public static Team getTeam(){
-        return new Team("Weather Agent System", weatherAgent, List.of());
+    public static Agent getAgent(){
+        return weatherAgent;
     }
 
 }
 
-```
-### Running the standalone agentic using HTTP
-
-Setup the `StandaloneWeatherAgent` to run it using `JettyHttpRunner` . Default port is `8181`
 
 ```
-public class StandaloneWeatherAgent {
+### Running the standalone weather agent using HTTP
+
+Setup the `WeatherChatBot` to run it using `JettyHttpRunner` . Default port is `8181`
+
+```
+public class WeatherChatBot {
 
 
     public static void main(String[] args) throws Exception {
 
-        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherSystem.getTeam());
+        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherAgent.getAgent());
         final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig));
 
         AgentJStarter.run(new JettyHttpRunner(defaultJettyConfig(), agentJConfig));
@@ -173,9 +170,9 @@ curl --location 'http://localhost:8181/chat/cv_f66cc4ab8c6346f6bfdd898c255dcd2c'
 
 ```
 {
-    "conversationId": "cv_f66cc4ab8c6346f6bfdd898c255dcd2c",
+    "sessionId": "cv_f66cc4ab8c6346f6bfdd898c255dcd2c",
     "messages": [
-        "The current temperature in Paris is approximately 46.3 Â°C."
+        "The current temperature in Paris is approximately 13.7 Â°C."
     ]
 }
 ```
