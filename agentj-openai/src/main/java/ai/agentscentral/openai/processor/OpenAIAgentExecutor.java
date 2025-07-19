@@ -22,6 +22,7 @@ import ai.agentscentral.openai.config.OpenAIConfig;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static ai.agentscentral.core.session.message.MessagePartType.text;
 import static ai.agentscentral.openai.processor.OpenAIToolConvertor.handOffsToOpenAITools;
@@ -65,7 +66,9 @@ public class OpenAIAgentExecutor implements ProviderAgentExecutor {
         final DeveloperMessage agentMessage = new DeveloperMessage(contextId, "",
                 new TextPart[]{new TextPart(text, agentInstructions())}, System.currentTimeMillis());
 
-        final CompletionRequest request = CompletionRequest.from(modelName, config, user.id(),
+        final String userId = Optional.ofNullable(user).map(User::id).orElse(null);
+
+        final CompletionRequest request = CompletionRequest.from(modelName, config, userId,
                 List.copyOf(openAITools.values()), messageConvertor.toOpenAIMessages(agentMessage, messages));
 
         final CompletionResponse completed = client.complete(request);
