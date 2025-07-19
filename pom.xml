@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ai.agentscentral.agentj</groupId>
+    <groupId>ai.agentscentral</groupId>
     <artifactId>agentj</artifactId>
     <packaging>pom</packaging>
 
@@ -18,7 +18,7 @@
     </modules>
     <version>0.0.1-SNAPSHOT</version>
     <name>agentJ</name>
-    <description>agentJ: Java multi-agentic development kit</description>
+    <description>agentJ: Java Multi-Agent Development Kit</description>
     <url>https://www.agentscentral.ai</url>
 
 
@@ -56,7 +56,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>ai.agentscentral.agentj</groupId>
+                <groupId>ai.agentscentral</groupId>
                 <artifactId>agentj-bom</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
                 <type>pom</type>
