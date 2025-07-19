@@ -16,8 +16,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class DefaultAgenticRegistrar implements AgenticRegistrar {
 
-    private final Map<RegistrationKey, Registered> teamRegister = new HashMap<>();
-    private final Map<RegistrationKey, Registered> agentRegister = new HashMap<>();
+    private final Map<RegistrationKey, RegisteredAgentic> teamRegistry = new HashMap<>();
+    private final Map<RegistrationKey, RegisteredAgentic> agentRegistry = new HashMap<>();
 
     @Override
     public void register(@Nonnull Agentic agentic, @Nullable Team partOfTeam, AgenticExecutor<? extends Agentic> executor) {
@@ -29,22 +29,22 @@ public class DefaultAgenticRegistrar implements AgenticRegistrar {
     }
 
     @Override
-    public Optional<Registered> findAny(String agenticName) {
+    public Optional<RegisteredAgentic> findAny(String agenticName) {
         return findAnyTeam(agenticName).or(() -> findAnyAgent(agenticName));
     }
 
     @Override
-    public Optional<Registered> find(String agenticName, String partOfTeamName) {
+    public Optional<RegisteredAgentic> find(String agenticName, String partOfTeamName) {
         final RegistrationKey key = new RegistrationKey(agenticName, ofNullable(partOfTeamName).orElse(EMPTY));
-        return agentRegister.containsKey(key) ?
-                Optional.of(agentRegister.get(key)) : Optional.ofNullable(teamRegister.get(key));
+        return agentRegistry.containsKey(key) ?
+                Optional.of(agentRegistry.get(key)) : Optional.ofNullable(teamRegistry.get(key));
     }
 
     private void registerTeam(@Nonnull Team team, @Nullable Team partOfTeam, AgenticExecutor<? extends Agentic> executor) {
         final String partOfTeamName = ofNullable(partOfTeam).map(Team::name).orElse(EMPTY);
         final RegistrationKey key = new RegistrationKey(team.name(), partOfTeamName);
         final RegisteredTeam registeredTeam = new RegisteredTeam(team, partOfTeam, executor);
-        teamRegister.putIfAbsent(key, registeredTeam);
+        teamRegistry.putIfAbsent(key, registeredTeam);
 
     }
 
@@ -52,16 +52,16 @@ public class DefaultAgenticRegistrar implements AgenticRegistrar {
         final String partOfTeamName = ofNullable(partOfTeam).map(Team::name).orElse(EMPTY);
         final RegistrationKey key = new RegistrationKey(agent.name(), partOfTeamName);
         final RegisteredAgent registeredAgent = new RegisteredAgent(agent, partOfTeam, executor);
-        agentRegister.putIfAbsent(key, registeredAgent);
+        agentRegistry.putIfAbsent(key, registeredAgent);
     }
 
-    private Optional<Registered> findAnyTeam(String agenticName) {
-        return teamRegister.values().stream().filter(r -> r.executor().getAgentic().name().equals(agenticName))
+    private Optional<RegisteredAgentic> findAnyTeam(String agenticName) {
+        return teamRegistry.values().stream().filter(r -> r.executor().getAgentic().name().equals(agenticName))
                 .findAny();
     }
 
-    private Optional<Registered> findAnyAgent(String agenticName) {
-        return agentRegister.values().stream().filter(r -> r.executor().getAgentic().name()
+    private Optional<RegisteredAgentic> findAnyAgent(String agenticName) {
+        return agentRegistry.values().stream().filter(r -> r.executor().getAgentic().name()
                 .equals(agenticName)).findAny();
     }
 }

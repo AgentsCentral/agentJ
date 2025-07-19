@@ -8,7 +8,7 @@ import ai.agentscentral.core.agentic.executor.AgenticExecutor;
  *
  * @author Rizwan Idrees
  */
-public interface Registered {
+public interface RegisteredAgentic {
 
     AgenticExecutor<? extends Agentic> executor();
 

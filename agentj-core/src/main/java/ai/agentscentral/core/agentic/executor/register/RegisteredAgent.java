@@ -13,5 +13,5 @@ import ai.agentscentral.core.team.Team;
  * @param executor
  * @author Rizwan Idrees
  */
-record RegisteredAgent(Agent agent, Team partOf, AgenticExecutor<? extends Agentic> executor) implements Registered {
+public record RegisteredAgent(Agent agent, Team partOf, AgenticExecutor<? extends Agentic> executor) implements RegisteredAgentic {
 }

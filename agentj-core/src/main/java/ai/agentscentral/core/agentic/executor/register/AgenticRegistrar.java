@@ -6,12 +6,17 @@ import ai.agentscentral.core.team.Team;
 
 import java.util.Optional;
 
+/**
+ * AgenticRegistrar
+ *
+ * @author Rizwan Idrees
+ */
 public interface AgenticRegistrar {
 
     void register(Agentic agentic, Team partOfTeam, AgenticExecutor<? extends Agentic> executor);
 
-    Optional<Registered> find(String agenticName, String partOfTeamName);
+    Optional<RegisteredAgentic> find(String agenticName, String partOfTeamName);
 
-    Optional<Registered> findAny(String agenticName);
+    Optional<RegisteredAgentic> findAny(String agenticName);
 
 }

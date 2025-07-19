@@ -19,6 +19,6 @@ public interface AgenticExecutor<T extends Agentic> {
                           User user,
                           List<Message> previousContext,
                           List<Message> newMessages,
-                          Agentic currentAgentic,
+                          String currentAgenticName,
                           MessageExecutionContext executionContext);
 }
