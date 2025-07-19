@@ -60,7 +60,7 @@ or skip tests
 
 Example local maven repo path  `~/.m2/repository`
 
-## Setting up a standalone weather agentic
+## Setting up a standalone weather agent
 
 ### Create a stub weatherAPI
 Weather API to be used by LLM agentic to retrieve current weather information
