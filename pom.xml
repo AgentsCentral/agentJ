@@ -25,6 +25,12 @@
     <developers>
         <developer>
             <name>Rizwan Idrees</name>
+            <email>rizwan@squadfour.com</email>
+            <roles>
+                <role>Founder</role>
+            </roles>
+            <organization>Agents Central</organization>
+            <organizationUrl>https://agentscentral.ai</organizationUrl>
         </developer>
     </developers>
 
