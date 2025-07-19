@@ -7,7 +7,7 @@ import ai.agentscentral.core.agentic.executor.DefaultHandoffExecutor;
 import ai.agentscentral.core.agentic.executor.MessageExecutionContext;
 import ai.agentscentral.core.agentic.executor.register.AgenticRegistrar;
 import ai.agentscentral.core.agentic.executor.register.DefaultAgenticRegistrar;
-import ai.agentscentral.core.agentic.executor.register.Registered;
+import ai.agentscentral.core.agentic.executor.register.RegisteredAgentic;
 import ai.agentscentral.core.context.ContextManager;
 import ai.agentscentral.core.context.ContextStateManager;
 import ai.agentscentral.core.factory.AgentJFactory;
@@ -37,8 +37,6 @@ public class DefaultSessionProcessor implements SessionProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DefaultSessionProcessor.class);
 
     private final AgenticRegistrar registrar = new DefaultAgenticRegistrar();
-    private final AgenticExecutorInitializer agenticExecutorInitializer = new AgenticExecutorInitializer(registrar);
-    private final Agentic agentic;
     private final AgenticExecutor<? extends Agentic> agenticExecutor;
     private final ContextStateManager stateManager;
     private final ContextManager contextManager;
@@ -50,11 +48,9 @@ public class DefaultSessionProcessor implements SessionProcessor {
                                    ContextManager contextManager,
                                    ExecutionLimits executionLimits) {
 
-        this.agentic = agentic;
         this.stateManager = stateManager;
         this.contextManager = contextManager;
-        this.agenticExecutor = agenticExecutorInitializer.initialize(agentic, null,
-                stateManager, contextManager, new DefaultHandoffExecutor(registrar, stateManager), agentJFactory);
+        this.agenticExecutor = initializeExecutor(agentic, agentJFactory);
         this.executionLimits = executionLimits;
     }
 
@@ -69,7 +65,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .orElse(agenticExecutor);
 
         final List<Message> newMessages = executor.execute(sessionId, user, context, new ArrayList<>(List.of(message)),
-                executor.getAgentic(), executionContext);
+                null, executionContext);
 
         return newMessages.stream()
                 .filter(m -> m instanceof AssistantMessage)
@@ -79,12 +75,17 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .toList();
     }
 
+    private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgentJFactory agentJFactory) {
+        final AgenticExecutorInitializer agenticExecutorInitializer = new AgenticExecutorInitializer(registrar);
+        return agenticExecutorInitializer.initialize(agentic, null,
+                stateManager, contextManager, new DefaultHandoffExecutor(registrar, stateManager), agentJFactory);
+    }
 
     private Optional<AgenticExecutor<? extends Agentic>> findExecutor(String sessionId) {
         return of(sessionId)
                 .flatMap(stateManager::getCurrentState)
                 .flatMap(state -> registrar.find(state.currentAgent(), state.currentTeam()))
-                .map(Registered::executor);
+                .map(RegisteredAgentic::executor);
     }
 
 }

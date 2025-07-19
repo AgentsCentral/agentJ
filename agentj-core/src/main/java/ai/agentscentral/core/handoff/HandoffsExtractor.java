@@ -15,9 +15,7 @@ public class HandoffsExtractor {
 
     private static final HandoffsExtractor instance = new HandoffsExtractor();
 
-
     private HandoffsExtractor() {
-
     }
 
     public Map<String, Handoff> extractHandOffs(List<Handoff> handoffs) {
@@ -28,8 +26,6 @@ public class HandoffsExtractor {
 
         return handoffs.stream().collect(toMap(Handoff::id, handoff -> handoff));
     }
-
-
 
     public static HandoffsExtractor getInstance() {
         return instance;

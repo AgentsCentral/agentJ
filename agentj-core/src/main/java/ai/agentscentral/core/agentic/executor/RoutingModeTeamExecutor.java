@@ -25,7 +25,6 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
 
     private final Team team;
     private final Agent leader;
-    private final List<Agentic> members;
     private final ContextStateManager stateManager;
     private final ContextManager contextManager;
     private final AgenticExecutorInitializer executorInitializer;
@@ -40,14 +39,15 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
                                    HandoffExecutor handoffExecutor) {
         this.team = team;
         this.leader = team.leader();
-        this.members = team.members();
         this.stateManager = stateManager;
         this.contextManager = contextManager;
         this.executorInitializer = executorInitializer;
         this.handoffExecutor = handoffExecutor;
 
-        agentExecutors.put(leader.name(), initializeExecutor(leader, agentJFactory));
-        members.forEach(a -> agentExecutors.put(a.name(), initializeExecutor(a, agentJFactory)));
+        ofNullable(team.leader())
+                .ifPresent(l -> agentExecutors.put(l.name(), initializeExecutor(leader, agentJFactory)));
+
+        team.members().forEach(a -> agentExecutors.put(a.name(), initializeExecutor(a, agentJFactory)));
     }
 
 
@@ -56,15 +56,14 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
                                  User user,
                                  List<Message> previousContext,
                                  List<Message> newMessages,
-                                 Agentic currentAgentic,
+                                 String currentAgenticName,
                                  MessageExecutionContext executionContext) {
 
-        final AgenticExecutor<? extends Agentic> agenticExecutor = findExecutor(currentAgentic)
+        final AgenticExecutor<? extends Agentic> agenticExecutor = findExecutor(currentAgenticName)
                 .orElse(agentExecutors.get(leader.name()));
 
-
         return agenticExecutor.execute(contextId, user, previousContext,
-                newMessages, currentAgentic, executionContext);
+                newMessages, currentAgenticName, executionContext);
     }
 
 
@@ -73,9 +72,9 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
         return this.team;
     }
 
-    final Optional<AgenticExecutor<? extends Agentic>> findExecutor(Agentic agentic) {
-        return ofNullable(agentic)
-                .map(a -> agentExecutors.get(a.name()));
+    final Optional<AgenticExecutor<? extends Agentic>> findExecutor(String agenticName) {
+        return ofNullable(agenticName)
+                .map(agentExecutors::get);
     }
 
     private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgentJFactory agentJFactory) {

@@ -1,9 +1,7 @@
 package ai.agentscentral.core.agentic.executor;
 
 import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.core.context.ContextManager;
-import ai.agentscentral.core.context.ContextStateManager;
 import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;
@@ -11,7 +9,6 @@ import ai.agentscentral.core.provider.ProviderAgentExecutor;
 import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.session.user.User;
-import ai.agentscentral.core.team.Team;
 import ai.agentscentral.core.tool.ToolCallExecutor;
 import ai.agentscentral.core.tool.ToolCallInstruction;
 import jakarta.annotation.Nonnull;
@@ -29,9 +26,6 @@ import static java.lang.System.currentTimeMillis;
 public class DefaultAgentExecutor implements AgentExecutor {
 
     private final Agent agent;
-    private final Team partOf;
-    private final AgentJFactory agentJFactory;
-    private final ContextStateManager stateManager;
     private final ContextManager contextManager;
     private final HandoffExecutor handoffExecutor;
     private final ToolCallExecutor<ToolMessage> toolCallExecutor;
@@ -39,16 +33,11 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private final MessageIdGenerator messageIdGenerator;
 
     public DefaultAgentExecutor(Agent agent,
-                                Team partOf,
                                 AgentJFactory agentJFactory,
-                                ContextStateManager stateManager,
                                 ContextManager contextManager,
                                 HandoffExecutor handoffExecutor) {
         this.agent = agent;
-        this.partOf = partOf;
-        this.agentJFactory = agentJFactory;
         this.toolCallExecutor = agentJFactory.getToolCallExecutor();
-        this.stateManager = stateManager;
         this.contextManager = contextManager;
         this.handoffExecutor = handoffExecutor;
         this.providerAgentExecutor = agent.model().config()
@@ -63,7 +52,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
                                  @Nullable User user,
                                  List<Message> previousContext,
                                  List<Message> newMessages,
-                                 Agentic currentAgentic,
+                                 String currentAgenticName,
                                  MessageExecutionContext executionContext) {
 
         final List<Message> localContext = new ArrayList<>(previousContext);
@@ -91,7 +80,8 @@ public class DefaultAgentExecutor implements AgentExecutor {
                     .flatMap(m -> m.handoffs().stream()).findFirst();
 
 
-            final AgenticExecutor<? extends Agentic> handOffExecutor = handoffInstruction.map(handoffExecutor::handoff)
+            final HandedOff handedOff = handoffInstruction
+                    .map(hi -> handoffExecutor.handoff(contextId, hi))
                     .orElseThrow(() -> new UnsupportedOperationException("unable to find the agent"));
 
 
@@ -116,8 +106,8 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
             executionContext.incrementHandOffCount();
 
-            return handOffExecutor.execute(contextId, user, previousContext, newMessages,
-                    null, executionContext);
+            return handedOff.newAgenticExecutor().execute(contextId, user, previousContext, newMessages,
+                    handedOff.agent(), executionContext);
 
         } else if (hasToolCalls) {
 
@@ -137,7 +127,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
             executionContext.incrementToolCalls();
 
-            return execute(contextId, user, previousContext, newMessages, currentAgentic, executionContext);
+            return execute(contextId, user, previousContext, newMessages, currentAgenticName, executionContext);
         }
 
         return newMessages;

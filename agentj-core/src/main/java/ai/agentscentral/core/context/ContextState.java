@@ -8,7 +8,11 @@ package ai.agentscentral.core.context;
 public interface ContextState {
 
     String contextId();
+
     String currentTeam();
+
     String currentAgent();
+
+    String partOfTeam();
 
 }

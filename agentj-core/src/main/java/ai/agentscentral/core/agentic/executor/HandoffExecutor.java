@@ -1,10 +1,10 @@
 package ai.agentscentral.core.agentic.executor;
 
-import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.core.handoff.HandoffInstruction;
+import jakarta.annotation.Nonnull;
 
 public interface HandoffExecutor {
 
-    AgenticExecutor<? extends Agentic> handoff(HandoffInstruction instruction);
+   HandedOff handoff(@Nonnull String contextId, @Nonnull HandoffInstruction instruction);
 
 }

@@ -34,8 +34,7 @@ public class AgenticExecutorInitializer {
 
 
         return switch (agentic) {
-            case Agent agent -> initializeAgentExecutor(agent, partOf,
-                    stateManager, contextManager, handoffExecutor, factory);
+            case Agent agent -> initializeAgentExecutor(agent, partOf, contextManager, handoffExecutor, factory);
             case Team team -> initializeTeamExecutor(team, partOf,
                     stateManager, contextManager, factory, handoffExecutor);
             default -> throw new UnsupportedOperationException("Unrecognized agentic type " + agentic.getClass());
@@ -44,13 +43,12 @@ public class AgenticExecutorInitializer {
 
     private AgentExecutor initializeAgentExecutor(@Nonnull Agent agent,
                                                   @Nullable Team partOf,
-                                                  @Nonnull ContextStateManager stateManager,
                                                   @Nonnull ContextManager contextManager,
                                                   @Nonnull HandoffExecutor handoffExecutor,
                                                   @Nonnull AgentJFactory agentJFactory) {
 
-        final DefaultAgentExecutor executor = new DefaultAgentExecutor(agent, partOf,
-                agentJFactory, stateManager, contextManager, handoffExecutor);
+        final DefaultAgentExecutor executor = new DefaultAgentExecutor(agent,
+                agentJFactory, contextManager, handoffExecutor);
 
         registrar.register(agent, partOf, executor);
 
