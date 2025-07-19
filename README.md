@@ -29,12 +29,12 @@ or skip tests
 ```
     <dependencies>
         <dependency>
-            <groupId>ai.agentscentral.agentj</groupId>
+            <groupId>ai.agentscentral</groupId>
             <artifactId>agentj-openai</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>ai.agentscentral.agentj</groupId>
+            <groupId>ai.agentscentral</groupId>
             <artifactId>agentj-jetty</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
