@@ -33,20 +33,20 @@ public class AgentJServlet extends HttpServlet {
     private final SessionProcessor processor;
     private final RequestExtractor requestExtractor;
     private final ResponseSender responseSender;
-    private final SessionIdExtractor conversationIdExtractor;
+    private final SessionIdExtractor sessionIdExtractor;
     private final SessionIdGenerator sessionIdGenerator;
     private final MessageIdGenerator messageIdGenerator;
 
     public AgentJServlet(SessionProcessor processor,
                          RequestExtractor requestExtractor,
                          ResponseSender responseSender,
-                         SessionIdExtractor conversationIdExtractor,
+                         SessionIdExtractor sessionIdExtractor,
                          SessionIdGenerator sessionIdGenerator,
                          MessageIdGenerator messageIdGenerator) {
         this.processor = processor;
         this.requestExtractor = requestExtractor;
         this.responseSender = responseSender;
-        this.conversationIdExtractor = conversationIdExtractor;
+        this.sessionIdExtractor = sessionIdExtractor;
         this.sessionIdGenerator = sessionIdGenerator;
         this.messageIdGenerator = messageIdGenerator;
     }
@@ -54,12 +54,12 @@ public class AgentJServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         final MessageRequest messageRequest = requestExtractor.extract(request);
-        final String conversationId = conversationIdExtractor.extract(request)
+        final String sessionId = sessionIdExtractor.extract(request)
                 .orElse(sessionIdGenerator.generate());
 
         final List<AssistantMessage> assistantMessages = Optional.of(messageRequest)
-                .map(r -> new UserMessage(conversationId, messageId(), toTextParts(r), currentTimeMillis()))
-                .map(um -> processor.process(conversationId, um, null)).orElse(List.of());
+                .map(r -> new UserMessage(sessionId, messageId(), toTextParts(r), currentTimeMillis()))
+                .map(um -> processor.process(sessionId, um, null)).orElse(List.of());
 
         final List<String> messages = assistantMessages.stream()
                 .flatMap(am -> Stream.of(am.parts()))
@@ -68,7 +68,7 @@ public class AgentJServlet extends HttpServlet {
                 .map(TextPart::text)
                 .toList();
 
-        responseSender.send(response, new MessageResponse(conversationId, messages));
+        responseSender.send(response, new MessageResponse(sessionId, messages));
 
     }
 
