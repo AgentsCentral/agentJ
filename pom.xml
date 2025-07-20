@@ -14,7 +14,7 @@
         <module>agentj-http</module>
         <module>agentj-anthropic</module>
     </modules>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>agentJ</name>
     <description>agentJ: Java Multi-Agent Development Kit</description>
     <url>https://www.agentscentral.ai</url>
