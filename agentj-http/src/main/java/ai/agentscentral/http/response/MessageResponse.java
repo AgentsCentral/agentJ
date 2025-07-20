@@ -11,5 +11,5 @@ import java.util.List;
  * @param messages
  * @author Rizwan Idrees
  */
-public record MessageResponse(@Nonnull String sessionId, @Nonnull List<String> messages) {
+public record MessageResponse(@Nonnull String sessionId, @Nonnull List<? extends Message> messages) {
 }
