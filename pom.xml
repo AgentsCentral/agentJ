@@ -42,7 +42,7 @@
 
     <scm>
         <connection>scm:git:git@github.com:AgentsCentral/agentJ.git</connection>
-        <developerConnection>scm:git:git@github.com:AgentsCentral/agentJ.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com:AgentsCentral/agentJ.git</developerConnection>
         <url>https://github.com/AgentsCentral/agentJ.git</url>
     </scm>
 
