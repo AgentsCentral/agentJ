@@ -14,7 +14,7 @@
         <module>agentj-http</module>
         <module>agentj-anthropic</module>
     </modules>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>agentJ</name>
     <description>agentJ: Java Multi-Agent Development Kit</description>
     <url>https://www.agentscentral.ai</url>
@@ -44,7 +44,6 @@
         <connection>scm:git:git@github.com:AgentsCentral/agentJ.git</connection>
         <developerConnection>scm:git:git@github.com:AgentsCentral/agentJ.git</developerConnection>
         <url>https://github.com/AgentsCentral/agentJ.git</url>
-        <tag>v0.0.1</tag>
     </scm>
 
     <properties>
@@ -62,7 +61,7 @@
             <dependency>
                 <groupId>ai.agentscentral</groupId>
                 <artifactId>agentj-bom</artifactId>
-                <version>0.0.2-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
