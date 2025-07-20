@@ -7,8 +7,8 @@
         <version>0.0.3-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.agentj.anthropic</groupId>
     <artifactId>agentj-anthropic</artifactId>
+    <name>agentJ Anthropic</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

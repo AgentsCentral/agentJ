@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>agentj-core</artifactId>
+    <name>agentJ core</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

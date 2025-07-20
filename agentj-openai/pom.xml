@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>agentj-openai</artifactId>
+    <name>agentJ OpenAI</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
