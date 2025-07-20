@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>agentj-jetty</artifactId>
-    <name>agentJ Jetty</name>
+    <name>agentJ-Jetty</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

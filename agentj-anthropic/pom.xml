@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>agentj-anthropic</artifactId>
-    <name>agentJ Anthropic</name>
+    <name>agentJ-Anthropic</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
