@@ -6,22 +6,7 @@ AgentJ - Java Multi Agent Development Kit
 ## JAVA VERSION 
 JDK 21+ is required
 
-## Getting started (Preview version)
-
-### Setup OpenAI Key as environment variable
-This is required for unit tests. 
-
-`export OPEN_AI_KEY=<YOUR_KEY>`
-
-You can skip tests to avoid it by using `-DskipTests`.
-
-Build and install agentJ in your local maven repo
-
-`$./mvnw clean install`
-
-or skip tests
-
-`$./mvnw clean install-DskipTests`
+## Getting started
 
 
 ### Add Dependencies
@@ -31,12 +16,12 @@ or skip tests
         <dependency>
             <groupId>ai.agentscentral</groupId>
             <artifactId>agentj-openai</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
             <groupId>ai.agentscentral</groupId>
             <artifactId>agentj-jetty</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -45,20 +30,7 @@ or skip tests
         </dependency>        
     </dependencies>
 ```
-### Configure local maven repo
 
-
-```
-<repositories>
-    <repository>
-    <id>local-repo</id>
-    <name>Local Repository</name>
-    <url>YOUR_LOCAL_REP_PATH_HERE</url> 
-    </repository>
-</repositories>
-```
-
-Example local maven repo path  `~/.m2/repository`
 
 ## Setting up a standalone weather agent
 
