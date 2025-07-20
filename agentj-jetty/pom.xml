@@ -4,7 +4,7 @@
     <parent>
         <groupId>ai.agentscentral</groupId>
         <artifactId>agentj</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.3</version>
     </parent>
 
     <artifactId>agentj-jetty</artifactId>
