@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public interface ResponseSender {
 
-
     void send(HttpServletResponse response, MessageResponse messageResponse);
 
 }
