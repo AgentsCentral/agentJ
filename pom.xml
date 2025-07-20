@@ -14,7 +14,7 @@
         <module>agentj-http</module>
         <module>agentj-anthropic</module>
     </modules>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>agentJ</name>
     <description>agentJ: Java Multi-Agent Development Kit</description>
     <url>https://www.agentscentral.ai</url>
@@ -62,7 +62,7 @@
             <dependency>
                 <groupId>ai.agentscentral</groupId>
                 <artifactId>agentj-bom</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
