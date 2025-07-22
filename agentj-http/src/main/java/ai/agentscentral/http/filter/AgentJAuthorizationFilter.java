@@ -1,4 +1,4 @@
-package ai.agentscentral.http.servlet;
+package ai.agentscentral.http.filter;
 
 import ai.agentscentral.http.auth.Authorizer;
 import jakarta.servlet.*;
