@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
  */
 public class HealthCheckServlet extends HttpServlet {
 
-    public static final String CONTENT_TYPE = "application/json";
+    private static final String CONTENT_TYPE = "application/json";
     private final LivenessProbe livenessProbe;
     private final ReadinessProbe readinessProbe;
 

@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+
 /**
  * JsonResponseSender
  *
@@ -24,7 +26,7 @@ public class JsonResponseSender implements ResponseSender {
     public void send(HttpServletResponse response, MessageResponse messageResponse) {
 
         response.setContentType(CONTENT_TYPE);
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(SC_OK);
 
         try (PrintWriter writer = response.getWriter()) {
 
