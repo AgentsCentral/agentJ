@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
+import static java.util.Objects.nonNull;
 
 /**
  * JettyHttpRunner
@@ -109,15 +110,18 @@ public class JettyHttpRunner implements AgentJHttpRunner {
                     agentJFactory.getMessageIdGenerator());
 
             servletContextHandler.addServlet(servlet, httpConfig.path());
-            servletContextHandler.addFilter(new AgentJAuthorizationFilter(httpConfig.authorizers()),
-                    httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
+
+            if (nonNull(httpConfig.authorizers()) && !httpConfig.authorizers().isEmpty()) {
+                servletContextHandler.addFilter(new AgentJAuthorizationFilter(httpConfig.authorizers()),
+                        httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
+            }
         }
     }
 
     @Override
     public void stop() throws Exception {
 
-        if (Objects.nonNull(server)) {
+        if (nonNull(server)) {
             server.stop();
         }
     }
