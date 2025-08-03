@@ -18,14 +18,6 @@ public class MessageExecutionContext {
 
     private int toolCallsCount = 0;
 
-    public int getHandOffCount() {
-        return handOffCount;
-    }
-
-    public int getToolCallsCount() {
-        return toolCallsCount;
-    }
-
     public void incrementHandOffCount() {
         handOffCount++;
     }
