@@ -5,20 +5,22 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.replaceEach;
+import static org.apache.commons.lang3.Strings.CS;
 
 /**
  * TrailingRequestPathConversationIdExtractor
  *
  * @author Rizwan Idrees
  */
-public class TrailingRequestPathConversationIdExtractor implements SessionIdExtractor {
+public class TrailingRequestPathSessionIdExtractor implements SessionIdExtractor {
 
     private static final String WILDCARD = "*";
     private static final String SLASH = "/";
     private final String path;
 
-    public TrailingRequestPathConversationIdExtractor(String path) {
+    public TrailingRequestPathSessionIdExtractor(String path) {
         this.path = cleanPath(path);
     }
 
@@ -28,7 +30,7 @@ public class TrailingRequestPathConversationIdExtractor implements SessionIdExtr
     }
 
     private Optional<String> extractConversationId(String requestUri) {
-        final String uri = endsWith(requestUri, SLASH)? requestUri : requestUri + SLASH;
+        final String uri = CS.endsWith(requestUri, SLASH) ? requestUri : requestUri + SLASH;
         return Optional.ofNullable(uri)
                 .map(this::removePath)
                 .map(this::removeSlash)

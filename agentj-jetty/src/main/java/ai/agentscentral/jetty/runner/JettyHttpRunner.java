@@ -11,7 +11,7 @@ import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
 import ai.agentscentral.http.health.LivenessProbe;
 import ai.agentscentral.http.health.ReadinessProbe;
 import ai.agentscentral.http.request.JsonRequestExtractor;
-import ai.agentscentral.http.request.TrailingRequestPathConversationIdExtractor;
+import ai.agentscentral.http.request.TrailingRequestPathSessionIdExtractor;
 import ai.agentscentral.http.response.JsonResponseSender;
 import ai.agentscentral.http.runner.AgentJHttpRunner;
 import ai.agentscentral.http.servlet.AgentJServlet;
@@ -104,7 +104,7 @@ public class JettyHttpRunner implements AgentJHttpRunner {
             final AgentJServlet servlet = new AgentJServlet(processor,
                     new JsonRequestExtractor(objectMapper),
                     new JsonResponseSender(objectMapper),
-                    new TrailingRequestPathConversationIdExtractor(httpConfig.path()),
+                    new TrailingRequestPathSessionIdExtractor(httpConfig.path()),
                     agentJFactory.getSessionIdGenerator(),
                     agentJFactory.getMessageIdGenerator());
 
