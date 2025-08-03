@@ -5,7 +5,7 @@
     <groupId>ai.agentscentral</groupId>
     <artifactId>agentj-bom</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
     <name>agentJ bill of materials</name>
     <description>agentJ: Java Multi-Agent Development Kit</description>
     <url>https://www.agentscentral.ai</url>
@@ -35,7 +35,7 @@
         <connection>scm:git:git@github.com:AgentsCentral/agentJ.git</connection>
         <developerConnection>scm:git:git@github.com:AgentsCentral/agentJ.git</developerConnection>
         <url>https://github.com/AgentsCentral/agentJ</url>
-        <tag>HEAD</tag>
+        <tag>v0.0.5</tag>
     </scm>
 
     <properties>
