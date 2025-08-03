@@ -7,6 +7,7 @@ import ai.agentscentral.core.factory.DefaultAgentJFactory;
 import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
 import ai.agentscentral.http.config.AgentJConfig;
 import ai.agentscentral.http.config.HttpConfig;
+import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
 import ai.agentscentral.http.health.LivenessProbe;
 import ai.agentscentral.http.health.ReadinessProbe;
 import ai.agentscentral.http.request.JsonRequestExtractor;
@@ -17,6 +18,7 @@ import ai.agentscentral.http.servlet.AgentJServlet;
 import ai.agentscentral.http.servlet.HealthCheckServlet;
 import ai.agentscentral.jetty.config.JettyConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -25,6 +27,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
@@ -106,6 +109,8 @@ public class JettyHttpRunner implements AgentJHttpRunner {
                     agentJFactory.getMessageIdGenerator());
 
             servletContextHandler.addServlet(servlet, httpConfig.path());
+            servletContextHandler.addFilter(new AgentJAuthorizationFilter(httpConfig.authorizers()),
+                    httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
         }
     }
 
