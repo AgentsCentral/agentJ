@@ -28,7 +28,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
