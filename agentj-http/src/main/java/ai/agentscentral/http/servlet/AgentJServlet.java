@@ -60,7 +60,7 @@ public class AgentJServlet extends HttpServlet {
 
         final List<AssistantMessage> assistantMessages = Optional.of(messageRequest)
                 .map(r -> new UserMessage(sessionId, messageId(), toTextParts(r), currentTimeMillis()))
-                .map(um -> processor.process(sessionId, um, null)).orElse(List.of());
+                .map(um -> processor.process(sessionId, um, null)).orElseGet(() -> List.of());
 
         final List<TextMessage> textMessages = assistantMessages.stream()
                 .map(am -> toTextMessage(am.messageId(), am.parts(), am.timestamp()))

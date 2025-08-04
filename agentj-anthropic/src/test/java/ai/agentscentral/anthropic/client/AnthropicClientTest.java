@@ -17,7 +17,7 @@ import java.util.Set;
 import static ai.agentscentral.anthropic.client.request.attributes.AnthropicUserMessage.USER;
 import static ai.agentscentral.anthropic.client.response.attributes.ResponseContentType.text;
 import static ai.agentscentral.anthropic.client.response.attributes.ResponseContentType.tool_use;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang3.Strings.CI;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnthropicClientTest {
@@ -55,7 +55,7 @@ class AnthropicClientTest {
 
         final TextResponseContent textResponseContent = (TextResponseContent) firstContentPart;
         assertEquals(text, textResponseContent.type());
-        assertTrue(containsIgnoreCase(textResponseContent.text(), "Washington"));
+        assertTrue(CI.contains(textResponseContent.text(), "Washington"));
     }
 
 
