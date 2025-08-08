@@ -1,68 +1,69 @@
 # agentJ - Java Multi Agent Development Kit
 
-
 AgentJ - Java Multi Agent Development Kit
 
 ## JAVA VERSION 
 JDK 21+ is required
 
-## Getting started
-
+## Getting Started
 
 ### Add Dependencies
 
-```
-    <dependencies>
-        <dependency>
-            <groupId>ai.agentscentral</groupId>
-            <artifactId>agentj-openai</artifactId>
-            <version>0.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>ai.agentscentral</groupId>
-            <artifactId>agentj-jetty</artifactId>
-            <version>0.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.21</version>
-        </dependency>        
-    </dependencies>
+```xml
+<dependencies>
+    <dependency>
+        <groupId>ai.agentscentral</groupId>
+        <artifactId>agentj-openai</artifactId>
+        <version>0.0.4</version>
+    </dependency>
+    <!-- Add agentj-jetty only if you need HTTP server capabilities -->
+    <dependency>
+        <groupId>ai.agentscentral</groupId>
+        <artifactId>agentj-jetty</artifactId>
+        <version>0.0.4</version>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.21</version>
+    </dependency>        
+</dependencies>
 ```
 
+## Setting up a Standalone Weather Agent
 
-## Setting up a standalone weather agent
+This example demonstrates how to create and deploy a simple weather agent in an HTTP server, configured with an AI agent and weather API.
 
-### Create a stub weatherAPI
-Weather API to be used by LLM agentic to retrieve current weather information
-```
+### 1. Create a Weather API
+
+First, create a simple weather API that your agent will use:
+
+```java
 public class WeatherAPI {
-
     private final Random temperatureGenerator = new Random();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public String getWeatherInformation(String city){
+    public String getWeatherInformation(String city) {
         double temperature = temperatureGenerator.nextDouble(1D, 50);
         return asJson(new WeatherInfo(city, temperature + " Celsius"));
     }
 
-    private String asJson(Object o){
+    private String asJson(Object o) {
         try {
             return mapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
 ```
-### Create Weather Agent 
 
-```
+### 2. Create the Weather Agent
 
+Next, create your agent using the `Agent` class:
+
+```java
 public class WeatherAgent {
-
     private static final OpenAIConfig config = new OpenAIConfig(1D, System.getenv("OPEN_AI_KEY"));
 
     private static final ToolBag weatherTools = new ToolBag() {
@@ -70,47 +71,98 @@ public class WeatherAgent {
 
         @Tool(name = "weather_tool", description = "Provides weather information about the city")
         public String weatherInformation(@ToolParam(name = "city", description = "City") String city) {
-            System.out.println("calling weather info");
-
+            System.out.println("Fetching weather for: " + city);
             return api.getWeatherInformation(city);
         }
     };
 
     private static final Agent weatherAgent = new Agent("weather_agent",
             new Model("o4-mini", config),
-            List.of(stringInstructor("You are a weather assistant. You are responsible for telling current weather information about the city.")),
+            List.of(stringInstructor("You are a helpful weather assistant. Provide current weather information when asked about cities.")),
             List.of(weatherTools),
             List.of()
     );
 
-    public static Agent getAgent(){
+    public static Agent getAgent() {
         return weatherAgent;
     }
-
 }
-
-
 ```
-### Running the standalone weather agent using HTTP
 
-Setup the `WeatherChatBot` to run it using `JettyHttpRunner` . Default port is `8181`
+### 3. Run the Agent as an HTTP Server
 
-```
+#### 3.1 Add HTTP Server Dependencies
+
+Make sure you have the `agentj-jetty` dependency in your `pom.xml` as shown in the dependencies section.
+
+#### 3.2 Configure and Start the Server
+
+```java
 public class WeatherChatBot {
-
-
     public static void main(String[] args) throws Exception {
-
+        // Configure your agent
         final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherAgent.getAgent());
         final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig));
 
-        AgentJStarter.run(new JettyHttpRunner(defaultJettyConfig(), agentJConfig));
+        // Start the server with default configuration
+        AgentJStarter.run(new JettyHttpRunner(JettyConfig.defaultConfig(), agentJConfig));
     }
-
-
 }
-
 ```
+
+#### 3.3 Server Configuration (Optional)
+
+Customize the server configuration if needed:
+
+```java
+// Custom server configuration
+JettyConfig config = JettyConfig.builder()
+    .port(8080)  // Change default port
+    .maxVirtualThreads(200)
+    .corsEnabled(true)
+    .allowedOrigins(Set.of("http://localhost:3000"))
+    .build();
+
+// Start with custom config
+AgentJStarter.run(new JettyHttpRunner(config, agentJConfig));
+```
+
+### 4 Test the API
+
+Once running, you can test the API using curl:
+
+```bash
+# Health check
+curl http://localhost:8181/health
+
+# Chat with the agent
+curl -X POST http://localhost:8181/chat/<session_id> \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What\'s the weather like in New York?"}'
+```
+
+## Advanced Configuration
+
+### CORS Configuration
+
+When running behind a web interface, configure CORS:
+
+```java
+JettyConfig config = JettyConfig.builder()
+    .corsEnabled(true)
+    .allowedOrigins(Set.of("http://your-frontend.com"))
+    .allowedHeaders(Set.of("Content-Type", "Authorization"))
+    .allowedMethods(Set.of("GET", "POST", "OPTIONS"))
+    .allowCredentials(true)
+    .build();
+```
+
+### Security Notes
+
+1. Always specify exact origins in production
+2. Only enable necessary HTTP methods and headers
+3. Use environment variables for sensitive configuration
+4. Consider adding authentication for production use`
 
 ### Health Checks
 
