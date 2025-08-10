@@ -20,10 +20,12 @@ import ai.agentscentral.jetty.config.JettyConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
@@ -60,7 +62,15 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         addHttpAgentSystems(servletContextHandler);
         addHealthChecks(servletContextHandler);
 
-        server.setHandler(servletContextHandler);
+        Handler finalHandler;
+
+        if (jettyConfig.corsEnabled()) {
+            finalHandler = createCorsHandler(servletContextHandler);
+        } else {
+            finalHandler = servletContextHandler;
+        }
+
+        server.setHandler(finalHandler);
 
 
         try (ServerConnector connector = new ServerConnector(server, httpConnectionFactory)) {
@@ -70,6 +80,26 @@ public class JettyHttpRunner implements AgentJHttpRunner {
 
         server.setStopAtShutdown(true);
         server.start();
+    }
+
+    /**
+     * Creates and configures a CORS handler with the specified servlet context handler.
+     *
+     * @param servletContextHandler This terminal handler in the chain to wrap with CORS support
+     * @return Configured CrossOriginHandler
+     */
+    private CrossOriginHandler createCorsHandler(ServletContextHandler servletContextHandler) {
+        // Add the CrossOriginHandler to protect from CSRF attacks.
+        CrossOriginHandler corsHandler = new CrossOriginHandler();
+        corsHandler.setAllowedOriginPatterns(jettyConfig.allowedOrigins());
+        corsHandler.setAllowedHeaders(jettyConfig.allowedHeaders());
+        corsHandler.setAllowedMethods(jettyConfig.allowedMethods());
+        corsHandler.setAllowCredentials(jettyConfig.allowCredentials());
+
+        // Wrap the servletContextHandler with the CrossOriginHandler since the servletContextHandler is the last handler in the chain
+        // The request flow is: Client → Request → CrossOriginHandler → ServletContextHandler → Response → ServletContextHandler → CrossOriginHandler → Client
+        corsHandler.setHandler(servletContextHandler);
+        return corsHandler;
     }
 
     private QueuedThreadPool queuedThreadPool() {
