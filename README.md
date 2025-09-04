@@ -119,11 +119,25 @@ Customize the server configuration if needed:
 JettyConfig config = JettyConfig.builder()
     .port(8080)  // Change default port
     .maxVirtualThreads(200)
-    .corsEnabled(true)
-    .allowedOrigins(Set.of("http://localhost:3000"))
+    .reservedThreads(2)
     .build();
 
 // Start with custom config
+AgentJStarter.run(new JettyHttpRunner(config, agentJConfig));
+```
+
+#### 3.4 CORS Configuration (Optional)
+
+```java
+CORSConfig corsConfig = CORSConfig.builder()
+        .allowedOrigins(Set.of("http://localhost:5173"))
+        .allowedHeaders(Set.of("Content-Type", "Authorization"))
+        .allowedMethods(Set.of("GET", "POST"))
+        .allowCredentials(true)
+        .build();
+
+// Start with custom config
+final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig), corsConfig);
 AgentJStarter.run(new JettyHttpRunner(config, agentJConfig));
 ```
 
@@ -148,21 +162,19 @@ curl -X POST http://localhost:8181/chat/<session_id> \
 When running behind a web interface, configure CORS:
 
 ```java
-JettyConfig config = JettyConfig.builder()
-    .corsEnabled(true)
-    .allowedOrigins(Set.of("http://your-frontend.com"))
-    .allowedHeaders(Set.of("Content-Type", "Authorization"))
-    .allowedMethods(Set.of("GET", "POST", "OPTIONS"))
-    .allowCredentials(true)
-    .build();
+CORSConfig corsConfig = CORSConfig.builder()
+        .allowedOrigins(Set.of("http://localhost:5173"))
+        .allowedHeaders(Set.of("Content-Type", "Authorization"))
+        .allowedMethods(Set.of("GET", "POST"))
+        .allowCredentials(true)
+        .build();
 ```
 
 ### Security Notes
 
 1. Always specify exact origins in production
 2. Only enable necessary HTTP methods and headers
-3. Use environment variables for sensitive configuration
-4. Consider adding authentication for production use`
+3. Consider adding authentication for production use
 
 ### Health Checks
 
