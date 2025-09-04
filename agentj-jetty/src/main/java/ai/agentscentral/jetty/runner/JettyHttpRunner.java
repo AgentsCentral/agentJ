@@ -7,6 +7,7 @@ import ai.agentscentral.core.factory.DefaultAgentJFactory;
 import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
 import ai.agentscentral.http.config.AgentJConfig;
 import ai.agentscentral.http.config.HttpConfig;
+import ai.agentscentral.http.config.cors.CORSConfig;
 import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
 import ai.agentscentral.http.health.LivenessProbe;
 import ai.agentscentral.http.health.ReadinessProbe;
@@ -21,15 +22,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.CrossOriginHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
@@ -40,6 +42,7 @@ import static java.util.Objects.nonNull;
  * Jetty implementation of AgentJHttpRunner
  *
  * @author Rizwan Idrees
+ * @author Mustafa Bhuiyan
  */
 public class JettyHttpRunner implements AgentJHttpRunner {
 
@@ -48,8 +51,8 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     private final Server server;
 
     public JettyHttpRunner(JettyConfig jettyConfig, AgentJConfig agentJConfig) {
-        this.jettyConfig = jettyConfig;
-        this.agentJConfig = agentJConfig;
+        this.jettyConfig = Objects.requireNonNull(jettyConfig, "JettyConfig cannot be null");
+        this.agentJConfig = Objects.requireNonNull(agentJConfig, "AgentJConfig cannot be null");
         this.server = new Server(queuedThreadPool());
     }
 
@@ -62,16 +65,10 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         addHttpAgentSystems(servletContextHandler);
         addHealthChecks(servletContextHandler);
 
-        Handler finalHandler;
+        Handler handler = agentJConfig.corsConfig() != null
+                ? createCorsHandler(servletContextHandler, agentJConfig.corsConfig()) : servletContextHandler;
 
-        if (jettyConfig.corsEnabled()) {
-            finalHandler = createCorsHandler(servletContextHandler);
-        } else {
-            finalHandler = servletContextHandler;
-        }
-
-        server.setHandler(finalHandler);
-
+        server.setHandler(handler);
 
         try (ServerConnector connector = new ServerConnector(server, httpConnectionFactory)) {
             connector.setPort(jettyConfig.port());
@@ -86,15 +83,17 @@ public class JettyHttpRunner implements AgentJHttpRunner {
      * Creates and configures a CORS handler with the specified servlet context handler.
      *
      * @param servletContextHandler This terminal handler in the chain to wrap with CORS support
+     * @param corsConfig
      * @return Configured CrossOriginHandler
      */
-    private CrossOriginHandler createCorsHandler(ServletContextHandler servletContextHandler) {
+    private CrossOriginHandler createCorsHandler(ServletContextHandler servletContextHandler, CORSConfig corsConfig) {
         // Add the CrossOriginHandler to protect from CSRF attacks.
         CrossOriginHandler corsHandler = new CrossOriginHandler();
-        corsHandler.setAllowedOriginPatterns(jettyConfig.allowedOrigins());
-        corsHandler.setAllowedHeaders(jettyConfig.allowedHeaders());
-        corsHandler.setAllowedMethods(jettyConfig.allowedMethods());
-        corsHandler.setAllowCredentials(jettyConfig.allowCredentials());
+
+        corsHandler.setAllowedOriginPatterns(corsConfig.allowedOrigins());
+        corsHandler.setAllowedHeaders(corsConfig.allowedHeaders());
+        corsHandler.setAllowedMethods(corsConfig.allowedMethods());
+        corsHandler.setAllowCredentials(corsConfig.allowCredentials());
 
         // Wrap the servletContextHandler with the CrossOriginHandler since the servletContextHandler is the last handler in the chain
         // The request flow is: Client → Request → CrossOriginHandler → ServletContextHandler → Response → ServletContextHandler → CrossOriginHandler → Client
