@@ -17,7 +17,6 @@ import ai.agentscentral.http.runner.AgentJHttpRunner;
 import ai.agentscentral.http.servlet.AgentJServlet;
 import ai.agentscentral.http.servlet.HealthCheckServlet;
 import ai.agentscentral.jetty.config.JettyConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -100,10 +99,9 @@ public class JettyHttpRunner implements AgentJHttpRunner {
                     new InMemoryContextStateManager(),
                     new InMemoryContextManager(), defaultExecutionLimits());
 
-            final ObjectMapper objectMapper = new ObjectMapper(); //TODO use singleton object mapper
             final AgentJServlet servlet = new AgentJServlet(processor,
-                    new JsonRequestExtractor(objectMapper),
-                    new JsonResponseSender(objectMapper),
+                    new JsonRequestExtractor(httpConfig.objectMapper()),
+                    new JsonResponseSender(httpConfig.objectMapper()),
                     new TrailingRequestPathSessionIdExtractor(httpConfig.path()),
                     agentJFactory.getSessionIdGenerator(),
                     agentJFactory.getMessageIdGenerator());
