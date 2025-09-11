@@ -8,11 +8,9 @@ import java.util.List;
  * AgentJConfig
  *
  * @param httpConfigs
- * @param corsConfig
  *
  * @author Rizwan Idrees
- * @author Mustafa Bhuiyan
  */
-public record AgentJConfig(List<HttpConfig> httpConfigs, CORSConfig corsConfig) {
+public record AgentJConfig(List<HttpConfig> httpConfigs) {
 
 }
