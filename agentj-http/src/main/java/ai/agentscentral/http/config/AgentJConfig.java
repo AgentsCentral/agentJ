@@ -1,7 +1,5 @@
 package ai.agentscentral.http.config;
 
-import ai.agentscentral.http.config.cors.CORSConfig;
-
 import java.util.List;
 
 /**
