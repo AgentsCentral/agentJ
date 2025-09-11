@@ -101,7 +101,7 @@ Make sure you have the `agentj-jetty` dependency in your `pom.xml` as shown in t
 public class WeatherChatBot {
     public static void main(String[] args) throws Exception {
         // Configure your agent
-        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherAgent.getAgent());
+        final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherAgent.getAgent(), List.of(), null);
         final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig));
 
         // Start the server with default configuration
@@ -116,14 +116,14 @@ Customize the server configuration if needed:
 
 ```java
 // Custom server configuration
-JettyConfig config = JettyConfig.builder()
+JettyConfig jettyConfig = JettyConfig.builder()
     .port(8080)  // Change default port
     .maxVirtualThreads(200)
     .reservedThreads(2)
     .build();
 
 // Start with custom config
-AgentJStarter.run(new JettyHttpRunner(config, agentJConfig));
+AgentJStarter.run(new JettyHttpRunner(jettyConfig, agentJConfig));
 ```
 
 #### 3.4 CORS Configuration (Optional)
@@ -136,9 +136,8 @@ CORSConfig corsConfig = CORSConfig.builder()
         .allowCredentials(true)
         .build();
 
-// Start with custom config
-final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig), corsConfig);
-AgentJStarter.run(new JettyHttpRunner(config, agentJConfig));
+final HttpConfig weatherChatConfig = new HttpConfig("/chat/*", WeatherAgent.getAgent(), List.of(), corsConfig);
+final AgentJConfig agentJConfig = new AgentJConfig(List.of(weatherChatConfig));
 ```
 
 ### 4 Test the API
