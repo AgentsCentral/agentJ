@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.stream.IntStream;
 
+import static org.apache.commons.lang3.Strings.CI;
+
 import static ai.agentscentral.http.json.Jsonify.asJson;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
-import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 /**
  * HealthCheckServlet
@@ -37,9 +38,9 @@ public class HealthCheckServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 
-        if (endsWithIgnoreCase(request.getRequestURI(), "/liveness")) {
+        if (CI.endsWith(request.getRequestURI(), "/liveness")) {
             doLivenessCheck(response);
-        } else if (endsWithIgnoreCase(request.getRequestURI(), "/readiness")) {
+        } else if (CI.endsWith(request.getRequestURI(), "/readiness")) {
             doReadinessCheck(response);
         }
 
