@@ -8,6 +8,7 @@ import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
 import ai.agentscentral.http.config.AgentJConfig;
 import ai.agentscentral.http.config.HttpConfig;
 import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
+import ai.agentscentral.http.filter.CORSFilter;
 import ai.agentscentral.http.health.LivenessProbe;
 import ai.agentscentral.http.health.ReadinessProbe;
 import ai.agentscentral.http.request.JsonRequestExtractor;
@@ -27,6 +28,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
@@ -37,6 +39,7 @@ import static java.util.Objects.nonNull;
  * Jetty implementation of AgentJHttpRunner
  *
  * @author Rizwan Idrees
+ * @author Mustafa Bhuiyan
  */
 public class JettyHttpRunner implements AgentJHttpRunner {
 
@@ -45,8 +48,8 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     private final Server server;
 
     public JettyHttpRunner(JettyConfig jettyConfig, AgentJConfig agentJConfig) {
-        this.jettyConfig = jettyConfig;
-        this.agentJConfig = agentJConfig;
+        this.jettyConfig = Objects.requireNonNull(jettyConfig, "JettyConfig cannot be null");
+        this.agentJConfig = Objects.requireNonNull(agentJConfig, "AgentJConfig cannot be null");
         this.server = new Server(queuedThreadPool());
     }
 
@@ -60,7 +63,6 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         addHealthChecks(servletContextHandler);
 
         server.setHandler(servletContextHandler);
-
 
         try (ServerConnector connector = new ServerConnector(server, httpConnectionFactory)) {
             connector.setPort(jettyConfig.port());
@@ -110,6 +112,11 @@ public class JettyHttpRunner implements AgentJHttpRunner {
 
             if (nonNull(httpConfig.authorizers()) && !httpConfig.authorizers().isEmpty()) {
                 servletContextHandler.addFilter(new AgentJAuthorizationFilter(httpConfig.authorizers()),
+                        httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
+            }
+            // Add CORS filter
+            if (nonNull(httpConfig.corsConfig())) {
+                servletContextHandler.addFilter(new CORSFilter(httpConfig.corsConfig()),
                         httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
             }
         }
