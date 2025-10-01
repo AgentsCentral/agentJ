@@ -1,4 +1,4 @@
-package ai.agentscentral.core.annotation;
+package ai.agentscentral.core.interrupt;
 
 public enum InterruptType {
     CONFIRM, CUSTOM
