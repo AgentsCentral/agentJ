@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * ToolParam
  *
  * @author Rizwan Idrees
  */
@@ -14,6 +15,8 @@ import java.lang.annotation.Target;
 public @interface ToolParam {
 
     String name();
+
     String description();
+
     boolean required() default true;
 }
