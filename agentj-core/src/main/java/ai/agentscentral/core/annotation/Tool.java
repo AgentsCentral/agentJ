@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Tool
  *
  * @author Rizwan Idrees
  */
@@ -14,5 +15,8 @@ import java.lang.annotation.Target;
 public @interface Tool {
 
     String name();
+
     String description();
+
+    Interrupts interrupts() default @Interrupts;
 }
