@@ -1,5 +1,7 @@
 package ai.agentscentral.core.tool;
 
+import ai.agentscentral.core.annotation.InterruptParameters;
+import ai.agentscentral.core.annotation.Interrupts;
 import ai.agentscentral.core.annotation.Tool;
 import ai.agentscentral.core.annotation.ToolParam;
 
@@ -53,12 +55,33 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
     private ToolCall extractTool(ToolBag toolBag, Method method) {
         final Tool toolAnnotation = method.getAnnotation(Tool.class);
+        final List<ToolInterrupt> interruptsBefore = extractToolInterrupts(toolAnnotation.interruptsBefore());
         final Parameter[] parameters = method.getParameters() != null ? method.getParameters() : new Parameter[]{};
 
         final List<ToolParameter> toolParameters = extractParameters(parameters);
 
+        return new ToolCall(toolBag, method, toolAnnotation.name(),
+                toolAnnotation.description(), toolParameters, interruptsBefore);
+    }
 
-        return new ToolCall(toolBag, method, toolAnnotation.name(), toolAnnotation.description(), toolParameters);
+
+    private List<ToolInterrupt> extractToolInterrupts(Interrupts interrupts) {
+        if (Objects.isNull(interrupts) || Objects.isNull(interrupts.value())) {
+            return List.of();
+        }
+
+        return Stream.of(interrupts.value())
+                .map(i -> new ToolInterrupt(i.type(), i.rendererReference(), extractInterruptParameters(i.parameters())))
+                .toList();
+    }
+
+    private Map<String, String> extractInterruptParameters(InterruptParameters[] parameters) {
+        if (Objects.isNull(parameters)) {
+            return Map.of();
+        }
+
+        return Stream.of(parameters)
+                .collect(Collectors.toMap(InterruptParameters::name, InterruptParameters::value));
     }
 
     private List<ToolParameter> extractParameters(Parameter[] parameters) {

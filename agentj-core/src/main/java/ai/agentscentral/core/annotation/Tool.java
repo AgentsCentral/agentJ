@@ -18,5 +18,5 @@ public @interface Tool {
 
     String description();
 
-    Interrupts interrupts() default @Interrupts;
+    Interrupts interruptsBefore() default @Interrupts;
 }
