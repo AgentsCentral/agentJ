@@ -11,6 +11,7 @@ import java.util.List;
  * @param name
  * @param description
  * @param parameters
+ * @param interruptParameters
  * @param interruptsBefore
  * @author Rizwan Idrees
  */
@@ -19,5 +20,6 @@ public record ToolCall(ToolBag toolBag,
                        String name,
                        String description,
                        List<ToolParameter> parameters,
+                       List<InterruptParameter> interruptParameters,
                        List<ToolInterrupt> interruptsBefore) {
 }
