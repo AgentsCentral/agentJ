@@ -1,8 +1,6 @@
 package ai.agentscentral.core.annotation;
 
-import ai.agentscentral.core.interrupt.InterruptType;
-
-import java.lang.annotation.*;
+import java.lang.annotation.Repeatable;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -14,10 +12,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Repeatable(Interrupts.class)
 public @interface Interrupt {
-    InterruptType type() default InterruptType.CONFIRM;
 
+    String name();
     String rendererReference() default EMPTY;
-
-    InterruptParameters[] parameters() default {};
+    String[] params() default {};
 
 }

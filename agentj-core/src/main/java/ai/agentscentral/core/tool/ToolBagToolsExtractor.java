@@ -1,6 +1,6 @@
 package ai.agentscentral.core.tool;
 
-import ai.agentscentral.core.annotation.InterruptParameters;
+import ai.agentscentral.core.annotation.InterruptParam;
 import ai.agentscentral.core.annotation.Interrupts;
 import ai.agentscentral.core.annotation.Tool;
 import ai.agentscentral.core.annotation.ToolParam;
@@ -28,7 +28,6 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
     private final Predicate<Method> toolMethods = method -> method.isAnnotationPresent(Tool.class);
 
     private ToolBagToolsExtractor() {
-
     }
 
     public Map<String, ToolCall> extractTools(List<ToolBag> toolBags) {
@@ -55,42 +54,58 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
     private ToolCall extractTool(ToolBag toolBag, Method method) {
         final Tool toolAnnotation = method.getAnnotation(Tool.class);
-        final List<ToolInterrupt> interruptsBefore = extractToolInterrupts(toolAnnotation.interruptsBefore());
         final Parameter[] parameters = method.getParameters() != null ? method.getParameters() : new Parameter[]{};
 
-        final List<ToolParameter> toolParameters = extractParameters(parameters);
+        final List<ToolParameter> toolParameters = extractToolParameters(parameters);
+        final List<InterruptParameter> interruptParameters = extractInterruptParameters(parameters);
+
+        final List<ToolInterrupt> interruptsBefore = extractToolInterrupts(toolAnnotation.interruptsBefore(),
+                interruptParameters);
 
         return new ToolCall(toolBag, method, toolAnnotation.name(),
-                toolAnnotation.description(), toolParameters, interruptsBefore);
+                toolAnnotation.description(), toolParameters, interruptParameters, interruptsBefore);
     }
 
 
-    private List<ToolInterrupt> extractToolInterrupts(Interrupts interrupts) {
+    private List<ToolInterrupt> extractToolInterrupts(Interrupts interrupts,
+                                                      List<InterruptParameter> interruptParameters) {
         if (Objects.isNull(interrupts) || Objects.isNull(interrupts.value())) {
             return List.of();
         }
 
+        final Map<String, InterruptParameter> parametersByName = interruptParameters
+                .stream().collect(Collectors.toMap(InterruptParameter::name, i -> i));
+
         return Stream.of(interrupts.value())
-                .map(i -> new ToolInterrupt(i.type(), i.rendererReference(), extractInterruptParameters(i.parameters())))
+                .map(i -> new ToolInterrupt(i.name(), i.rendererReference(),
+                        findInterruptParameters(parametersByName, i.params())))
                 .toList();
     }
 
-    private Map<String, String> extractInterruptParameters(InterruptParameters[] parameters) {
+    private List<InterruptParameter> extractInterruptParameters(Parameter[] parameters) {
         if (Objects.isNull(parameters)) {
-            return Map.of();
+            return List.of();
         }
 
-        return Stream.of(parameters)
-                .collect(Collectors.toMap(InterruptParameters::name, InterruptParameters::value));
-    }
-
-    private List<ToolParameter> extractParameters(Parameter[] parameters) {
         return IntStream.range(0, parameters.length)
-                .mapToObj(i -> extractParameter(i, parameters[i]))
+                .filter(i -> parameters[i].isAnnotationPresent(InterruptParam.class))
+                .mapToObj(i -> extractInterruptParameter(i, parameters[i]))
                 .toList();
     }
 
-    private ToolParameter extractParameter(int index, Parameter parameter) {
+    private List<ToolParameter> extractToolParameters(Parameter[] parameters) {
+
+        if (Objects.isNull(parameters)) {
+            return List.of();
+        }
+
+        return IntStream.range(0, parameters.length)
+                .filter(i -> parameters[i].isAnnotationPresent(ToolParam.class))
+                .mapToObj(i -> extractToolParameter(i, parameters[i]))
+                .toList();
+    }
+
+    private ToolParameter extractToolParameter(int index, Parameter parameter) {
 
         if (parameter.getType().isEnum()) {
             return extractEnumParameter(index, parameter, parameter.getAnnotation(ToolParam.class));
@@ -102,6 +117,30 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
             return extractCollectionParameter(index, parameter, parameter.getAnnotation(ToolParam.class));
         }
         return extractTypedParameter(index, parameter, parameter.getAnnotation(ToolParam.class));
+    }
+
+
+    private InterruptParameter extractInterruptParameter(int index, Parameter parameter) {
+
+        if (parameter.getType().isEnum()) {
+            return extractEnumParameter(index, parameter, parameter.getAnnotation(InterruptParam.class));
+        } else if (parameter.getType().isPrimitive()) {
+            return extractPrimitiveParameter(index, parameter, parameter.getAnnotation(InterruptParam.class));
+        } else if (parameter.getType().isArray()) {
+            return extractArrayParameter(index, parameter, parameter.getAnnotation(InterruptParam.class));
+        } else if (Collection.class.isAssignableFrom(parameter.getType())) {
+            return extractCollectionParameter(index, parameter, parameter.getAnnotation(InterruptParam.class));
+        }
+        return extractTypedParameter(index, parameter, parameter.getAnnotation(InterruptParam.class));
+    }
+
+    private List<InterruptParameter> findInterruptParameters(Map<String, InterruptParameter> parameters,
+                                                             String... paramNames) {
+        if (Objects.isNull(paramNames)) {
+            return List.of();
+        }
+
+        return Stream.of(paramNames).map(parameters::get).toList();
     }
 
     public static ToolBagToolsExtractor getInstance() {
