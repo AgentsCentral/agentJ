@@ -6,9 +6,9 @@ import java.util.List;
  * ToolInterrupt
  *
  * @param name
- * @param rendererReference
+ * @param renderer
  * @param parameters
  */
 
-public record ToolInterrupt(String name, String rendererReference, List<InterruptParameter> parameters) {
+public record ToolInterrupt(String name, String renderer, List<InterruptParameter> parameters) {
 }
