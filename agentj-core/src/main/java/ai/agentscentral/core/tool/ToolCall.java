@@ -2,6 +2,7 @@ package ai.agentscentral.core.tool;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ToolCall
@@ -22,4 +23,9 @@ public record ToolCall(ToolBag toolBag,
                        List<ToolParameter> parameters,
                        List<InterruptParameter> interruptParameters,
                        List<ToolInterrupt> interruptsBefore) {
+
+
+    public boolean hasInterruptsBefore(){
+        return Objects.nonNull(interruptsBefore) && !interruptsBefore.isEmpty();
+    }
 }
