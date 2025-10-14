@@ -1,6 +1,7 @@
 package ai.agentscentral.core.session.processor;
 
 import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.core.session.user.User;
 import jakarta.annotation.Nonnull;
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface SessionProcessor {
 
-    List<AssistantMessage> process(@Nonnull String sessionId, @Nonnull UserMessage message, @Nullable User user);
+    List<Message> process(@Nonnull String sessionId, @Nonnull UserMessage message, @Nullable User user);
 }
