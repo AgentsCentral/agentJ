@@ -14,6 +14,7 @@ import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.session.config.ExecutionLimits;
 import ai.agentscentral.core.session.message.AssistantMessage;
 import ai.agentscentral.core.session.message.Message;
+import ai.agentscentral.core.session.message.ToolInterruptMessage;
 import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.core.session.user.User;
 import jakarta.annotation.Nonnull;
@@ -55,7 +56,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
     }
 
     @Override
-    public List<AssistantMessage> process(@Nonnull String sessionId, @Nonnull UserMessage message, User user) {
+    public List<Message> process(@Nonnull String sessionId, @Nonnull UserMessage message, User user) {
 
         final MessageExecutionContext executionContext = new MessageExecutionContext(executionLimits);
         final List<Message> context = new ArrayList<>(contextManager.getContext(sessionId));
@@ -68,10 +69,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 null, executionContext);
 
         return newMessages.stream()
-                .filter(m -> m instanceof AssistantMessage)
-                .map(m -> (AssistantMessage) m)
-                .filter(am -> !am.hasToolCalls() && !am.hasHandOffs())
-                .filter(am -> am.timestamp() > message.timestamp())
+                .filter(m -> shouldDisplayMessage(m, message.timestamp()))
                 .toList();
     }
 
@@ -86,6 +84,16 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .flatMap(stateManager::getCurrentState)
                 .flatMap(state -> registrar.find(state.currentAgent(), state.currentTeam()))
                 .map(RegisteredAgentic::executor);
+    }
+
+    private boolean shouldDisplayMessage(Message message, long timestampAfter) {
+        if (message instanceof AssistantMessage am) {
+            return !am.hasToolCalls() && !am.hasHandOffs() && message.timestamp() > timestampAfter;
+        } else if (message instanceof ToolInterruptMessage interruptMessage) {
+            return interruptMessage.timestamp() > timestampAfter;
+        }
+
+        return false;
     }
 
 }

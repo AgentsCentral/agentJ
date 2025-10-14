@@ -2,25 +2,23 @@ package ai.agentscentral.http.servlet;
 
 import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.id.SessionIdGenerator;
+import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.session.processor.SessionProcessor;
 import ai.agentscentral.http.request.MessageRequest;
 import ai.agentscentral.http.request.RequestExtractor;
 import ai.agentscentral.http.request.SessionIdExtractor;
-import ai.agentscentral.http.response.MessageResponse;
-import ai.agentscentral.http.response.MessageType;
-import ai.agentscentral.http.response.ResponseSender;
-import ai.agentscentral.http.response.TextMessage;
+import ai.agentscentral.http.response.*;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static ai.agentscentral.core.session.message.MessagePartType.text;
+import static ai.agentscentral.http.response.MessageType.interrupt;
 import static java.lang.System.currentTimeMillis;
 
 
@@ -58,26 +56,48 @@ public class AgentJServlet extends HttpServlet {
         final String sessionId = sessionIdExtractor.extract(request)
                 .orElse(sessionIdGenerator.generate());
 
-        final List<AssistantMessage> assistantMessages = Optional.of(messageRequest)
+        final List<Message> messages = Optional.of(messageRequest)
                 .map(r -> new UserMessage(sessionId, messageId(), toTextParts(r), currentTimeMillis()))
-                .map(um -> processor.process(sessionId, um, null)).orElseGet(() -> List.of());
+                .map(um -> processor.process(sessionId, um, null)).orElseGet(List::of);
 
-        final List<TextMessage> textMessages = assistantMessages.stream()
-                .map(am -> toTextMessage(am.messageId(), am.parts(), am.timestamp()))
+        final List<ai.agentscentral.http.response.Message> responseMessages = messages.stream()
+                .map(this::toMessage)
                 .toList();
 
-        responseSender.send(response, new MessageResponse(sessionId, textMessages));
+        responseSender.send(response, new MessageResponse(sessionId, responseMessages));
     }
 
     private String messageId() {
         return messageIdGenerator.generate();
     }
 
+
+    private ai.agentscentral.http.response.Message toMessage(Message message) {
+        if (message instanceof AssistantMessage assistantMessage) {
+            return toTextMessage(assistantMessage.messageId(), assistantMessage.parts(),
+                    assistantMessage.timestamp());
+        } else if (message instanceof ToolInterruptMessage interruptMessage) {
+            return toInterruptMessage(interruptMessage);
+        }
+        return null;
+    }
+
+    private InterruptMessage toInterruptMessage(ToolInterruptMessage interruptMessage) {
+        final InterruptPart[] interruptParts = Stream.of(interruptMessage.parts())
+                .map(t -> (ToolInterruptPart) t)
+                .map(i -> new InterruptPart(i.toolCallId(), i.renderer(),
+                        i.toolCallParameters(), i.interruptParameters()))
+                .toArray(InterruptPart[]::new);
+
+        return new InterruptMessage(interrupt, interruptMessage.messageId(), interruptParts,
+                interruptMessage.timestamp());
+    }
+
     private TextMessage toTextMessage(String id, MessagePart[] parts, long timestamp) {
-        final String text = Stream.of(parts)
+        final String[] text = Stream.of(parts)
                 .filter(messagePart -> messagePart.type() == MessagePartType.text)
                 .map(t -> (TextPart) t)
-                .map(TextPart::text).collect(Collectors.joining());
+                .map(TextPart::text).toArray(String[]::new);
 
         return new TextMessage(MessageType.text, id, text, timestamp);
     }
