@@ -1,6 +1,5 @@
 package ai.agentscentral.core.session.processor;
 
-import ai.agentscentral.core.session.message.AssistantMessage;
 import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.core.session.user.User;

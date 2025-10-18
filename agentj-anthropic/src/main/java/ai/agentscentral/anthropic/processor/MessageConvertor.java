@@ -133,14 +133,11 @@ class MessageConvertor {
     }
 
     private TextPart[] textParts(List<ResponseContent> content) {
-        final List<TextPart> textParts = content.stream()
+        return content.stream()
                 .filter(rc -> rc instanceof TextResponseContent || rc instanceof ThinkingResponseContent)
                 .map(this::toTextPart)
                 .filter(Objects::nonNull)
-                .toList();
-
-        return textParts.toArray(new TextPart[0]);
-
+                .toArray(TextPart[]::new);
     }
 
     private TextPart toTextPart(ResponseContent responseContent) {

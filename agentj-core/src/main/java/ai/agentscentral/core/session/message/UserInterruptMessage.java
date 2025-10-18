@@ -3,7 +3,7 @@ package ai.agentscentral.core.session.message;
 import java.util.Map;
 
 /**
- * ToolInterruptMessage
+ * UserInterruptMessage
  *
  * @param contextId
  * @param messageId

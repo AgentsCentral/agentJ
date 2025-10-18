@@ -5,6 +5,7 @@ import ai.agentscentral.core.session.id.SessionIdGenerator;
 import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.session.processor.SessionProcessor;
+import ai.agentscentral.http.common.MessageType;
 import ai.agentscentral.http.request.MessageRequest;
 import ai.agentscentral.http.request.RequestExtractor;
 import ai.agentscentral.http.request.SessionIdExtractor;
@@ -18,7 +19,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static ai.agentscentral.core.session.message.MessagePartType.text;
-import static ai.agentscentral.http.response.MessageType.interrupt;
+import static ai.agentscentral.core.session.message.MessagePartType.user_interrupt;
+import static ai.agentscentral.http.common.MessageType.interrupt;
 import static java.lang.System.currentTimeMillis;
 
 
@@ -57,7 +59,7 @@ public class AgentJServlet extends HttpServlet {
                 .orElse(sessionIdGenerator.generate());
 
         final List<Message> messages = Optional.of(messageRequest)
-                .map(r -> new UserMessage(sessionId, messageId(), toTextParts(r), currentTimeMillis()))
+                .map(r -> new UserMessage(sessionId, messageId(), toMessageParts(r), currentTimeMillis()))
                 .map(um -> processor.process(sessionId, um, null)).orElseGet(List::of);
 
         final List<ai.agentscentral.http.response.Message> responseMessages = messages.stream()
@@ -102,7 +104,27 @@ public class AgentJServlet extends HttpServlet {
         return new TextMessage(MessageType.text, id, text, timestamp);
     }
 
-    private static TextPart[] toTextParts(MessageRequest messageRequest) {
-        return new TextPart[]{new TextPart(text, messageRequest.message())};
+    private MessagePart[] toMessageParts(MessageRequest messageRequest) {
+       return messageRequest.messages().stream()
+                .map(this::toMessagePart).toArray(MessagePart[]::new);
+
+    }
+
+    private MessagePart toMessagePart(ai.agentscentral.http.request.Message message) {
+        return switch (message) {
+            case ai.agentscentral.http.request.TextMessage m -> toTextPart(m);
+            case ai.agentscentral.http.request.InterruptMessage m -> toUserInterruptPart(m);
+            default -> throw new RuntimeException("Unknown message part type");
+        };
+    }
+
+    private static TextPart toTextPart(ai.agentscentral.http.request.TextMessage message) {
+        return new TextPart(text, message.text());
+    }
+
+    private static UserInterruptPart toUserInterruptPart(ai.agentscentral.http.request.InterruptMessage message) {
+        final List<InterruptParameterValue> parameterValues = message.interruptParameters().stream()
+                .map(p -> new InterruptParameterValue(p.name(), p.value())).toList();
+        return new UserInterruptPart(user_interrupt, message.toolCallId(), message.name(), parameterValues);
     }
 }

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ai.agentscentral.core.session.message.MessagePartType.interrupt;
 import static ai.agentscentral.core.session.message.MessagePartType.text;
+import static ai.agentscentral.core.session.message.MessagePartType.tool_interrupt;
 import static ai.agentscentral.core.tool.convertors.ToolConvertors.convertToolCallExecutionErrorToToolMessage;
 import static ai.agentscentral.core.tool.convertors.ToolConvertors.convertToolCallResultToToolMessage;
 import static java.lang.System.currentTimeMillis;
@@ -193,7 +193,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private List<ToolInterruptPart> toolInterruptParts(ToolCallInstruction toolCallInstruction) {
         final ToolCall toolCall = toolCallInstruction.toolCall();
         return toolCall.interruptsBefore().stream()
-                .map(i -> new ToolInterruptPart(interrupt, toolCallInstruction.id(), i.name(), i.renderer(),
+                .map(i -> new ToolInterruptPart(tool_interrupt, toolCallInstruction.id(), i.name(), i.renderer(),
                         toolCallInstruction.arguments(), toolInterruptParameters(i.parameters())))
                 .toList();
     }

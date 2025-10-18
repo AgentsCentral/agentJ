@@ -1,4 +1,4 @@
-package ai.agentscentral.http.response;
+package ai.agentscentral.http.request;
 
 import ai.agentscentral.http.common.MessageType;
 
@@ -6,12 +6,10 @@ import ai.agentscentral.http.common.MessageType;
  * TextMessage
  *
  * @param type
- * @param id
  * @param text
- * @param timestamp
  * @author Rizwan Idrees
  */
-public record TextMessage(MessageType type, String id, String[] text, long timestamp) implements Message {
+public record TextMessage(MessageType type, String text) implements Message {
 
     public MessageType type() {
         return MessageType.text;

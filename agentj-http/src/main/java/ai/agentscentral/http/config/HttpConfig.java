@@ -2,8 +2,8 @@ package ai.agentscentral.http.config;
 
 import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.http.auth.Authorizer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ai.agentscentral.http.config.cors.CORSConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
