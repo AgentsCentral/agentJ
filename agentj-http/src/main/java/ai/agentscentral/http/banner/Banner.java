@@ -7,6 +7,9 @@ package ai.agentscentral.http.banner;
  */
 public class Banner {
 
+    private Banner() {
+    }
+
     private final static String banner = """
   
   

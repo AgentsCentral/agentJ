@@ -2,11 +2,13 @@ package ai.agentscentral.http.request;
 
 import jakarta.annotation.Nonnull;
 
+import java.util.List;
+
 /**
  * MessageRequest
  *
- * @param message
+ * @param messages
  * @author Rizwan Idrees
  */
-public record MessageRequest(@Nonnull String message) {
+public record MessageRequest(@Nonnull List<? extends Message> messages) {
 }

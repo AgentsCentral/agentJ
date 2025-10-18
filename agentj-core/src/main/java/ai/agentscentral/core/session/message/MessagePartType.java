@@ -6,5 +6,5 @@ package ai.agentscentral.core.session.message;
  * @author Rizwan Idrees
  */
 public enum MessagePartType {
-    text, thinking, interrupt
+    text, thinking, tool_interrupt, user_interrupt
 }

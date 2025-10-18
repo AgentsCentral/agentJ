@@ -1,4 +1,4 @@
-package ai.agentscentral.http.response;
+package ai.agentscentral.http.common;
 
 public enum MessageType {
     text, interrupt

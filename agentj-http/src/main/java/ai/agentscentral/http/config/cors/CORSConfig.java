@@ -17,7 +17,7 @@ public record CORSConfig (Set<String> allowedOrigins,
                           Set<String> allowedMethods,
                           boolean allowCredentials) {
     /**
-     * <p>Default CORS configuration values.<p/>
+     * <p>Default CORS configuration values.</p>
      * <p><b>SECURITY_WARNING:</b> The default CORS configuration is intentionally restrictive.
      *  In production, explicitly configure CORS to allow only trusted origins.
      *  Using "*" as an allowed origin is not recommended for production

@@ -13,10 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.stream.IntStream;
 
-import static org.apache.commons.lang3.Strings.CI;
-
 import static ai.agentscentral.http.json.Jsonify.asJson;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import static org.apache.commons.lang3.Strings.CI;
 
 /**
  * HealthCheckServlet

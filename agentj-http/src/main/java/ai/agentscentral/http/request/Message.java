@@ -1,4 +1,4 @@
-package ai.agentscentral.http.response;
+package ai.agentscentral.http.request;
 
 import ai.agentscentral.http.common.MessageType;
 
@@ -10,9 +10,4 @@ import ai.agentscentral.http.common.MessageType;
 public interface Message {
 
     MessageType type();
-
-    String id();
-
-    long timestamp();
-
 }

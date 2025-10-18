@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * InterruptPart
+ * ToolInterruptPart
  *
  * @param type
  * @param toolCallId
@@ -22,6 +22,6 @@ public record ToolInterruptPart(MessagePartType type,
                                 List<ToolInterruptParameter> interruptParameters) implements MessagePart {
 
     public MessagePartType type() {
-        return MessagePartType.interrupt;
+        return MessagePartType.tool_interrupt;
     }
 }
