@@ -193,7 +193,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private List<ToolInterruptPart> toolInterruptParts(ToolCallInstruction toolCallInstruction) {
         final ToolCall toolCall = toolCallInstruction.toolCall();
         return toolCall.interruptsBefore().stream()
-                .map(i -> new ToolInterruptPart(interrupt, toolCallInstruction.id(), i.renderer(),
+                .map(i -> new ToolInterruptPart(interrupt, toolCallInstruction.id(), i.name(), i.renderer(),
                         toolCallInstruction.arguments(), toolInterruptParameters(i.parameters())))
                 .toList();
     }

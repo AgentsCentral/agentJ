@@ -69,7 +69,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 null, executionContext);
 
         return newMessages.stream()
-                .filter(m -> shouldDisplayMessage(m, message.timestamp()))
+                .filter(m -> isDisplayableMessage(m, message.timestamp()))
                 .toList();
     }
 
@@ -86,7 +86,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .map(RegisteredAgentic::executor);
     }
 
-    private boolean shouldDisplayMessage(Message message, long timestampAfter) {
+    private boolean isDisplayableMessage(Message message, long timestampAfter) {
         if (message instanceof AssistantMessage am) {
             return !am.hasToolCalls() && !am.hasHandOffs() && message.timestamp() > timestampAfter;
         } else if (message instanceof ToolInterruptMessage interruptMessage) {

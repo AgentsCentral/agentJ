@@ -85,7 +85,7 @@ public class AgentJServlet extends HttpServlet {
     private InterruptMessage toInterruptMessage(ToolInterruptMessage interruptMessage) {
         final InterruptPart[] interruptParts = Stream.of(interruptMessage.parts())
                 .map(t -> (ToolInterruptPart) t)
-                .map(i -> new InterruptPart(i.toolCallId(), i.renderer(),
+                .map(i -> new InterruptPart(i.interruptName(), i.toolCallId(), i.renderer(),
                         i.toolCallParameters(), i.interruptParameters()))
                 .toArray(InterruptPart[]::new);
 

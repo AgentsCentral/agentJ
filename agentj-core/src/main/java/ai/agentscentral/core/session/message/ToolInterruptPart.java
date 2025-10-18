@@ -8,6 +8,7 @@ import java.util.Map;
  *
  * @param type
  * @param toolCallId
+ * @param interruptName
  * @param renderer
  * @param toolCallParameters
  * @param interruptParameters
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public record ToolInterruptPart(MessagePartType type,
                                 String toolCallId,
+                                String interruptName,
                                 String renderer,
                                 Map<String, Object> toolCallParameters,
                                 List<ToolInterruptParameter> interruptParameters) implements MessagePart {
