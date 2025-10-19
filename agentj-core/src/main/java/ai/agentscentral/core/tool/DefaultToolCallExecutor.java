@@ -10,6 +10,7 @@ import java.util.*;
 
 import static ai.agentscentral.core.tool.ResultOrError.ofError;
 import static ai.agentscentral.core.tool.ResultOrError.ofResult;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * DefaultToolExecutor
@@ -29,7 +30,7 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
             final Method method = toolCall.method();
             method.setAccessible(true);
 
-            final Object result = method.invoke(toolCall.toolBag(), parameters(instruction));
+            final Object result = method.invoke(toolCall.toolBag(), parameters(instruction, interruptParameters));
             return ofResult(new DefaultToolCallResult(instruction, result, method.getReturnType()));
 
         } catch (IllegalAccessException e) {
@@ -46,25 +47,59 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
         }
     }
 
-    private Object[] parameters(ToolCallInstruction instruction) {
+    private Object[] parameters(ToolCallInstruction instruction, List<InterruptParameterValue> interruptParameters) {
         final ToolCall toolCall = instruction.toolCall();
 
-        if (Objects.isNull(toolCall.parameters())) {
+        if (Objects.isNull(toolCall.parameters()) && Objects.isNull(interruptParameters)) {
             return null;
         }
 
-        final List<ToolParameter> toolCallParameters = new ArrayList<>(toolCall.parameters());
+        final List<MethodParameter> methodParameters = allMethodParameters(instruction, interruptParameters);
 
-        final Map<String, Object> properties = instruction.arguments();
-        final Object[] parameters = new Object[toolCallParameters.size()];
+        final Object[] parameters = new Object[methodParameters.size()];
 
-        toolCallParameters.sort(Comparator.comparing(ToolParameter::index));
+        methodParameters.sort(Comparator.comparing(MethodParameter::index));
 
-        for (int i = 0; i < toolCallParameters.size(); i++) {
-            final String name = toolCallParameters.get(i).name();
-            parameters[i] = properties.get(name);
+        for (int i = 0; i < methodParameters.size(); i++) {
+            parameters[i] = methodParameters.get(i).value();
         }
 
         return parameters;
     }
+
+    private List<MethodParameter> allMethodParameters(ToolCallInstruction instruction,
+                                                      List<InterruptParameterValue> interruptParameterValues) {
+
+        final List<MethodParameter> methodParameters = new ArrayList<>();
+
+        final Map<String, Object> properties = instruction.arguments();
+        final Map<String, Object> interruptValues = interruptParameterValues.stream()
+                .collect(toMap(InterruptParameterValue::name, InterruptParameterValue::value));
+
+        final ToolCall toolCall = instruction.toolCall();
+
+        final List<ToolParameter> toolParameters = Objects.isNull(toolCall.parameters()) ?
+                List.of() : toolCall.parameters();
+
+        final List<MethodParameter> toolMethodParameters = toolParameters.stream()
+                .map(tp -> new MethodParameter(tp.index(), tp.name(), properties.get(tp.name()))).toList();
+
+        final List<InterruptParameter> interruptParameters = Objects.isNull(toolCall.interruptParameters()) ?
+                List.of() : toolCall.interruptParameters();
+
+        final List<MethodParameter> interruptMethodParameters = interruptParameters.stream()
+                .map(ip -> new MethodParameter(ip.index(), ip.name(), interruptValues.get(ip.name()))).toList();
+
+
+        methodParameters.addAll(toolMethodParameters);
+        methodParameters.addAll(interruptMethodParameters);
+
+
+        return methodParameters;
+    }
+
+
+    private record MethodParameter(int index, String name, Object value) {
+    }
+
 }
