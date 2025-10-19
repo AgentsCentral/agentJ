@@ -9,14 +9,15 @@ import ai.agentscentral.core.session.config.ExecutionLimits;
  */
 public class MessageExecutionContext {
 
+    private int handOffCount = 0;
+
+    private int toolCallsCount = 0;
+    private boolean interruptsProcessed;
     private final ExecutionLimits limits;
 
     public MessageExecutionContext(ExecutionLimits limits) {
         this.limits = limits;
     }
-    private int handOffCount = 0;
-
-    private int toolCallsCount = 0;
 
     public void incrementHandOffCount() {
         handOffCount++;
@@ -26,6 +27,14 @@ public class MessageExecutionContext {
         toolCallsCount++;
     }
 
+    public boolean isInterruptsProcessed() {
+        return interruptsProcessed;
+    }
+
+    public void markInterruptsAsProcessed() {
+        this.interruptsProcessed = true;
+    }
+
     public boolean isHandoffLimitExceeded(){
         return handOffCount > limits.maxHandOffsPerMessage();
     }
@@ -33,5 +42,6 @@ public class MessageExecutionContext {
     public boolean isToolCallLimitExceeded(){
         return toolCallsCount > limits.maxToolCallsPerMessage();
     }
+
 
 }

@@ -6,6 +6,7 @@ import ai.agentscentral.core.context.ContextManager;
 import ai.agentscentral.core.context.ContextStateManager;
 import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.session.message.Message;
+import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.core.session.user.User;
 import ai.agentscentral.core.team.Team;
 
@@ -54,6 +55,7 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
     @Override
     public List<Message> execute(String contextId,
                                  User user,
+                                 UserMessage userMessage,
                                  List<Message> previousContext,
                                  List<Message> newMessages,
                                  String currentAgenticName,
@@ -62,8 +64,8 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
         final AgenticExecutor<? extends Agentic> agenticExecutor = findExecutor(currentAgenticName)
                 .orElse(agentExecutors.get(leader.name()));
 
-        return agenticExecutor.execute(contextId, user, previousContext,
-                newMessages, currentAgenticName, executionContext);
+        return agenticExecutor.execute(contextId, user, userMessage, previousContext, newMessages,
+                currentAgenticName, executionContext);
     }
 
 
@@ -73,8 +75,7 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
     }
 
     final Optional<AgenticExecutor<? extends Agentic>> findExecutor(String agenticName) {
-        return ofNullable(agenticName)
-                .map(agentExecutors::get);
+        return ofNullable(agenticName).map(agentExecutors::get);
     }
 
     private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgentJFactory agentJFactory) {

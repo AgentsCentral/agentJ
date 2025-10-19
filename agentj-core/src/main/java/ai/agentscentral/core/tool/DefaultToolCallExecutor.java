@@ -1,5 +1,6 @@
 package ai.agentscentral.core.tool;
 
+import ai.agentscentral.core.session.message.InterruptParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,8 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
     private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallExecutor.class);
 
     @Override
-    public ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction) {
+    public ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction,
+                                                                            List<InterruptParameterValue> interruptParameters) {
         final String toolCallId = instruction.id();
         final ToolCall toolCall = instruction.toolCall();
         try {
