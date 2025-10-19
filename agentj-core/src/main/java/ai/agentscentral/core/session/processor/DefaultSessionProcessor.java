@@ -58,6 +58,8 @@ public class DefaultSessionProcessor implements SessionProcessor {
     @Override
     public List<Message> process(@Nonnull String sessionId, @Nonnull UserMessage message, User user) {
 
+        contextManager.addContext(sessionId, List.of(message));
+
         final MessageExecutionContext executionContext = new MessageExecutionContext(executionLimits);
         final List<Message> context = new ArrayList<>(contextManager.getContext(sessionId));
         context.sort(comparing(Message::timestamp));
@@ -65,8 +67,8 @@ public class DefaultSessionProcessor implements SessionProcessor {
         final AgenticExecutor<? extends Agentic> executor = findExecutor(sessionId)
                 .orElse(agenticExecutor);
 
-        final List<Message> newMessages = executor.execute(sessionId, user, context, new ArrayList<>(List.of(message)),
-                null, executionContext);
+        final List<Message> newMessages = executor.execute(sessionId, user, message,
+                context, new ArrayList<>(List.of(message)), null, executionContext);
 
         return newMessages.stream()
                 .filter(m -> isDisplayableMessage(m, message.timestamp()))

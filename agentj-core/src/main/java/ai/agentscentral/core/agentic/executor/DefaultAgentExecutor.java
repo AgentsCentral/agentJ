@@ -16,15 +16,16 @@ import ai.agentscentral.core.tool.ToolCallInstruction;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ai.agentscentral.core.session.message.MessagePartType.text;
 import static ai.agentscentral.core.session.message.MessagePartType.tool_interrupt;
 import static ai.agentscentral.core.tool.convertors.ToolConvertors.convertToolCallExecutionErrorToToolMessage;
 import static ai.agentscentral.core.tool.convertors.ToolConvertors.convertToolCallResultToToolMessage;
 import static java.lang.System.currentTimeMillis;
+import static java.util.stream.Collectors.groupingBy;
 
 public class DefaultAgentExecutor implements AgentExecutor {
 
@@ -53,6 +54,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
     @Override
     public List<Message> execute(@Nonnull String contextId,
                                  @Nullable User user,
+                                 UserMessage userMessage,
                                  List<Message> previousContext,
                                  List<Message> newMessages,
                                  String currentAgenticName,
@@ -60,6 +62,11 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
         final List<Message> localContext = new ArrayList<>(previousContext);
         localContext.addAll(newMessages);
+
+        if (shouldResumeToolCall(userMessage, executionContext)) {
+            return resumeToolCallsWithInterrupt(contextId, user, userMessage, previousContext,
+                    newMessages, currentAgenticName, executionContext);
+        }
 
         final List<AssistantMessage> assistantMessages = providerAgentExecutor.execute(contextId, user, localContext);
 
@@ -80,13 +87,13 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
 
         if (hasHandOffs) {
-            return handleHandOff(contextId, user, previousContext, newMessages, executionContext,
+            return handleHandOff(contextId, user, userMessage, previousContext, newMessages, executionContext,
                     assistantMessages, localContext);
         } else if (hasToolCalls && toolCallHasInterrupts) {
             return handleToolCallInterrupts(contextId, newMessages, assistantMessages);
         } else if (hasToolCalls) {
-            return handleToolCalls(contextId, user, previousContext, newMessages, currentAgenticName, executionContext,
-                    assistantMessages, localContext);
+            return handleToolCalls(contextId, user, userMessage, previousContext, newMessages, currentAgenticName,
+                    executionContext, assistantMessages);
         }
 
         return newMessages;
@@ -118,14 +125,61 @@ public class DefaultAgentExecutor implements AgentExecutor {
         return newMessages;
     }
 
+
+    private List<Message> resumeToolCallsWithInterrupt(String contextId,
+                                                       User user,
+                                                       UserMessage userMessage,
+                                                       List<Message> previousContext,
+                                                       List<Message> newMessages,
+                                                       String currentAgenticName,
+                                                       MessageExecutionContext executionContext) {
+
+        final List<UserInterruptPart> userInterruptParts = newMessages.stream()
+                .filter(m -> m instanceof UserMessage)
+                .map(m -> (UserMessage) m)
+                .filter(um -> um.parts() instanceof UserInterruptPart[])
+                .flatMap(um -> Stream.of((UserInterruptPart[]) um.parts()))
+                .toList();
+
+        final Set<String> interruptedToolCallIds = userInterruptParts.stream()
+                .map(UserInterruptPart::toolCallId).collect(Collectors.toSet());
+
+        final Map<String, List<UserInterruptPart>> interruptsByToolCallId = userInterruptParts.stream()
+                .collect(groupingBy(UserInterruptPart::toolCallId));
+
+        final List<ToolCallInstruction> toolCallInstructions = previousContext.stream()
+                .filter(m -> m instanceof AssistantMessage)
+                .map(m -> (AssistantMessage) m)
+                .filter(AssistantMessage::hasToolCalls)
+                .flatMap(m -> m.toolCalls().stream())
+                .filter(tci -> interruptedToolCallIds.contains(tci.id()))
+                .toList();
+
+
+        final List<ToolMessage> toolMessages = toolCallInstructions.stream()
+                .map(tci -> toolCallExecutor.execute(tci,
+                        interruptParameterValues(interruptsByToolCallId.getOrDefault(tci.id(), List.of()))))
+                .map(roe -> roe.onResult(contextId, messageIdGenerator.generate(), convertToolCallResultToToolMessage)
+                        .orOnError(convertToolCallExecutionErrorToToolMessage)
+                ).toList();
+
+        contextManager.addContext(contextId, toolMessages);
+        newMessages.addAll(toolMessages);
+
+        executionContext.markInterruptsAsProcessed();
+        executionContext.incrementToolCalls();
+
+        return execute(contextId, user, userMessage, previousContext, newMessages, currentAgenticName, executionContext);
+    }
+
     private List<Message> handleToolCalls(String contextId,
                                           User user,
+                                          UserMessage userMessage,
                                           List<Message> previousContext,
                                           List<Message> newMessages,
                                           String currentAgenticName,
                                           MessageExecutionContext executionContext,
-                                          List<AssistantMessage> assistantMessages,
-                                          List<Message> localContext) {
+                                          List<AssistantMessage> assistantMessages) {
 
         final List<ToolCallInstruction> toolCallInstructions = assistantMessages.stream()
                 .filter(AssistantMessage::hasToolCalls)
@@ -133,22 +187,23 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
 
         final List<ToolMessage> toolMessages = toolCallInstructions.stream()
-                .map(toolCallExecutor::execute)
+                .map(tci -> toolCallExecutor.execute(tci, List.of()))
                 .map(roe -> roe.onResult(contextId, messageIdGenerator.generate(), convertToolCallResultToToolMessage)
                         .orOnError(convertToolCallExecutionErrorToToolMessage)
                 ).toList();
 
         contextManager.addContext(contextId, toolMessages);
         newMessages.addAll(toolMessages);
-        localContext.addAll(toolMessages);
 
         executionContext.incrementToolCalls();
 
-        return execute(contextId, user, previousContext, newMessages, currentAgenticName, executionContext);
+        return execute(contextId, user, userMessage, previousContext, newMessages, currentAgenticName, executionContext);
     }
 
     private List<Message> handleHandOff(String contextId,
-                                        User user, List<Message> previousContext,
+                                        User user,
+                                        UserMessage userMessage,
+                                        List<Message> previousContext,
                                         List<Message> newMessages,
                                         MessageExecutionContext executionContext,
                                         List<AssistantMessage> assistantMessages,
@@ -185,7 +240,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
         executionContext.incrementHandOffCount();
 
-        return handedOff.newAgenticExecutor().execute(contextId, user, previousContext, newMessages,
+        return handedOff.newAgenticExecutor().execute(contextId, user, userMessage, previousContext, newMessages,
                 handedOff.agent(), executionContext);
     }
 
@@ -201,6 +256,20 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private List<ToolInterruptParameter> toolInterruptParameters(List<InterruptParameter> interruptParameters) {
         return interruptParameters.stream().map(i -> new ToolInterruptParameter(i.name(), i.required()))
                 .toList();
+    }
+
+    private List<InterruptParameterValue> interruptParameterValues(List<UserInterruptPart> interruptParts) {
+        return interruptParts.stream()
+                .flatMap(um -> um.interruptParameters().stream())
+                .toList();
+    }
+
+    private boolean shouldResumeToolCall(UserMessage userMessage, MessageExecutionContext executionContext) {
+        if (executionContext.isInterruptsProcessed()) {
+            return true;
+        }
+
+        return Stream.of(userMessage.parts()).anyMatch(p -> p instanceof UserInterruptPart);
     }
 
     @Override
