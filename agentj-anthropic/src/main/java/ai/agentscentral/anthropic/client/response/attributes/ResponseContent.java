@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * ResponseContent
+ *
  * @author Rizwan Idrees
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
