@@ -99,14 +99,17 @@ public class JettyHttpRunner implements AgentJHttpRunner {
             final DefaultSessionProcessor processor = new DefaultSessionProcessor(httpConfig.agentic(),
                     agentJFactory,
                     new InMemoryContextStateManager(),
-                    new InMemoryContextManager(), defaultExecutionLimits());
+                    new InMemoryContextManager(),
+                    defaultExecutionLimits()
+            );
 
             final AgentJServlet servlet = new AgentJServlet(processor,
                     new JsonRequestExtractor(httpConfig.objectMapper()),
                     new JsonResponseSender(httpConfig.objectMapper()),
                     new TrailingRequestPathSessionIdExtractor(httpConfig.path()),
                     agentJFactory.getSessionIdGenerator(),
-                    agentJFactory.getMessageIdGenerator());
+                    agentJFactory.getMessageIdGenerator()
+            );
 
             servletContextHandler.addServlet(servlet, httpConfig.path());
 
