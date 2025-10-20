@@ -35,8 +35,7 @@ public class AgenticExecutorInitializer {
 
         return switch (agentic) {
             case Agent agent -> initializeAgentExecutor(agent, partOf, contextManager, handoffExecutor, factory);
-            case Team team -> initializeTeamExecutor(team, partOf,
-                    stateManager, contextManager, factory, handoffExecutor);
+            case Team team -> initializeTeamExecutor(team, partOf, stateManager, contextManager, factory, handoffExecutor);
             default -> throw new UnsupportedOperationException("Unrecognized agentic type " + agentic.getClass());
         };
     }
