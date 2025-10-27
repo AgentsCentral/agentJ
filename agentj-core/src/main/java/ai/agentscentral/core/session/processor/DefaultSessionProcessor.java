@@ -68,7 +68,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .orElse(agenticExecutor);
 
         final List<Message> newMessages = executor.execute(sessionId, user, message,
-                context, new ArrayList<>(List.of(message)), null, executionContext);
+                context, new ArrayList<>(), null, executionContext);
 
         return newMessages.stream()
                 .filter(m -> isDisplayableMessage(m, message.timestamp()))

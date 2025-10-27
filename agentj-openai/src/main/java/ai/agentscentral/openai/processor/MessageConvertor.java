@@ -24,8 +24,8 @@ import static ai.agentscentral.openai.client.request.attributes.OpenAIAssistantM
 import static ai.agentscentral.openai.client.request.attributes.OpenAIDeveloperMessage.DEVELOPER;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIToolMessage.TOOL;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIUserMessage.USER;
+import static ai.agentscentral.openai.client.request.attributes.TextContentPart.TEXT;
 import static ai.agentscentral.openai.processor.ArgumentExtractor.extractFromJson;
-import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -45,7 +45,11 @@ class MessageConvertor {
     }
 
     List<OpenAIMessage> toOpenAIMessages(DeveloperMessage message, List<Message> messages) {
-        final List<OpenAIMessage> context = messages.stream().map(this::toOpenAIMessage).toList();
+
+        final List<OpenAIMessage> context = messages.stream()
+                .filter(m -> !isInterruptMessage(m))
+                .map(this::toOpenAIMessage).toList();
+
         final OpenAIMessage agentContext = toOpenAIMessage(message);
         final List<OpenAIMessage> fullContext = new ArrayList<>();
 
@@ -117,17 +121,17 @@ class MessageConvertor {
         };
     }
 
-    private MessageContent toMessageContent(MessagePart[] parts) {
-        if (Objects.isNull(parts)) {
-            return new TextContent(EMPTY);
+    private MessageContents toMessageContent(MessagePart[] parts) {
+
+        if (Objects.isNull(parts) || parts.length == 0) {
+            return new MessageContents(List.of(new TextContentPart(TEXT, EMPTY)));
         }
 
-        if (parts instanceof TextPart[] textParts) {
-            String text = Stream.of(textParts).map(TextPart::text).collect(joining());
-            return new TextContent(text);
-        }
+        final List<TextContentPart> textContentParts = Stream.of(parts).filter(p -> p instanceof TextPart)
+                .map(p -> (TextPart) p)
+                .map(p -> new TextContentPart(TEXT, p.text())).toList();
 
-        return new TextContent(EMPTY);
+        return new MessageContents(textContentParts);
     }
 
     private List<OpenAIToolCall> toolCalls(AssistantMessage assistantMessage) {
@@ -141,5 +145,15 @@ class MessageConvertor {
         return null;
     }
 
+    private boolean isInterruptMessage(Message message){
+        if(message instanceof ToolInterruptMessage || message instanceof UserInterruptMessage){
+            return true;
+        }
+        else if(message instanceof  UserMessage um){
+            return Objects.isNull(um.parts()) || Stream.of(um.parts())
+                    .allMatch(p -> p instanceof ToolInterruptPart || p instanceof UserInterruptPart);
+        }
+        return false;
+    }
 
 }

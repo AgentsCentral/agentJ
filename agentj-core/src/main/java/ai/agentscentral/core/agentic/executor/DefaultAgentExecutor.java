@@ -68,6 +68,10 @@ public class DefaultAgentExecutor implements AgentExecutor {
         final List<Message> localContext = new ArrayList<>(previousContext);
         localContext.addAll(newMessages);
 
+        if (executionContext.isHandoffLimitExceeded() || executionContext.isToolCallLimitExceeded()) {
+            return newMessages;
+        }
+
         if (shouldResumeToolCall(userMessage, executionContext)) {
             return resumeToolCallsWithInterrupt(contextId, user, userMessage, previousContext,
                     newMessages, currentAgenticName, executionContext);
@@ -84,11 +88,6 @@ public class DefaultAgentExecutor implements AgentExecutor {
         contextManager.addContext(contextId, assistantMessages);
         newMessages.addAll(assistantMessages);
         localContext.addAll(assistantMessages);
-
-
-        if (executionContext.isHandoffLimitExceeded() || executionContext.isToolCallLimitExceeded()) {
-            return newMessages;
-        }
 
 
         if (hasHandOffs) {
@@ -139,11 +138,11 @@ public class DefaultAgentExecutor implements AgentExecutor {
                                                        String currentAgenticName,
                                                        MessageExecutionContext executionContext) {
 
-        final List<UserInterruptPart> userInterruptParts = newMessages.stream()
-                .filter(m -> m instanceof UserMessage)
-                .map(m -> (UserMessage) m)
-                .filter(um -> um.parts() instanceof UserInterruptPart[])
-                .flatMap(um -> Stream.of((UserInterruptPart[]) um.parts()))
+        executionContext.markInterruptsAsProcessed();
+
+        final List<UserInterruptPart> userInterruptParts = Stream.of(userMessage.parts())
+                .filter(p -> p instanceof UserInterruptPart)
+                .map(p -> (UserInterruptPart) p)
                 .toList();
 
         final Set<String> interruptedToolCallIds = userInterruptParts.stream()
@@ -171,7 +170,6 @@ public class DefaultAgentExecutor implements AgentExecutor {
         contextManager.addContext(contextId, toolMessages);
         newMessages.addAll(toolMessages);
 
-        executionContext.markInterruptsAsProcessed();
         executionContext.incrementToolCalls();
 
         return execute(contextId, user, userMessage, previousContext, newMessages, currentAgenticName, executionContext);
@@ -270,11 +268,9 @@ public class DefaultAgentExecutor implements AgentExecutor {
     }
 
     private boolean shouldResumeToolCall(UserMessage userMessage, MessageExecutionContext executionContext) {
-        if (executionContext.isInterruptsProcessed()) {
-            return true;
-        }
 
-        return Stream.of(userMessage.parts()).anyMatch(p -> p instanceof UserInterruptPart);
+        final boolean hasInterruptParts = Stream.of(userMessage.parts()).anyMatch(p -> p instanceof UserInterruptPart);
+        return !executionContext.isInterruptsProcessed() && hasInterruptParts;
     }
 
     @Override

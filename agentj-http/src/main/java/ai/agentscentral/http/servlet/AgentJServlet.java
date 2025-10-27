@@ -105,7 +105,7 @@ public class AgentJServlet extends HttpServlet {
     }
 
     private MessagePart[] toMessageParts(MessageRequest messageRequest) {
-       return messageRequest.messages().stream()
+        return messageRequest.messages().stream()
                 .map(this::toMessagePart).toArray(MessagePart[]::new);
 
     }

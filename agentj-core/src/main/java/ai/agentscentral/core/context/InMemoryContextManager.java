@@ -21,7 +21,11 @@ public class InMemoryContextManager implements ContextManager {
 
     @Override
     public List<Message> getContext(String contextId) {
-        final List<Message> context = contexts.getOrDefault(contextId, synchronizedList(new ArrayList<>()));
+        if(!contexts.containsKey(contextId)){
+            contexts.put(contextId, synchronizedList(new ArrayList<>()));
+        }
+
+        final List<Message> context = contexts.get(contextId);
         context.sort(comparing(Message::timestamp));
         return context;
     }

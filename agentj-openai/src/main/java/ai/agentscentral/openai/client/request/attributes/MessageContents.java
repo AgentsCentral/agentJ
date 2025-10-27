@@ -8,5 +8,5 @@ import java.util.List;
  * @param content
  * @author Rizwan Idrees
  */
-public record MessageContents(List<ContentPart> content) implements MessageContent {
+public record MessageContents(List<? extends ContentPart> content) implements MessageContent {
 }
