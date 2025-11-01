@@ -69,7 +69,7 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
     private List<ToolInterrupt> extractToolInterrupts(Interrupts interrupts,
                                                       List<InterruptParameter> interruptParameters) {
-        if (Objects.isNull(interrupts) || Objects.isNull(interrupts.value())) {
+        if (isNull(interrupts) || isNull(interrupts.value())) {
             return List.of();
         }
 
@@ -78,12 +78,13 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
         return Stream.of(interrupts.value())
                 .map(i -> new ToolInterrupt(i.name(), i.rendererReference(),
+                        isNull(i.interruptPreCalls())? List.of() : List.of(i.interruptPreCalls()),
                         findInterruptParameters(parametersByName, i.params())))
                 .toList();
     }
 
     private List<InterruptParameter> extractInterruptParameters(Parameter[] parameters) {
-        if (Objects.isNull(parameters)) {
+        if (isNull(parameters)) {
             return List.of();
         }
 
@@ -95,7 +96,7 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
     private List<ToolParameter> extractToolParameters(Parameter[] parameters) {
 
-        if (Objects.isNull(parameters)) {
+        if (isNull(parameters)) {
             return List.of();
         }
 
@@ -136,7 +137,7 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
     private List<InterruptParameter> findInterruptParameters(Map<String, InterruptParameter> parameters,
                                                              String... paramNames) {
-        if (Objects.isNull(paramNames)) {
+        if (isNull(paramNames)) {
             return List.of();
         }
 
