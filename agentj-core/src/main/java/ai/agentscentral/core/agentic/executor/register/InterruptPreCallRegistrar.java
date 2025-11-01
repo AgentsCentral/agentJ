@@ -11,8 +11,8 @@ import java.util.Optional;
  */
 public interface InterruptPreCallRegistrar {
 
-    void register(String name, PreInterruptCall preInterruptCall);
+    <T> void register(String name, PreInterruptCall<T> preInterruptCall);
 
-    Optional<PreInterruptCall> findByName(String name);
+    <T> Optional<PreInterruptCall<T>> findByName(String name);
 
 }

@@ -8,8 +8,8 @@ import ai.agentscentral.core.session.user.User;
  * @author Rizwan Idrees
  */
 @FunctionalInterface
-public interface PreInterruptCall {
+public interface PreInterruptCall<T> {
 
-    void call(User user);
+    T call(User user);
 
 }

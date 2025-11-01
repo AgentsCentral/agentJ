@@ -1,5 +1,6 @@
 package ai.agentscentral.core.factory;
 
+import ai.agentscentral.core.agentic.executor.register.DefaultInterruptPreCallRegistrar;
 import ai.agentscentral.core.handoff.HandoffsExtractor;
 import ai.agentscentral.core.session.id.DefaultMessageIdGenerator;
 import ai.agentscentral.core.session.id.DefaultSessionIdGenerator;
@@ -23,7 +24,7 @@ public interface AgentJFactory {
     }
 
     default ToolCallExecutor<ToolMessage> getToolCallExecutor() {
-        return new DefaultToolCallExecutor<>();
+        return new DefaultToolCallExecutor<>(new DefaultInterruptPreCallRegistrar());
     }
 
     default HandoffsExtractor getHandoffsExtractor() {

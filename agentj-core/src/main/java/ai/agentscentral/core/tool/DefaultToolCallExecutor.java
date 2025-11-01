@@ -1,6 +1,8 @@
 package ai.agentscentral.core.tool;
 
+import ai.agentscentral.core.agentic.executor.register.InterruptPreCallRegistrar;
 import ai.agentscentral.core.session.message.InterruptParameterValue;
+import ai.agentscentral.core.session.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,18 @@ import static java.util.stream.Collectors.toMap;
 public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultToolCallExecutor.class);
+
+    private final InterruptPreCallRegistrar preCallRegistrar;
+
+    public DefaultToolCallExecutor(InterruptPreCallRegistrar preCallRegistrar) {
+        this.preCallRegistrar = preCallRegistrar;
+    }
+
+
+    @Override
+    public <R> Optional<R> executePreCall(String name, User user) {
+        return preCallRegistrar.<R>findByName(name).map(pc -> pc.call(user));
+    }
 
     @Override
     public ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction,
