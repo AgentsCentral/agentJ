@@ -91,7 +91,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
             return handleHandOff(contextId, user, userMessage, previousContext, newMessages, executionContext,
                     assistantMessages, localContext);
         } else if (hasToolCalls && toolCallHasInterrupts) {
-            return handleToolCallInterrupts(contextId, newMessages, assistantMessages);
+            return handleToolCallInterrupts(contextId, user, newMessages, assistantMessages);
         } else if (hasToolCalls) {
             return handleToolCalls(contextId, user, userMessage, previousContext, newMessages, currentAgenticName,
                     executionContext, assistantMessages);
@@ -101,8 +101,8 @@ public class DefaultAgentExecutor implements AgentExecutor {
     }
 
 
-    private List<Message> handleToolCallInterrupts(User user,
-                                                   String contextId,
+    private List<Message> handleToolCallInterrupts(String contextId,
+                                                   User user,
                                                    List<Message> newMessages,
                                                    List<AssistantMessage> assistantMessages) {
 
