@@ -9,10 +9,7 @@ import ai.agentscentral.core.provider.ProviderAgentExecutor;
 import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.message.*;
 import ai.agentscentral.core.session.user.User;
-import ai.agentscentral.core.tool.InterruptParameter;
-import ai.agentscentral.core.tool.ToolCall;
-import ai.agentscentral.core.tool.ToolCallExecutor;
-import ai.agentscentral.core.tool.ToolCallInstruction;
+import ai.agentscentral.core.tool.*;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
@@ -104,7 +101,8 @@ public class DefaultAgentExecutor implements AgentExecutor {
     }
 
 
-    private List<Message> handleToolCallInterrupts(String contextId,
+    private List<Message> handleToolCallInterrupts(User user,
+                                                   String contextId,
                                                    List<Message> newMessages,
                                                    List<AssistantMessage> assistantMessages) {
 
@@ -113,6 +111,13 @@ public class DefaultAgentExecutor implements AgentExecutor {
                 .flatMap(am -> am.toolCalls().stream())
                 .filter(tci -> tci.toolCall().hasInterruptsBefore()).toList();
 
+
+        final List<Optional<Object>> preCallResult = toolCallInstructions.stream()
+                .filter(tci -> tci.toolCall().hasInterruptsBefore())
+                .flatMap(tci -> tci.toolCall().interruptsBefore().stream())
+                .filter(ti -> Objects.nonNull(ti.preInterruptCalls()))
+                .flatMap(ti -> ti.preInterruptCalls().stream())
+                .map(pc -> toolCallExecutor.executePreCall(pc, user)).toList();
 
         final MessagePart[] toolInterruptParts = toolCallInstructions.stream()
                 .filter(tci -> tci.toolCall().hasInterruptsBefore())
