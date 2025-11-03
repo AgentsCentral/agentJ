@@ -112,16 +112,9 @@ public class DefaultAgentExecutor implements AgentExecutor {
                 .filter(tci -> tci.toolCall().hasInterruptsBefore()).toList();
 
 
-        final List<Optional<Object>> preCallResult = toolCallInstructions.stream()
-                .filter(tci -> tci.toolCall().hasInterruptsBefore())
-                .flatMap(tci -> tci.toolCall().interruptsBefore().stream())
-                .filter(ti -> Objects.nonNull(ti.preInterruptCalls()))
-                .flatMap(ti -> ti.preInterruptCalls().stream())
-                .map(pc -> toolCallExecutor.executePreCall(pc, user)).toList();
-
         final MessagePart[] toolInterruptParts = toolCallInstructions.stream()
                 .filter(tci -> tci.toolCall().hasInterruptsBefore())
-                .flatMap(tci -> toolInterruptParts(tci).stream())
+                .flatMap(tci -> toolInterruptParts(tci, user).stream())
                 .toList().toArray(new MessagePart[]{});
 
 
@@ -253,11 +246,31 @@ public class DefaultAgentExecutor implements AgentExecutor {
     }
 
 
-    private List<ToolInterruptPart> toolInterruptParts(ToolCallInstruction toolCallInstruction) {
+    private List<ToolInterruptPart> toolInterruptParts(ToolCallInstruction toolCallInstruction, User user) {
+
+        final Map<String, List<String>> interruptPreCalls = Optional.of(toolCallInstruction).stream()
+                .filter(tci -> tci.toolCall().hasInterruptsBefore())
+                .flatMap(tci -> tci.toolCall().interruptsBefore().stream())
+                .filter(ti -> Objects.nonNull(ti.preInterruptCalls()))
+                .collect(Collectors.toMap(ToolInterrupt::name, ToolInterrupt::preInterruptCalls));
+
+
         final ToolCall toolCall = toolCallInstruction.toolCall();
         return toolCall.interruptsBefore().stream()
-                .map(i -> new ToolInterruptPart(tool_interrupt, toolCallInstruction.id(), i.name(), i.renderer(),
-                        toolCallInstruction.arguments(), toolInterruptParameters(i.parameters())))
+                .map(i -> new ToolInterruptPart(tool_interrupt,
+                        toolCallInstruction.id(),
+                        i.name(),
+                        i.renderer(),
+                        toolCallInstruction.arguments(),
+                        interruptPreCallResults(interruptPreCalls.getOrDefault(i.name(), List.of()), user),
+                        toolInterruptParameters(i.parameters())
+                )).toList();
+    }
+
+
+    private List<InterruptPreCallResult> interruptPreCallResults(List<String> preCalls, User user) {
+        return preCalls.stream()
+                .map(pc -> new InterruptPreCallResult(pc, toolCallExecutor.executePreCall(pc, user)))
                 .toList();
     }
 
