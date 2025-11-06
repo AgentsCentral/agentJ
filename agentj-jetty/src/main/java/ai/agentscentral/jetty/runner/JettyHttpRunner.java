@@ -11,6 +11,8 @@ import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
 import ai.agentscentral.http.filter.CORSFilter;
 import ai.agentscentral.http.health.LivenessProbe;
 import ai.agentscentral.http.health.ReadinessProbe;
+import ai.agentscentral.http.health.response.LivenessResponse;
+import ai.agentscentral.http.health.response.ReadinessResponse;
 import ai.agentscentral.http.request.JsonRequestExtractor;
 import ai.agentscentral.http.request.TrailingRequestPathSessionIdExtractor;
 import ai.agentscentral.http.response.JsonResponseSender;
@@ -32,6 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static java.util.Objects.nonNull;
 
 /**
@@ -84,10 +87,8 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     }
 
     private void addHealthChecks(ServletContextHandler servletContextHandler) {
-        final LivenessProbe livenessProbe = new LivenessProbe() {
-        };
-        final ReadinessProbe readinessProbe = new ReadinessProbe() {
-        };
+        final LivenessProbe livenessProbe = () -> new LivenessResponse(SC_OK);
+        final ReadinessProbe readinessProbe = () -> new ReadinessResponse(SC_OK);
         servletContextHandler.addServlet(new HealthCheckServlet(livenessProbe, readinessProbe), "/health/*");
     }
 

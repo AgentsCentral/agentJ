@@ -9,10 +9,9 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
  *
  * @author Rizwan Idrees
  */
+@FunctionalInterface
 public interface ReadinessProbe {
 
-    default ReadinessResponse probe() {
-        return new ReadinessResponse(SC_OK);
-    }
+    ReadinessResponse probe();
 
 }

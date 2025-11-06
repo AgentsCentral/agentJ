@@ -17,7 +17,6 @@ public record JettyConfig(
         int maxVirtualThreads,
         int reservedThreads
 ) {
-    // Default config values
     public static final String DEFAULT_HOST = "0.0.0.0";
     public static final int DEFAULT_PORT = 8181;
     public static final int DEFAULT_MAX_VIRTUAL_THREADS = 128;

@@ -9,10 +9,9 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
  *
  * @author Rizwan Idrees
  */
+@FunctionalInterface
 public interface LivenessProbe {
 
-    default LivenessResponse probe() {
-        return new LivenessResponse(SC_OK);
-    }
+    LivenessResponse probe();
 
 }
