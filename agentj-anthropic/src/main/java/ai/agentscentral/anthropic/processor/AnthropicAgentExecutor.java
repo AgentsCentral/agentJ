@@ -31,7 +31,6 @@ import static java.util.Optional.ofNullable;
  */
 public class AnthropicAgentExecutor implements ProviderAgentExecutor {
 
-
     private final Agent agent;
     private final Map<String, AnthropicTool> anthropicTools = new HashMap<>();
     private final String modelName;
@@ -89,8 +88,4 @@ public class AnthropicAgentExecutor implements ProviderAgentExecutor {
         return new SystemPrompts(textPrompts);
     }
 
-    @Override
-    public Agent getAgent() {
-        return this.agent;
-    }
 }

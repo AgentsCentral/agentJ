@@ -11,7 +11,6 @@ import java.util.List;
  */
 public interface ContextManager {
 
-
     List<Message> getContext(String contextId);
     List<Message> addContext(String contextId, List<? extends Message> newMessages);
 

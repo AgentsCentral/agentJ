@@ -45,7 +45,7 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
         this.executorInitializer = executorInitializer;
         this.handoffExecutor = handoffExecutor;
 
-        ofNullable(team.leader())
+        Optional.of(team.leader())
                 .ifPresent(l -> agentExecutors.put(l.name(), initializeExecutor(leader, agentJFactory)));
 
         team.members().forEach(a -> agentExecutors.put(a.name(), initializeExecutor(a, agentJFactory)));

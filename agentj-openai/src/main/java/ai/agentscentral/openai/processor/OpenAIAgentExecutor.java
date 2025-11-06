@@ -90,9 +90,4 @@ public class OpenAIAgentExecutor implements ProviderAgentExecutor {
 
         return agent.instructors().stream().map(Instructor::instruct).collect(joining());
     }
-
-    @Override
-    public Agent getAgent() {
-        return this.agent;
-    }
 }
