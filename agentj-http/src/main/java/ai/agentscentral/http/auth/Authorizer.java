@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * @author Rizwan Idrees
  */
+@FunctionalInterface
 public interface Authorizer {
-
 
     boolean isAuthorized(HttpServletRequest request);
 

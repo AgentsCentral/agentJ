@@ -79,8 +79,6 @@ public class AgenticExecutorInitializer {
         registrar.register(team, partOf, executor);
 
         return executor;
-
-
     }
 
 }
