@@ -11,6 +11,8 @@ public interface Message {
 
     String messageId();
 
+    MessageType type();
+
     MessagePart[] parts();
 
     long timestamp();

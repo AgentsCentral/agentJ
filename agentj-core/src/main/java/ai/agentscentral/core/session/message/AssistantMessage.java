@@ -20,11 +20,25 @@ import java.util.Objects;
  */
 public record AssistantMessage(String contextId,
                                String messageId,
+                               MessageType type,
                                MessagePart[] parts,
                                List<ToolCallInstruction> toolCalls,
                                List<HandoffInstruction> handoffs,
                                long timestamp) implements Message {
 
+    public AssistantMessage(String contextId,
+                            String messageId,
+                            MessagePart[] parts,
+                            List<ToolCallInstruction> toolCalls,
+                            List<HandoffInstruction> handoffs,
+                            long timestamp) {
+        this(contextId, messageId, MessageType.ASSISTANT_MESSAGE, parts, toolCalls, handoffs, timestamp);
+    }
+
+    @Override
+    public MessageType type() {
+        return MessageType.ASSISTANT_MESSAGE;
+    }
 
     public boolean hasToolCalls(){
         return Objects.nonNull(toolCalls) && !toolCalls.isEmpty();
