@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>ai.agentscentral</groupId>
@@ -50,6 +51,7 @@
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
+        <mongodb-driver-sync.version>5.6.1</mongodb-driver-sync.version>
     </properties>
 
     <dependencyManagement>
@@ -130,6 +132,11 @@
                 <groupId>ai.agentscentral</groupId>
                 <artifactId>agentj-http</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${mongodb-driver-sync.version}</version>
             </dependency>
 
             <!-- test -->
