@@ -31,8 +31,7 @@ public class InMemoryContextManager implements ContextManager {
     }
 
     @Override
-    public List<Message> addContext(String contextId, List<? extends Message> newMessages) {
+    public void addContext(String contextId, List<? extends Message> newMessages) {
         getContext(contextId).addAll(newMessages);
-        return getContext(contextId);
     }
 }
