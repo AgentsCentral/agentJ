@@ -18,6 +18,7 @@ public interface ToolCallExecutor<T> {
     <R> Optional<R> executePreCall(String name, User user);
 
     ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction,
+                                                                     ToolCall toolCall,
                                                                      List<InterruptParameterValue> interruptParameters);
 
 }

@@ -10,28 +10,33 @@ import org.bson.Document;
  * @author Mustafa Kamal
  * @author Rizwan Idrees
  */
-public class MessageConvertor {
+public class DocumentToMessageConvertor {
 
-    private MessageConvertor() {
+    private DocumentToMessageConvertor() {
     }
 
-    public static final Convertor<Message, Document> messageToDocumentConvertor = m ->
-            switch (m) {
-                case AssistantMessage am -> assistantMessageToDocument(am);
-                case DeveloperMessage dm -> developerMessageToDocument(dm);
-                case HandOffMessage hm -> handoffMessageToDocument(hm);
-                case ToolInterruptMessage tim -> toolInterruptMessageToDocument(tim);
-                case ToolMessage tm -> toolMessageToDocument(tm);
-                case UserInterruptMessage uim -> userInterruptMessageToDocument(uim);
-                case UserMessage um -> userMessageToDocument(um);
+    public static final Convertor<Document, Message> documentToMessageConvertor = d ->
+            switch (d.getString("class")) {
+                case  "ai.agentscentral.core.session.message.AssistantMessage.class" ->  documentToAssistantMessage(d);
+//                case DeveloperMessage dm -> developerMessageToDocument(dm);
+//                case HandOffMessage hm -> handoffMessageToDocument(hm);
+//                case ToolInterruptMessage tim -> toolInterruptMessageToDocument(tim);
+//                case ToolMessage tm -> toolMessageToDocument(tm);
+//                case UserInterruptMessage uim -> userInterruptMessageToDocument(uim);
+//                case UserMessage um -> userMessageToDocument(um);
                 default -> throw new UnsupportedOperationException("");
             };
 
 
-    private static Document assistantMessageToDocument(AssistantMessage message) {
-        return defaultMessage(message)
-                .append("toolCalls", message.toolCalls())
-                .append("handoffs", message.handoffs());
+    private static AssistantMessage documentToAssistantMessage(Document document) {
+        return new AssistantMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                null,
+                null,
+                null,
+                document.getLong("timestamp")
+        );
 
     }
 

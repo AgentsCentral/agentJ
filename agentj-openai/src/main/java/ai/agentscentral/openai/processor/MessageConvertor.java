@@ -100,8 +100,7 @@ class MessageConvertor {
         return new DefaultToolCallInstruction(toolCall.id(),
                 toolName,
                 function.arguments(),
-                extractFromJson(function.arguments()),
-                tools.get(toolName));
+                extractFromJson(function.arguments()));
     }
 
     private HandoffInstruction toHandffInstruction(ToolCall toolCall) {
@@ -145,11 +144,10 @@ class MessageConvertor {
         return null;
     }
 
-    private boolean isInterruptMessage(Message message){
-        if(message instanceof ToolInterruptMessage || message instanceof UserInterruptMessage){
+    private boolean isInterruptMessage(Message message) {
+        if (message instanceof ToolInterruptMessage || message instanceof UserInterruptMessage) {
             return true;
-        }
-        else if(message instanceof  UserMessage um){
+        } else if (message instanceof UserMessage um) {
             return Objects.isNull(um.parts()) || Stream.of(um.parts())
                     .allMatch(p -> p instanceof ToolInterruptPart || p instanceof UserInterruptPart);
         }

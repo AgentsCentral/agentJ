@@ -5,6 +5,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,12 @@ public class AgentJMongoDB {
 
     public MongoCollection<Document> getCollection(String collectionName) {
         return database.getCollection(collectionName);
+    }
+
+    public void find(MongoCollection<Document> collection,
+                     List<Bson> filters,
+                     List<Bson> sorts){
+
     }
 
     public <T> void insert(MongoCollection<Document> collection,

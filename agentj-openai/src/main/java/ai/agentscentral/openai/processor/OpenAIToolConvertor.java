@@ -105,7 +105,7 @@ class OpenAIToolConvertor {
 
     static OpenAIToolCall toOpenAIToolCall(ToolCallInstruction toolCallInstruction) {
         final String id = toolCallInstruction.id();
-        final String name = toolCallInstruction.toolCall().name();
+        final String name = toolCallInstruction.name();
         final String arguments = toolCallInstruction.rawArguments();
         return new OpenAIToolCall(id, FUNCTION, new ToolCallFunction(name, arguments));
     }

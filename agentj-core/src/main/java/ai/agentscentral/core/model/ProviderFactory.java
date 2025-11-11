@@ -1,9 +1,12 @@
 package ai.agentscentral.core.model;
 
 import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.factory.AgentJFactory;
+import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.provider.ProviderAgentExecutor;
+import ai.agentscentral.core.tool.ToolCall;
 import jakarta.annotation.Nonnull;
+
+import java.util.Map;
 
 /**
  * ProviderFactory
@@ -13,6 +16,6 @@ import jakarta.annotation.Nonnull;
  */
 public interface ProviderFactory<P extends ProviderAgentExecutor> {
 
-    P createAgentExecutor(@Nonnull Agent agent, @Nonnull AgentJFactory agentJFactory);
+    P createAgentExecutor(@Nonnull Agent agent, Map<String, ToolCall> tools, Map<String, Handoff> handOffs);
 
 }

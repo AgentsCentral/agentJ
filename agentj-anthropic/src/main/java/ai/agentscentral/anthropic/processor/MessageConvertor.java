@@ -84,8 +84,7 @@ class MessageConvertor {
         return new DefaultToolCallInstruction(toolUse.id(),
                 toolUse.name(),
                 Objects.toString(toolUse.input(), "{}"),
-                toolUse.input(),
-                tools.get(toolUse.name()));
+                toolUse.input());
     }
 
     private HandoffInstruction toHandffInstruction(ToolUseResponseContent toolUse) {

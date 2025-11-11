@@ -37,17 +37,24 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private final ToolCallExecutor<ToolMessage> toolCallExecutor;
     private final ProviderAgentExecutor providerAgentExecutor;
     private final MessageIdGenerator messageIdGenerator;
+    private final Map<String, ToolCall> tools;
 
     public DefaultAgentExecutor(Agent agent,
                                 AgentJFactory agentJFactory,
                                 ContextManager contextManager,
                                 HandoffExecutor handoffExecutor) {
         this.agent = agent;
+        this.tools = agentJFactory.getToolBagToolsExtractor().extractTools(agent.toolBags());
         this.toolCallExecutor = agentJFactory.getToolCallExecutor();
         this.contextManager = contextManager;
         this.handoffExecutor = handoffExecutor;
+
+
+        final Map<String, Handoff> handOffs = agentJFactory.getHandoffsExtractor()
+                .extractHandOffs(agent.handoffs());
+
         this.providerAgentExecutor = agent.model().config()
-                .getFactory().createAgentExecutor(agent, agentJFactory);
+                .getFactory().createAgentExecutor(agent, tools, handOffs);
 
         this.messageIdGenerator = agentJFactory.getMessageIdGenerator();
 
@@ -80,7 +87,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
         final boolean hasToolCalls = assistantMessages.stream().anyMatch(AssistantMessage::hasToolCalls);
         final boolean toolCallHasInterrupts = hasToolCalls && assistantMessages.stream()
                 .flatMap(am -> am.toolCalls().stream())
-                .map(ToolCallInstruction::toolCall).anyMatch(ToolCall::hasInterruptsBefore);
+                .map(tci -> tools.get(tci.name())).anyMatch(ToolCall::hasInterruptsBefore);
 
         contextManager.addContext(contextId, assistantMessages);
         newMessages.addAll(assistantMessages);
@@ -109,11 +116,11 @@ public class DefaultAgentExecutor implements AgentExecutor {
         final List<ToolCallInstruction> toolCallInstructions = assistantMessages.stream()
                 .filter(AssistantMessage::hasToolCalls)
                 .flatMap(am -> am.toolCalls().stream())
-                .filter(tci -> tci.toolCall().hasInterruptsBefore()).toList();
+                .filter(tci -> tools.get(tci.name()).hasInterruptsBefore()).toList();
 
 
         final MessagePart[] toolInterruptParts = toolCallInstructions.stream()
-                .filter(tci -> tci.toolCall().hasInterruptsBefore())
+                .filter(tci -> tools.get(tci.name()).hasInterruptsBefore())
                 .flatMap(tci -> toolInterruptParts(tci, user).stream())
                 .toList().toArray(new MessagePart[]{});
 
@@ -159,7 +166,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
 
         final List<ToolMessage> toolMessages = toolCallInstructions.stream()
-                .map(tci -> toolCallExecutor.execute(tci,
+                .map(tci -> toolCallExecutor.execute(tci, tools.get(tci.name()),
                         interruptParameterValues(interruptsByToolCallId.getOrDefault(tci.id(), List.of()))))
                 .map(roe -> roe.onResult(contextId, messageIdGenerator.generate(), convertToolCallResultToToolMessage)
                         .orOnError(convertToolCallExecutionErrorToToolMessage)
@@ -188,7 +195,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
 
 
         final List<ToolMessage> toolMessages = toolCallInstructions.stream()
-                .map(tci -> toolCallExecutor.execute(tci, List.of()))
+                .map(tci -> toolCallExecutor.execute(tci, tools.get(tci.name()), List.of()))
                 .map(roe -> roe.onResult(contextId, messageIdGenerator.generate(), convertToolCallResultToToolMessage)
                         .orOnError(convertToolCallExecutionErrorToToolMessage)
                 ).toList();
@@ -249,13 +256,13 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private List<ToolInterruptPart> toolInterruptParts(ToolCallInstruction toolCallInstruction, User user) {
 
         final Map<String, List<String>> interruptPreCalls = Optional.of(toolCallInstruction).stream()
-                .filter(tci -> tci.toolCall().hasInterruptsBefore())
-                .flatMap(tci -> tci.toolCall().interruptsBefore().stream())
+                .filter(tci -> tools.get(tci.name()).hasInterruptsBefore())
+                .flatMap(tci -> tools.get(tci.name()).interruptsBefore().stream())
                 .filter(ti -> Objects.nonNull(ti.preInterruptCalls()))
                 .collect(Collectors.toMap(ToolInterrupt::name, ToolInterrupt::preInterruptCalls));
 
 
-        final ToolCall toolCall = toolCallInstruction.toolCall();
+        final ToolCall toolCall = tools.get(toolCallInstruction.name());
         return toolCall.interruptsBefore().stream()
                 .map(i -> new ToolInterruptPart(tool_interrupt,
                         toolCallInstruction.id(),

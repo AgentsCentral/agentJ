@@ -38,14 +38,15 @@ public class AnthropicAgentExecutor implements ProviderAgentExecutor {
     private final AnthropicClient client;
     private final MessageConvertor messageConvert;
 
-    public AnthropicAgentExecutor(Agent agent, AgentJFactory agentJFactory, AnthropicClient client) {
+    public AnthropicAgentExecutor(Agent agent,
+                                  Map<String, ToolCall> tools,
+                                  Map<String, Handoff> handOffs,
+                                  AnthropicClient client) {
         this.agent = agent;
         this.modelName = agent.model().name();
         this.config = agent.model().config() instanceof AnthropicConfig c ? c : null;
         this.client = client;
 
-        final Map<String, ToolCall> tools = agentJFactory.getToolBagToolsExtractor().extractTools(agent.toolBags());
-        final Map<String, Handoff> handOffs = agentJFactory.getHandoffsExtractor().extractHandOffs(agent.handoffs());
         final Map<String, AnthropicTool> mappedTools = toolsToAnthropicTool(tools);
         final Map<String, AnthropicTool> mappedHandOffs = handOffsToAnthropicTool(handOffs);
 

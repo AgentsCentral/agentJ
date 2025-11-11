@@ -45,13 +45,15 @@ public class OpenAIAgentExecutor implements ProviderAgentExecutor {
     private final OpenAIClient client;
     private final MessageConvertor messageConvertor;
 
-    public OpenAIAgentExecutor(Agent agent, AgentJFactory agentJFactory, OpenAIClient client) {
+    public OpenAIAgentExecutor(Agent agent,
+                               Map<String, ToolCall> tools,
+                               Map<String, Handoff> handOffs,
+                               OpenAIClient client) {
         this.agent = agent;
         this.modelName = agent.model().name();
         this.config = agent.model().config() instanceof OpenAIConfig c ? c : null;
         this.client = client;
-        final Map<String, ToolCall> tools = agentJFactory.getToolBagToolsExtractor().extractTools(agent.toolBags());
-        final Map<String, Handoff> handOffs = agentJFactory.getHandoffsExtractor().extractHandOffs(agent.handoffs());
+
         final Map<String, OpenAITool> mappedTools = toolsToOpenAITools(tools);
         final Map<String, OpenAITool> mappedHandOffs = handOffsToOpenAITools(handOffs);
 

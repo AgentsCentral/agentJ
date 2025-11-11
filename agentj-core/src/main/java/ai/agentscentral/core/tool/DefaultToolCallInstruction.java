@@ -9,13 +9,11 @@ import java.util.Map;
  * @param name
  * @param rawArguments
  * @param arguments
- * @param toolCall
  * @author Rizwan Idrees
  */
 public record DefaultToolCallInstruction(String id,
                                          String name,
                                          String rawArguments,
-                                         Map<String, Object> arguments,
-                                         ToolCall toolCall)
+                                         Map<String, Object> arguments)
         implements ToolCallInstruction {
 }

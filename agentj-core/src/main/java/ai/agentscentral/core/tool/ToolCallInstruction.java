@@ -10,10 +10,10 @@ import java.util.Map;
 public interface ToolCallInstruction {
 
     String id();
+    String name();
 
     String rawArguments();
 
     Map<String, Object> arguments();
 
-    ToolCall toolCall();
 }

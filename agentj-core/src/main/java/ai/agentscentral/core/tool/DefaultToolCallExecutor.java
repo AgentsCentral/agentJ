@@ -37,38 +37,39 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
 
     @Override
     public ResultOrError<ToolCallResult, ToolCallExecutionError, T> execute(ToolCallInstruction instruction,
+                                                                            ToolCall toolCall,
                                                                             List<InterruptParameterValue> interruptParameters) {
         final String toolCallId = instruction.id();
-        final ToolCall toolCall = instruction.toolCall();
         try {
             final Method method = toolCall.method();
             method.setAccessible(true);
 
-            final Object result = method.invoke(toolCall.toolBag(), parameters(instruction, interruptParameters));
+            final Object result = method.invoke(toolCall.toolBag(), parameters(instruction, toolCall, interruptParameters));
             return ofResult(new DefaultToolCallResult(instruction, result, method.getReturnType()));
 
         } catch (IllegalAccessException e) {
-            logger.error("Failed to execute tool due to method access level. Tool info {}", instruction.toolCall());
+            logger.error("Failed to execute tool due to method access level. Tool info {}", toolCall);
             return ofError(new ToolCallExecutionError(toolCallId, toolCall.name(), "Unable to access the tool " + toolCall.name()));
         } catch (InvocationTargetException e) {
-            logger.error("Failed to execute tool due to method invocation error. Tool info {}", instruction.toolCall());
+            logger.error("Failed to execute tool due to method invocation error. Tool info {}", toolCall);
             return ofError(new ToolCallExecutionError(toolCallId, toolCall.name(),
                     "Unable to call the tool " + toolCall.name()));
         } catch (Exception e) {
-            logger.error("Failed to execute tool due to error. Tool info {}, error {}", instruction.toolCall(),
+            logger.error("Failed to execute tool due to error. Tool info {}, error {}", toolCall,
                     e.getMessage());
             return ofError(new ToolCallExecutionError(toolCallId, toolCall.name(), "Error calling the tool " + toolCall.name()));
         }
     }
 
-    private Object[] parameters(ToolCallInstruction instruction, List<InterruptParameterValue> interruptParameters) {
-        final ToolCall toolCall = instruction.toolCall();
+    private Object[] parameters(ToolCallInstruction instruction,
+                                ToolCall toolCall,
+                                List<InterruptParameterValue> interruptParameters) {
 
         if (Objects.isNull(toolCall.parameters()) && Objects.isNull(interruptParameters)) {
             return null;
         }
 
-        final List<MethodParameter> methodParameters = allMethodParameters(instruction, interruptParameters);
+        final List<MethodParameter> methodParameters = allMethodParameters(instruction, toolCall, interruptParameters);
 
         final Object[] parameters = new Object[methodParameters.size()];
 
@@ -82,6 +83,7 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
     }
 
     private List<MethodParameter> allMethodParameters(ToolCallInstruction instruction,
+                                                      ToolCall toolCall,
                                                       List<InterruptParameterValue> interruptParameterValues) {
 
         final List<MethodParameter> methodParameters = new ArrayList<>();
@@ -89,8 +91,6 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
         final Map<String, Object> properties = instruction.arguments();
         final Map<String, Object> interruptValues = interruptParameterValues.stream()
                 .collect(toMap(InterruptParameterValue::name, InterruptParameterValue::value));
-
-        final ToolCall toolCall = instruction.toolCall();
 
         final List<ToolParameter> toolParameters = Objects.isNull(toolCall.parameters()) ?
                 List.of() : toolCall.parameters();

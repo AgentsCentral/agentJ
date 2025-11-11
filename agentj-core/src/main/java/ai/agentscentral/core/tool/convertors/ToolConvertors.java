@@ -18,7 +18,7 @@ public class ToolConvertors {
 
     public static final TriConvertor<String, String, ToolCallResult, ToolMessage> convertToolCallResultToToolMessage =
             (contextId, messageId, result) -> new ToolMessage(contextId, messageId,
-                    result.instruction().id(), result.instruction().toolCall().name(), textParts(result) , currentTimeMillis());
+                    result.instruction().id(), result.instruction().name(), textParts(result) , currentTimeMillis());
 
     public static final TriConvertor<String, String, ToolCallExecutionError, ToolMessage> convertToolCallExecutionErrorToToolMessage =
             (contextId, messageId, error) -> new ToolMessage(contextId, messageId,
