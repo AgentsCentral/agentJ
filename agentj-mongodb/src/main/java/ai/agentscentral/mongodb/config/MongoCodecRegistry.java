@@ -28,8 +28,8 @@ public class MongoCodecRegistry {
                 .build();
 
         return CodecRegistries.fromRegistries(
-                CodecRegistries.fromProviders(pojoCodecProvider),
-                MongoClientSettings.getDefaultCodecRegistry()
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
         );
     }
 
@@ -44,8 +44,8 @@ public class MongoCodecRegistry {
                 .automatic(true)
                 .build();
         return CodecRegistries.fromRegistries(
-                CodecRegistries.fromProviders(pojoCodecProvider),
-                MongoClientSettings.getDefaultCodecRegistry()
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
         );
     }
     
@@ -64,8 +64,8 @@ public class MongoCodecRegistry {
                 .build();
         // Create the final registry, including the RecordCodecProvider
         return CodecRegistries.fromRegistries(
-                CodecRegistries.fromProviders(pojoCodecProvider),
-                MongoClientSettings.getDefaultCodecRegistry()
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
         );
     }
 }
