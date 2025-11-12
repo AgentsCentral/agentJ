@@ -77,8 +77,8 @@ public class MongoContextManagerIntegrationTest {
             MessageDocument expected = testMessageDocs.get(i);
             Message actual = result.get(i);
             
-            assertEquals(expected.contextId(), actual.contextId());
-            assertEquals(expected.messageId(), actual.messageId());
+            assertEquals(expected.getContextId(), actual.contextId());
+            assertEquals(expected.getMessageId(), actual.messageId());
         }
     }
 

@@ -18,7 +18,7 @@ import static ai.agentscentral.core.session.message.MessageType.*;
 public class MessageConverter {
 
     public static Message toMessage(MessageDocument messageDocument) {
-        return switch (messageDocument.type()) {
+        return switch (messageDocument.getType()) {
             case USER_MESSAGE -> toUserMessage(messageDocument);
             case ASSISTANT_MESSAGE -> toAssistantMessage(messageDocument);
             case TOOL_MESSAGE -> toToolMessage(messageDocument);
@@ -29,57 +29,57 @@ public class MessageConverter {
 
     private static Message toUserMessage(MessageDocument messageDocument) {
         return new UserMessage(
-                messageDocument.contextId(),
-                messageDocument.messageId(),
-                messageDocument.type(),
-                messageDocument.textParts().toArray(new MessagePart[0]),
-                messageDocument.timestamp()
+                messageDocument.getContextId(),
+                messageDocument.getMessageId(),
+                messageDocument.getType(),
+                messageDocument.getTextParts().toArray(new MessagePart[0]),
+                messageDocument.getTimestamp()
         );
     }
 
     private static Message toAssistantMessage(MessageDocument messageDocument) {
         return new AssistantMessage(
-                messageDocument.contextId(),
-                messageDocument.messageId(),
-                messageDocument.type(),
-                messageDocument.textParts().toArray(new MessagePart[0]),
-                messageDocument.toolCalls(),
-                messageDocument.handoffs(),
-                messageDocument.timestamp()
+                messageDocument.getContextId(),
+                messageDocument.getMessageId(),
+                messageDocument.getType(),
+                messageDocument.getTextParts().toArray(new MessagePart[0]),
+                messageDocument.getToolCalls(),
+                messageDocument.getHandoffs(),
+                messageDocument.getTimestamp()
         );
     }
 
     private static Message toToolMessage(MessageDocument messageDocument) {
         return new ToolMessage(
-                messageDocument.contextId(),
-                messageDocument.messageId(),
-                messageDocument.type(),
-                messageDocument.toolCallId(),
-                messageDocument.toolName(),
-                messageDocument.textParts().toArray(new MessagePart[0]),
-                messageDocument.timestamp()
+                messageDocument.getContextId(),
+                messageDocument.getMessageId(),
+                messageDocument.getType(),
+                messageDocument.getToolCallId(),
+                messageDocument.getToolName(),
+                messageDocument.getTextParts().toArray(new MessagePart[0]),
+                messageDocument.getTimestamp()
         );
     }
 
     private static Message toHandoffMessage(MessageDocument messageDocument) {
         return new HandOffMessage(
-                messageDocument.contextId(),
-                messageDocument.messageId(),
-                messageDocument.type(),
-                messageDocument.handOffId(),
-                messageDocument.agentName(),
-                messageDocument.textParts().toArray(new MessagePart[0]),
-                messageDocument.timestamp()
+                messageDocument.getContextId(),
+                messageDocument.getMessageId(),
+                messageDocument.getType(),
+                messageDocument.getHandOffId(),
+                messageDocument.getAgentName(),
+                messageDocument.getTextParts().toArray(new MessagePart[0]),
+                messageDocument.getTimestamp()
         );
     }
 
     private static Message toDeveloperMessage(MessageDocument messageDocument) {
         return new DeveloperMessage(
-                messageDocument.contextId(),
-                messageDocument.messageId(),
-                messageDocument.type(),
-                messageDocument.textParts().toArray(new MessagePart[0]),
-                messageDocument.timestamp()
+                messageDocument.getContextId(),
+                messageDocument.getMessageId(),
+                messageDocument.getType(),
+                messageDocument.getTextParts().toArray(new MessagePart[0]),
+                messageDocument.getTimestamp()
         );
     }
 
