@@ -14,6 +14,7 @@
         <module>agentj-http</module>
         <module>agentj-anthropic</module>
         <module>agentj-mongodb</module>
+        <module>agentj-messaging</module>
     </modules>
     <version>0.0.7-SNAPSHOT</version>
     <name>agentJ</name>
