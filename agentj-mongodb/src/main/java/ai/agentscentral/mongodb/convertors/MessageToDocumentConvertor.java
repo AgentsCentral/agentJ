@@ -1,15 +1,15 @@
 package ai.agentscentral.mongodb.convertors;
 
 import ai.agentscentral.core.convertors.Convertor;
-import ai.agentscentral.core.handoff.DefaultHandoffInstruction;
-import ai.agentscentral.core.handoff.Handoff;
-import ai.agentscentral.core.session.message.*;
-import ai.agentscentral.core.tool.*;
-import com.mongodb.MongoClientSettings;
+import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.DeveloperMessage;
+import ai.agentscentral.core.session.message.HandOffMessage;
+import ai.agentscentral.core.session.message.Message;
+import ai.agentscentral.core.session.message.ToolInterruptMessage;
+import ai.agentscentral.core.session.message.ToolMessage;
+import ai.agentscentral.core.session.message.UserInterruptMessage;
+import ai.agentscentral.core.session.message.UserMessage;
 import org.bson.Document;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * MessageConvertor
@@ -31,7 +31,7 @@ public class MessageToDocumentConvertor {
                 case ToolMessage tm -> toolMessageToDocument(tm);
                 case UserInterruptMessage uim -> userInterruptMessageToDocument(uim);
                 case UserMessage um -> userMessageToDocument(um);
-                default -> throw new UnsupportedOperationException("");
+                default -> throw new UnsupportedOperationException("Failed to convert message to document");
             };
 
 
@@ -72,46 +72,10 @@ public class MessageToDocumentConvertor {
     }
 
     private static Document defaultMessage(Message message) {
-        return new Document("_class", message.getClass())
+        return new Document("_class", message.getClass().getName())
                 .append("messageId", message.messageId())
                 .append("contextId", message.contextId())
                 .append("parts", message.parts())
                 .append("timestamp", message.timestamp());
     }
-
-
-    static final class SomeToolBag implements ToolBag{
-
-        public void someTool(){
-
-        }
-    }
-
-    /*
-    public static void main(String...args) throws NoSuchMethodException {
-
-        SomeToolBag someToolBag = new SomeToolBag();
-
-        ToolCall toolCall = new ToolCall(someToolBag, someToolBag.getClass().getMethod("someTool"),
-                "some toolName", "some description",
-                List.of(new TypedToolParameter(0, String.class, "param", "param", true, "param")),
-                List.of(),
-                List.of()
-        );
-
-        TextPart[] parts = {new TextPart(MessagePartType.text, "test")};
-        final DefaultToolCallInstruction tci = new DefaultToolCallInstruction("t1", "some_tool",
-                "1,2", Map.of("somep1", "somep2"), toolCall);
-
-
-
-        DefaultHandoffInstruction hoi = new DefaultHandoffInstruction("c1", new Handoff("1", "some_Ag", "someagi"));
-
-
-        AssistantMessage am = new AssistantMessage("c1", "m1",
-                parts, List.of(tci), List.of(hoi), System.currentTimeMillis());
-
-    }
-
-     */
 }

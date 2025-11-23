@@ -52,6 +52,8 @@
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <mongodb-driver-sync.version>5.6.1</mongodb-driver-sync.version>
+        <testcontainers.mongodb.version>2.0.2</testcontainers.mongodb.version>
+        <testcontainers.junit-jupiter.version>1.21.3</testcontainers.junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -144,6 +146,20 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Test Container for MongoDB -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-mongodb</artifactId>
+                <version>${testcontainers.mongodb.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Testontainers JUnit Jupiter integration -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainers.junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
 

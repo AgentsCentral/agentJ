@@ -1,4 +1,4 @@
-package ai.agentscentral.mongodb;
+package ai.agentscentral.mongodb.contextstate;
 
 import ai.agentscentral.core.context.ContextState;
 import ai.agentscentral.core.context.ContextStateManager;
@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * MongoDBContextStateManager
  *
- * @author Mustafa Kamal
+ * @author Mustafa Bhuiyan
  * @author Rizwan Idrees
  */
 public class MongoDBContextStateManager implements ContextStateManager {

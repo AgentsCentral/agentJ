@@ -1,45 +1,51 @@
 package ai.agentscentral.mongodb;
 
 import ai.agentscentral.core.convertors.Convertor;
-import com.mongodb.client.MongoClient;
+import ai.agentscentral.mongodb.config.MongoDBConfig;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * MongoDBContextManager
  *
- * @author Mustafa Kamal
+ * @author Mustafa Bhuiyan
  * @author Rizwan Idrees
  */
 public class AgentJMongoDB {
 
-    private final MongoClient mongoClient;
-    private final MongoDatabase database;
+    public final MongoDatabase database;
 
-
-    public AgentJMongoDB(MongoClient mongoClient, String databaseName) {
-        this.mongoClient = mongoClient;
-        this.database = mongoClient.getDatabase(databaseName);
+    public AgentJMongoDB(String connectionString, String databaseName) {
+        this.database = MongoDBConfig.getMongoDatabase(connectionString, databaseName);
     }
 
     public MongoCollection<Document> getCollection(String collectionName) {
         return database.getCollection(collectionName);
     }
 
-    public void find(MongoCollection<Document> collection,
-                     List<Bson> filters,
-                     List<Bson> sorts){
-
+    public <T> T findOne(MongoCollection<Document> collection,
+                               Bson filter,
+                               Bson sort, Convertor<Document, T> convertor) {
+        Document document = collection.find(filter).sort(sort).first();
+        return Optional.ofNullable(document).map(convertor::convert).orElse(null);
     }
 
-    public <T> void insert(MongoCollection<Document> collection,
-                           T record,
-                           Convertor<T, Document> convertor) {
+    public <T> List<T> find(MongoCollection<Document> collection,
+                            Bson filter,
+                            Bson sort, Convertor<Document, T> convertor) {
+        FindIterable<Document> iterableDocs = collection.find(filter).sort(sort);
+        return iterableDocs.map(convertor::convert).into(new ArrayList<>());
+    }
+
+    public <T> void insertOne(MongoCollection<Document> collection, T record,
+                              Convertor<T, Document> convertor) {
 
         Optional.of(record)
                 .map(convertor::convert)

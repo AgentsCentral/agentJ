@@ -1,13 +1,25 @@
 package ai.agentscentral.mongodb.convertors;
 
 import ai.agentscentral.core.convertors.Convertor;
-import ai.agentscentral.core.session.message.*;
+import ai.agentscentral.core.handoff.HandoffInstruction;
+import ai.agentscentral.core.session.message.AssistantMessage;
+import ai.agentscentral.core.session.message.DeveloperMessage;
+import ai.agentscentral.core.session.message.HandOffMessage;
+import ai.agentscentral.core.session.message.Message;
+import ai.agentscentral.core.session.message.MessagePart;
+import ai.agentscentral.core.session.message.ToolInterruptMessage;
+import ai.agentscentral.core.session.message.ToolMessage;
+import ai.agentscentral.core.session.message.UserInterruptMessage;
+import ai.agentscentral.core.session.message.UserMessage;
+import ai.agentscentral.core.tool.ToolCallInstruction;
 import org.bson.Document;
+
+import java.util.Map;
 
 /**
  * MessageConvertor
  *
- * @author Mustafa Kamal
+ * @author Mustafa Bhuiyan
  * @author Rizwan Idrees
  */
 public class DocumentToMessageConvertor {
@@ -16,15 +28,15 @@ public class DocumentToMessageConvertor {
     }
 
     public static final Convertor<Document, Message> documentToMessageConvertor = d ->
-            switch (d.getString("class")) {
-                case  "ai.agentscentral.core.session.message.AssistantMessage.class" ->  documentToAssistantMessage(d);
-//                case DeveloperMessage dm -> developerMessageToDocument(dm);
-//                case HandOffMessage hm -> handoffMessageToDocument(hm);
-//                case ToolInterruptMessage tim -> toolInterruptMessageToDocument(tim);
-//                case ToolMessage tm -> toolMessageToDocument(tm);
-//                case UserInterruptMessage uim -> userInterruptMessageToDocument(uim);
-//                case UserMessage um -> userMessageToDocument(um);
-                default -> throw new UnsupportedOperationException("");
+            switch (d.getString("_class")) {
+                case  "AssistantMessage.class" ->  documentToAssistantMessage(d);
+                case "DeveloperMessage" -> documentToDeveloperMessage(d);
+                case "HandOffMessage" -> documentToHandoffMessage(d);
+                case "ToolInterruptMessage" -> documentToToolInterruptMessage(d);
+                case "ToolMessage" -> documentToToolMessage(d);
+                case "UserInterruptMessage" -> documentToUserInterruptMessage(d);
+                case "UserMessage" -> documentToUserMessage(d);
+                default -> throw new UnsupportedOperationException("Failed to convert document to message");
             };
 
 
@@ -32,48 +44,71 @@ public class DocumentToMessageConvertor {
         return new AssistantMessage(
                 document.getString("contextId"),
                 document.getString("messageId"),
-                null,
-                null,
-                null,
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getList("toolCalls", ToolCallInstruction.class),
+                document.getList("handoffs", HandoffInstruction.class),
                 document.getLong("timestamp")
         );
 
     }
 
-    private static Document developerMessageToDocument(DeveloperMessage message) {
-        return defaultMessage(message);
+    private static DeveloperMessage documentToDeveloperMessage(Document document) {
+        return new DeveloperMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp")
+        );
     }
 
-    private static Document handoffMessageToDocument(HandOffMessage message) {
-        return defaultMessage(message)
-                .append("handOffId", message.handOffId())
-                .append("agentName", message.agentName());
+    private static HandOffMessage documentToHandoffMessage(Document document) {
+        return new HandOffMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                document.getString("handOffId"),
+                document.getString("agentName"),
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp")
+        );
     }
 
-    private static Document toolInterruptMessageToDocument(ToolInterruptMessage message) {
-        return defaultMessage(message);
+    private static ToolInterruptMessage documentToToolInterruptMessage(Document document) {
+        return new ToolInterruptMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp")
+        );
     }
 
-    private static Document toolMessageToDocument(ToolMessage message) {
-        return defaultMessage(message)
-                .append("toolCallId", message.toolCallId())
-                .append("toolName", message.toolName());
+    private static ToolMessage documentToToolMessage(Document document) {
+        return new ToolMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                document.getString("toolCallId"),
+                document.getString("toolName"),
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp")
+        );
     }
 
-    private static Document userInterruptMessageToDocument(UserInterruptMessage message) {
-        return defaultMessage(message)
-                .append("interruptParameterValues", message.interruptParameterValues());
+    private static UserInterruptMessage documentToUserInterruptMessage(Document document) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> interruptParameterValues =
+                (Map<String, String>) document.get("interruptParameterValues");
+        return new UserInterruptMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                interruptParameterValues,
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp"));
     }
 
-    private static Document userMessageToDocument(UserMessage message) {
-        return defaultMessage(message);
-    }
-
-    private static Document defaultMessage(Message message) {
-        return new Document("_class", message.getClass())
-                .append("messageId", message.messageId())
-                .append("contextId", message.contextId())
-                .append("parts", message.parts())
-                .append("timestamp", message.timestamp());
+    private static UserMessage documentToUserMessage(Document document) {
+        return new UserMessage(
+                document.getString("contextId"),
+                document.getString("messageId"),
+                document.getList("parts", MessagePart.class).toArray(new MessagePart[0]),
+                document.getLong("timestamp"));
     }
 }
