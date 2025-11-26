@@ -20,7 +20,7 @@ public class MongoDBConfig {
             mongoClient = MongoClients.create(connectionString);
         }
 
-        if (StringUtils.isAllBlank()) {
+        if (StringUtils.isAllBlank(databaseName)) {
             databaseName = DEFAULT_DATABASE_NAME;
         }
 
