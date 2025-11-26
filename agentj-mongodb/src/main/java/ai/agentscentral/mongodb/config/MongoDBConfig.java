@@ -25,6 +25,6 @@ public class MongoDBConfig {
         }
 
         return mongoClient.getDatabase(databaseName)
-                .withCodecRegistry(MongoDBCodecRegistry.DOCUMENT_CODEC_REGISTRY);
+                .withCodecRegistry(MongoDBCodecRegistry.AUTO_CODEC_REGISTRY);
     }
 }

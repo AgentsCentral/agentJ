@@ -2,10 +2,10 @@ package ai.agentscentral.mongodb;
 
 import ai.agentscentral.core.convertors.Convertor;
 import ai.agentscentral.mongodb.config.MongoDBConfig;
+import ai.agentscentral.mongodb.model.MessageDocument;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
@@ -26,38 +26,38 @@ public class AgentJMongoDB {
         this.database = MongoDBConfig.getMongoDatabase(connectionString, databaseName);
     }
 
-    public MongoCollection<Document> getCollection(String collectionName) {
-        return database.getCollection(collectionName);
+    public <T> MongoCollection<T> getCollection(String collectionName, Class<T> documentClass) {
+        return database.getCollection(collectionName, documentClass);
     }
 
-    public <T> T findOne(MongoCollection<Document> collection,
+    public <T> T findOne(MongoCollection<MessageDocument> collection,
                                Bson filter,
-                               Bson sort, Convertor<Document, T> convertor) {
-        Document document = collection.find(filter).sort(sort).first();
+                               Bson sort, Convertor<MessageDocument, T> convertor) {
+        MessageDocument document = collection.find(filter).sort(sort).first();
         return Optional.ofNullable(document).map(convertor::convert).orElse(null);
     }
 
-    public <T> List<T> find(MongoCollection<Document> collection,
+    public <T> List<T> find(MongoCollection<MessageDocument> collection,
                             Bson filter,
-                            Bson sort, Convertor<Document, T> convertor) {
-        FindIterable<Document> iterableDocs = collection.find(filter).sort(sort);
+                            Bson sort, Convertor<MessageDocument, T> convertor) {
+        FindIterable<MessageDocument> iterableDocs = collection.find(filter).sort(sort);
         return iterableDocs.map(convertor::convert).into(new ArrayList<>());
     }
 
-    public <T> void insertOne(MongoCollection<Document> collection, T record,
-                              Convertor<T, Document> convertor) {
+    public <T> void insertOne(MongoCollection<MessageDocument> collection, T record,
+                              Convertor<T, MessageDocument> convertor) {
 
         Optional.of(record)
                 .map(convertor::convert)
                 .map(collection::insertOne);
     }
 
-    public <T> void insertMany(MongoCollection<Document> collection,
+    public <T> void insertMany(MongoCollection<MessageDocument> collection,
                                List<? extends T> records,
-                               Convertor<T, Document> convertor) {
+                               Convertor<T, MessageDocument> convertor) {
 
 
-        final List<Document> documents = records.stream()
+        final List<MessageDocument> documents = records.stream()
                 .map(convertor::convert).toList();
 
         collection.insertMany(documents);
