@@ -1,5 +1,7 @@
 package ai.agentscentral.messaging.message;
 
+import ai.agentscentral.core.session.user.User;
+
 import java.util.List;
 
 /**
@@ -8,5 +10,7 @@ import java.util.List;
  * @param taskId
  * @param messageParts
  */
-public record TaskMessage(String taskId, List<? extends MessagePart> messageParts) {
+public record TaskMessage(String taskId,
+                          List<? extends MessagePart> messageParts,
+                          User user) {
 }
