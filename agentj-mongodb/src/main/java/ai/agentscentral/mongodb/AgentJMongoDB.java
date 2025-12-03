@@ -41,7 +41,7 @@ public class AgentJMongoDB {
      * @param convertor the convertor to convert the document to a record
      * @return the record if found, or null if not found
      */
-    public <T, D> T findOne(MongoCollection<D> collection,
+    public <T, D extends AgentJDocument> T findOne(MongoCollection<D> collection,
                                Bson filter, Convertor<D, T> convertor) {
         D document = collection.find(filter).first();
         return Optional.ofNullable(document).map(convertor::convert).orElse(null);
@@ -56,7 +56,7 @@ public class AgentJMongoDB {
      * @param convertor the convertor to convert documents to records
      * @return a list of records
      */
-    public <T, D> List<T> find(MongoCollection<D> collection,
+    public <T, D extends AgentJDocument> List<T> find(MongoCollection<D> collection,
                             Bson filter,
                             Bson sort, Convertor<D, T> convertor) {
         FindIterable<D> iterableDocs = collection.find(filter).sort(sort);
@@ -70,12 +70,16 @@ public class AgentJMongoDB {
      * @param record the record to be inserted
      * @param convertor the convertor to convert the record to a document
      */
-    public <T, D> void insertOne(MongoCollection<D> collection, T record,
+    public <T, D extends AgentJDocument> void insertOne(MongoCollection<D> collection, T record,
                               Convertor<T, D> convertor) {
 
-        Optional.of(record)
-                .map(convertor::convert)
-                .map(collection::insertOne);
+        D document = convertor.convert(record);
+
+        Instant now = Instant.now();
+        document.setCreatedAt(now);
+        document.setUpdatedAt(now);
+
+        collection.insertOne(document);
     }
 
     /**
@@ -85,13 +89,18 @@ public class AgentJMongoDB {
      * @param records the records to be inserted
      * @param convertor the convertor to convert the records to documents
      */
-    public <T, D> void insertMany(MongoCollection<D> collection,
+    public <T, D extends AgentJDocument> void insertMany(MongoCollection<D> collection,
                                List<? extends T> records,
                                Convertor<T, D> convertor) {
 
+        Instant now = Instant.now();
 
         final List<D> documents = records.stream()
-                .map(convertor::convert).toList();
+                .map(convertor::convert)
+                .peek(document -> {
+                    document.setCreatedAt(now);
+                    document.setUpdatedAt(now);
+                }).toList();
 
         collection.insertMany(documents);
     }
