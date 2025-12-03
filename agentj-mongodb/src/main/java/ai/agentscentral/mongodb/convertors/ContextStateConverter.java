@@ -6,6 +6,11 @@ import ai.agentscentral.core.convertors.Convertor;
 import ai.agentscentral.mongodb.enums.ContextStateType;
 import ai.agentscentral.mongodb.model.ContextStateDocument;
 
+/**
+ * ContextStateConverter
+ *
+ * @author Mustafa Bhuiyan
+ */
 public class ContextStateConverter {
 
     // Converter to convert ContextState -> ContextStateDocument

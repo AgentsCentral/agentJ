@@ -15,6 +15,13 @@ public class MongoDBConfig {
     private static MongoClient mongoClient;
     private static final String DEFAULT_DATABASE_NAME = "agentj_mongodb";
 
+    /**
+     * Create or Retrieve the MongoDB database instance.
+     *
+     * @param connectionString the connection string for the MongoDB database
+     * @param databaseName the name of the database to retrieve
+     * @return the MongoDB database instance
+     */
     public static synchronized MongoDatabase getMongoDatabase(String connectionString, String databaseName) {
         if (mongoClient == null) {
             mongoClient = MongoClients.create(connectionString);

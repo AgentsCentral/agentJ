@@ -5,6 +5,11 @@ import org.bson.types.ObjectId;
 
 import java.time.Instant;
 
+/**
+ * ContextStateDocument
+ *
+ * @author Mustafa Bhuiyan
+ */
 public class ContextStateDocument extends AgentJDocument {
     private ContextStateType type;
     private String contextId;

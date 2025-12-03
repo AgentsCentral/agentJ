@@ -23,6 +23,11 @@ public class MongoDBTestConfig {
     private static AgentJMongoDB agentJMongoDB;
     private static final Logger logger = LoggerFactory.getLogger(MongoDBTestConfig.class);
 
+    /**
+     * Starts the MongoDB test container and creates the AgentJMongoDB instance.
+     *
+     * @return the AgentJMongoDB instance
+     */
     public static AgentJMongoDB getAgentJMongoDB() {
         if (agentJMongoDB == null) {
             if (!mongoDBContainer.isRunning()) {

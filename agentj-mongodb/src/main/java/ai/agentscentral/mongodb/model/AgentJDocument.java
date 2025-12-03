@@ -4,6 +4,11 @@ import org.bson.types.ObjectId;
 
 import java.time.Instant;
 
+/**
+ * AgentJDocument
+ *
+ * @author Mustafa Bhuiyan
+ */
 public abstract class AgentJDocument {
     protected ObjectId id;
     protected Instant createdAt;
