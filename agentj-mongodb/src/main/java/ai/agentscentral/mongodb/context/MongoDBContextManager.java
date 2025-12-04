@@ -30,6 +30,12 @@ public class MongoDBContextManager implements ContextManager {
         this.contextCollection = agentJMongoDB.getCollection(contextCollectionName, MessageDocument.class);
     }
 
+    /**
+     * Retrieves the context message list for the specified context ID.
+     *
+     * @param contextId the unique identifier of the context message list
+     * @return a List of Messages if found, or empty if not found
+     */
     @Override
     public List<Message> getContext(String contextId) {
         Bson filter = Filters.eq("contextId", contextId);
@@ -37,6 +43,13 @@ public class MongoDBContextManager implements ContextManager {
         return agentJMongoDB.find(contextCollection, filter, sort, toMessageConverter);
     }
 
+    /**
+     * Adds a list of messages to the context for the specified context ID.
+     *
+     * @param contextId the unique identifier of the context message list
+     * @param newMessages the list of messages to be added
+     * @throws IllegalArgumentException if the messages list is null or empty
+     */
     @Override
     public void addContext(String contextId, List<? extends Message> newMessages) {
         if (newMessages == null || newMessages.isEmpty()) {

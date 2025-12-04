@@ -3,6 +3,7 @@ package ai.agentscentral.mongodb.model;
 import ai.agentscentral.mongodb.enums.MessageType;
 import org.bson.types.ObjectId;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +12,7 @@ import java.util.Map;
  *
  * @author Mustafa Bhuiyan
  */
-public class MessageDocument {
-    private ObjectId id;
+public class MessageDocument extends AgentJDocument {
     private MessageType messageType;
 
     // Common fields for all message types
@@ -56,7 +56,8 @@ public class MessageDocument {
             String agentName,
             String toolCallId,
             String toolName,
-            Map<String, String> interruptParameterValues) {
+            Map<String, String> interruptParameterValues,
+            Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.messageType = messageType;
         this.contextId = contextId;
@@ -70,17 +71,11 @@ public class MessageDocument {
         this.toolCallId = toolCallId;
         this.toolName = toolName;
         this.interruptParameterValues = interruptParameterValues;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     // Getters and Setters
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
 
     public MessageType getMessageType() {
         return messageType;
