@@ -14,11 +14,12 @@ import java.util.List;
  * @param agentic
  * @param authorizers
  * @param corsConfig
- *
  * @author Rizwan Idrees
  */
-public record HttpConfig(String path, Agentic agentic, List<Authorizer> authorizers, CORSConfig corsConfig, ObjectMapper objectMapper) {
-    public HttpConfig(String path, Agentic agentic, List<Authorizer> authorizers, CORSConfig corsConfig) {
-        this(path, agentic, authorizers, corsConfig, new ObjectMapper());
-    }
+public record HttpConfig(String path,
+                         Agentic agentic,
+                         List<Authorizer> authorizers,
+                         CORSConfig corsConfig,
+                         ObjectMapper objectMapper) {
+
 }

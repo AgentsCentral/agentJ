@@ -1,0 +1,38 @@
+package ai.agentscentral.http.route;
+
+import ai.agentscentral.http.request.Request;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+/**
+ * ControllerMappedRoute
+ *
+ * @author Rizwan Idrees
+ */
+class ControllerMappedRoute implements Route {
+
+    private final String path;
+    private final HttpMethod httpMethod;
+    private final Method mappedMethod;
+    private final PathPattern pathPattern;
+
+    ControllerMappedRoute(String path, HttpMethod httpMethod, Method mappedMethod) {
+        this.path = path;
+        this.httpMethod = httpMethod;
+        this.mappedMethod = mappedMethod;
+        this.pathPattern = PathPatternExtractor.extract(path);
+    }
+
+    @Override
+    public Optional<ControllerMappedMatchedRoute> match(Request request) {
+
+        final Predicate<Request> requestMatches = r -> r.method() == httpMethod &&
+                pathPattern.pattern().matcher(r.path()).matches();
+
+        return Optional.of(request)
+               .filter(requestMatches)
+               .map(r -> new ControllerMappedMatchedRoute(path, mappedMethod));
+    }
+}
