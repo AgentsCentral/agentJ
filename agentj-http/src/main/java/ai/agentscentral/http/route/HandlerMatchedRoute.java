@@ -5,5 +5,5 @@ package ai.agentscentral.http.route;
  *
  * @author Rizwan Idrees
  */
-public record HandlerMatchedRoute(String path) implements MatchedRoute {
+public record HandlerMatchedRoute(String path, HttpHandlerRoute route) implements MatchedRoute {
 }

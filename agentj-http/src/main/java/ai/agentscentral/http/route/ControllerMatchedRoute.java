@@ -1,15 +1,13 @@
 package ai.agentscentral.http.route;
 
-import java.lang.reflect.Method;
-
 /**
  * ControllerMatchedRoute
  *
  * @param path
  * @param controller
- * @param method
+ * @param route
  * @author Rizwan Idrees
  */
 
-public record ControllerMatchedRoute(String path, Object controller, Method method) implements MatchedRoute {
+public record ControllerMatchedRoute(String path, Object controller, ControllerMappedMatchedRoute route) implements MatchedRoute {
 }
