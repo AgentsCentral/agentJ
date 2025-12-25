@@ -1,7 +1,7 @@
 package ai.agentscentral.http.route;
 
 /**
- * PathName
+ * PathValue
  *
  * @param name
  * @param value
