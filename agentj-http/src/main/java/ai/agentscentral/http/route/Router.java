@@ -1,12 +1,10 @@
 package ai.agentscentral.http.route;
 
-import java.util.Set;
+import ai.agentscentral.http.request.Request;
+import ai.agentscentral.http.response.Response;
 
-public class Router {
+public interface Router {
 
-    private final Set<Route> routes;
+    Response route(Request request);
 
-    public Router(Set<Route> routes) {
-        this.routes = routes;
-    }
 }

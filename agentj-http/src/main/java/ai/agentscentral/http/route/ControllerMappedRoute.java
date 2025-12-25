@@ -26,7 +26,7 @@ class ControllerMappedRoute implements Route {
     }
 
     @Override
-    public Optional<ControllerMappedMatchedRoute> match(Request request) {
+    public Optional<MatchedRoute> match(Request request) {
 
         final Predicate<Request> requestMatches = r -> r.method() == httpMethod &&
                 pathPattern.pattern().matcher(r.path()).matches();

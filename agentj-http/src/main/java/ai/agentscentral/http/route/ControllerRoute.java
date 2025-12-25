@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static ai.agentscentral.http.route.HttpRouter.sortByPathLength;
 import static java.util.Comparator.comparingInt;
 
 /**
@@ -15,7 +16,7 @@ import static java.util.Comparator.comparingInt;
  */
 public class ControllerRoute implements Route {
 
-    public static final Comparator<ControllerMappedMatchedRoute> sortByPathLength = comparingInt(o -> o.path().length());
+
     private final Object controller;
     private final List<ControllerMappedRoute> mappedRoutes;
 
@@ -26,8 +27,9 @@ public class ControllerRoute implements Route {
 
 
     @Override
-    public Optional<ControllerMatchedRoute> match(Request request) {
-        return mappedRoutes.stream().flatMap(mr -> mr.match(request).stream()).max(sortByPathLength)
-                 .map(mr -> new ControllerMatchedRoute(mr.path(), controller, mr));
+    public Optional<MatchedRoute> match(Request request) {
+        return mappedRoutes.stream().flatMap(mr -> mr.match(request).stream())
+                .max(sortByPathLength)
+                .map(mr -> new ControllerMatchedRoute(mr.path(), controller, (ControllerMappedMatchedRoute) mr));
     }
 }

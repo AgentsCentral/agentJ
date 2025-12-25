@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 public interface Route {
 
-    Optional<? extends MatchedRoute> match(Request request);
+    Optional<MatchedRoute> match(Request request);
 }

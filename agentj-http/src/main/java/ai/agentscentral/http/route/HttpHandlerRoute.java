@@ -26,9 +26,9 @@ public class HttpHandlerRoute implements Route {
 
 
     @Override
-    public Optional<HandlerMatchedRoute> match(Request request) {
+    public Optional<MatchedRoute> match(Request request) {
         return Optional.of(request)
                 .filter(r -> r.method() == method && pathPattern.pattern().matcher(r.path()).matches())
-                .map(r -> new HandlerMatchedRoute(path, this));
+                .map(r -> new HandlerMatchedRoute(path, this, handler));
     }
 }
