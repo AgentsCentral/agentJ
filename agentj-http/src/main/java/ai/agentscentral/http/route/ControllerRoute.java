@@ -2,12 +2,10 @@ package ai.agentscentral.http.route;
 
 import ai.agentscentral.http.request.Request;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static ai.agentscentral.http.route.HttpRouter.sortByPathLength;
-import static java.util.Comparator.comparingInt;
 
 /**
  * ControllerRoute

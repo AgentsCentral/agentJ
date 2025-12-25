@@ -14,6 +14,7 @@ public class HttpRouter implements Router {
     static final Comparator<MatchedRoute> sortByPathLength = comparingInt(o -> o.path().length());
 
     private final Set<Route> routes;
+    private final HttpControllerRouter controllerRouter = new HttpControllerRouter();
 
     public HttpRouter(Set<Route> routes) {
         this.routes = routes;
@@ -24,6 +25,17 @@ public class HttpRouter implements Router {
         final Optional<MatchedRoute> matchedRoute = routes.stream()
                 .flatMap(r -> r.match(request).stream())
                 .max(sortByPathLength);
-        return null;
+
+        return matchedRoute.map(mr -> routeToMatched(mr, request))
+                .orElseGet(() -> null);
     }
+
+    private Response routeToMatched(MatchedRoute matchedRoute, Request request) {
+        return switch (matchedRoute) {
+            case HandlerMatchedRoute hmr -> hmr.handler().handle(request);
+            case ControllerMatchedRoute cmr -> controllerRouter.route(cmr, request);
+            default -> null;
+        };
+    }
+
 }
