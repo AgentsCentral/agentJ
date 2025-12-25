@@ -16,7 +16,7 @@ class PathPatternExtractor {
 
     private static final String REPLACEMENT = "([^/]+)";
     private static final String $ = "$";
-    private static final String PATH_REGEX = "\\{[^/]+\\}";
+    private static final String PATH_REGEX = "\\{[^/]+}";
     private static final String REGEX_PREFIX = "^";
     private static final String OPENING_EXPRESSION = "{";
     private static final String CLOSING_EXPRESSION = "}";

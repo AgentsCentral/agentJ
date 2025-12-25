@@ -33,6 +33,6 @@ class ControllerMappedRoute implements Route {
 
         return Optional.of(request)
                .filter(requestMatches)
-               .map(r -> new ControllerMappedMatchedRoute(path, mappedMethod, this));
+               .map(r -> new ControllerMappedMatchedRoute(path, mappedMethod, pathPattern, this));
     }
 }

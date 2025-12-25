@@ -25,7 +25,8 @@ class ControllerMappedRoutesExtractor {
                     method.isAnnotationPresent(Patch.class) ||
                     method.isAnnotationPresent(Post.class) ||
                     method.isAnnotationPresent(Put.class);
-    public static final String FORWARD_SLASH = "/";
+
+    private static final String FORWARD_SLASH = "/";
 
 
     private ControllerMappedRoutesExtractor() {

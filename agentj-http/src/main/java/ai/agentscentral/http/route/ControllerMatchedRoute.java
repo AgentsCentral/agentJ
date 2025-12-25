@@ -5,9 +5,9 @@ package ai.agentscentral.http.route;
  *
  * @param path
  * @param controller
- * @param route
+ * @param mappedMatchedRoute
  * @author Rizwan Idrees
  */
 
-public record ControllerMatchedRoute(String path, Object controller, ControllerMappedMatchedRoute route) implements MatchedRoute {
+public record ControllerMatchedRoute(String path, Object controller, ControllerMappedMatchedRoute mappedMatchedRoute) implements MatchedRoute {
 }
