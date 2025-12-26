@@ -12,8 +12,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static ai.agentscentral.http.route.HttpMethod.*;
-import static ai.agentscentral.http.route.ParameterType.PARAMETER;
-import static ai.agentscentral.http.route.ParameterType.PATH;
+import static ai.agentscentral.http.route.ParameterType.*;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.substringBeforeLast;
@@ -103,6 +102,7 @@ class ControllerMappedRoutesExtractor {
                 .toList();
     }
 
+
     private static MethodParameter extractMethodParameter(int index, Parameter parameter) {
         if(parameter.isAnnotationPresent(RequestParam.class)){
             final RequestParam annotation = parameter.getAnnotation(RequestParam.class);
@@ -114,8 +114,17 @@ class ControllerMappedRoutesExtractor {
             return new MethodParameter(index, annotation.name(), true, PATH,
                     parameter.getType());
         }
+        else if(parameter.isAnnotationPresent(Header.class)){
+            final Header annotation = parameter.getAnnotation(Header.class);
+            return new MethodParameter(index, annotation.name(), annotation.required(), HEADER,
+                    parameter.getType());
+        }
+        else if(parameter.isAnnotationPresent(Body.class)){
+            return new MethodParameter(index, parameter.getName(), true, BODY,
+                    parameter.getType());
+        }
 
-        return null;
+        throw new UnsupportedOperationException("Unknown parameter");
     }
 
 }
