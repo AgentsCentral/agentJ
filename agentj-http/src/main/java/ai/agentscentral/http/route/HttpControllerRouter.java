@@ -5,6 +5,7 @@ import ai.agentscentral.http.response.Response;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static ai.agentscentral.http.route.PathPatternExtractor.extractPathVariables;
@@ -61,16 +62,26 @@ class HttpControllerRouter {
                               List<String> pathNames,
                               List<String> pathValues) {
 
-        //TODO:: do argument conversion
         return switch (methodParameter.type()) {
-            case PARAMETER -> request.parameters().get(methodParameter.name());
-            case PATH -> pathValue(methodParameter.name(), pathNames, pathValues);
+            case PARAMETER -> convertParameter(methodParameter.name(), request, methodParameter.typeClass());
+            case PATH -> pathValue(methodParameter.name(), pathNames, pathValues, methodParameter.typeClass());
+            case HEADER -> convertHeader(methodParameter.name(), request, methodParameter.typeClass());
             default -> null;
         };
     }
 
-    private Object pathValue(String name, List<String> pathNames, List<String> pathValues) {
-        return pathValues.get(pathNames.indexOf(name));
+    private Object convertParameter(String name, Request request, Class<?> type) {
+        final Map<String, String[]> parameters = request.parameters();
+        return TypeConvertor.convert(parameters.get(name), type);
     }
 
+    private Object pathValue(String name, List<String> pathNames, List<String> pathValues, Class<?> type) {
+        final String pathValue = pathValues.get(pathNames.indexOf(name));
+        return TypeConvertor.convert(pathValue, type);
+    }
+
+    private Object convertHeader(String name, Request request, Class<?> type) {
+        final Map<String, List<String>> headers = request.headers();
+        return TypeConvertor.convert(headers.get(name).toArray(String[]::new), type);
+    }
 }

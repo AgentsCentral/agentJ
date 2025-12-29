@@ -104,23 +104,20 @@ class ControllerMappedRoutesExtractor {
 
 
     private static MethodParameter extractMethodParameter(int index, Parameter parameter) {
-        if(parameter.isAnnotationPresent(RequestParam.class)){
+        if (parameter.isAnnotationPresent(RequestParam.class)) {
             final RequestParam annotation = parameter.getAnnotation(RequestParam.class);
-            return new MethodParameter(index, annotation.name(), annotation.required(), PARAMETER,
+            return new MethodParameter(index, annotation.name(), PARAMETER,
                     parameter.getType());
-        }
-        else if(parameter.isAnnotationPresent(PathVariable.class)){
+        } else if (parameter.isAnnotationPresent(PathVariable.class)) {
             final PathVariable annotation = parameter.getAnnotation(PathVariable.class);
-            return new MethodParameter(index, annotation.name(), true, PATH,
+            return new MethodParameter(index, annotation.name(), PATH,
                     parameter.getType());
-        }
-        else if(parameter.isAnnotationPresent(Header.class)){
+        } else if (parameter.isAnnotationPresent(Header.class)) {
             final Header annotation = parameter.getAnnotation(Header.class);
-            return new MethodParameter(index, annotation.name(), annotation.required(), HEADER,
+            return new MethodParameter(index, annotation.name(), HEADER,
                     parameter.getType());
-        }
-        else if(parameter.isAnnotationPresent(Body.class)){
-            return new MethodParameter(index, parameter.getName(), true, BODY,
+        } else if (parameter.isAnnotationPresent(Body.class)) {
+            return new MethodParameter(index, parameter.getName(), BODY,
                     parameter.getType());
         }
 

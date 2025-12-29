@@ -16,5 +16,4 @@ public @interface RequestParam {
 
     String name();
 
-    boolean required() default true;
 }
