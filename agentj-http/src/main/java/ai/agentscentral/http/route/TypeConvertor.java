@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 /**
  * TypeConvertor
@@ -14,9 +15,7 @@ import java.util.function.Function;
  */
 class TypeConvertor {
 
-    private static final Map<Class<?>, Function<String, Object>> CONVERTERS = new HashMap<>();
-
-    static {
+    private static final Map<Class<?>, Function<String, Object>> CONVERTERS = new HashMap<>() {{
         register(int.class, Integer.class, Integer::parseInt);
         register(long.class, Long.class, Long::parseLong);
         register(double.class, Double.class, Double::parseDouble);
@@ -25,7 +24,7 @@ class TypeConvertor {
         register(short.class, Short.class, Short::parseShort);
         register(byte.class, Byte.class, Byte::parseByte);
         CONVERTERS.put(String.class, s -> s);
-    }
+    }};
 
 
     static Object convert(String[] values, Class<?> type) {
@@ -65,10 +64,9 @@ class TypeConvertor {
 
         final Object array = Array.newInstance(componentType, values.length);
 
-        for (int i = 0; i < values.length; i++) {
-            Object convertedElement = convert(values[i], componentType);
-            Array.set(array, i, convertedElement);
-        }
+        IntStream.range(0, values.length)
+                .forEach( i ->  Array.set(array, i, convert(values[i], componentType)));
+
         return array;
     }
 

@@ -25,15 +25,13 @@ class HttpControllerRouter {
 
         final ControllerMappedMatchedRoute mappedMatchedRoute = matchedRoute.mappedMatchedRoute();
 
-
         try {
-            //todo map method parameters
-            final Object invoked = mappedMatchedRoute.method().invoke(matchedRoute.controller());
+            return (Response) mappedMatchedRoute.method().invoke(matchedRoute.controller(),
+                    methodArguments(mappedMatchedRoute, request));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e); //TODO:: default 500 response.
         }
 
-        return null;
     }
 
     private Object[] methodArguments(ControllerMappedMatchedRoute mappedMatchedRoute,
@@ -64,9 +62,9 @@ class HttpControllerRouter {
 
         return switch (methodParameter.type()) {
             case PARAMETER -> convertParameter(methodParameter.name(), request, methodParameter.typeClass());
-            case PATH -> pathValue(methodParameter.name(), pathNames, pathValues, methodParameter.typeClass());
+            case PATH -> convertPath(methodParameter.name(), pathNames, pathValues, methodParameter.typeClass());
             case HEADER -> convertHeader(methodParameter.name(), request, methodParameter.typeClass());
-            default -> null;
+            case BODY -> convertBody(request, methodParameter.typeClass());
         };
     }
 
@@ -75,7 +73,7 @@ class HttpControllerRouter {
         return TypeConvertor.convert(parameters.get(name), type);
     }
 
-    private Object pathValue(String name, List<String> pathNames, List<String> pathValues, Class<?> type) {
+    private Object convertPath(String name, List<String> pathNames, List<String> pathValues, Class<?> type) {
         final String pathValue = pathValues.get(pathNames.indexOf(name));
         return TypeConvertor.convert(pathValue, type);
     }
@@ -83,5 +81,9 @@ class HttpControllerRouter {
     private Object convertHeader(String name, Request request, Class<?> type) {
         final Map<String, List<String>> headers = request.headers();
         return TypeConvertor.convert(headers.get(name).toArray(String[]::new), type);
+    }
+
+    private Object convertBody(Request request, Class<?> type) {
+        return null;
     }
 }
