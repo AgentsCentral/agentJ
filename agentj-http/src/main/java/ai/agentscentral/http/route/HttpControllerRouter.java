@@ -5,10 +5,10 @@ import ai.agentscentral.http.response.Response;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static ai.agentscentral.http.route.PathPatternExtractor.extractPathVariables;
+import static ai.agentscentral.http.route.convertors.TypeConvertors.*;
 import static java.util.Comparator.comparingInt;
 
 /**
@@ -60,27 +60,13 @@ class HttpControllerRouter {
                               List<String> pathNames,
                               List<String> pathValues) {
 
+        final String name = methodParameter.name();
         return switch (methodParameter.type()) {
-            case PARAMETER -> convertParameter(methodParameter.name(), request, methodParameter.typeClass());
-            case PATH -> convertPath(methodParameter.name(), pathNames, pathValues, methodParameter.typeClass());
-            case HEADER -> convertHeader(methodParameter.name(), request, methodParameter.typeClass());
+            case PARAMETER -> parameterConvertor.convert(name, request, methodParameter.typeClass());
+            case PATH -> pathConvertor.convert(name, pathNames, pathValues, methodParameter.typeClass());
+            case HEADER -> headerConvertor.convert(name, request, methodParameter.typeClass());
             case BODY -> convertBody(request, methodParameter.typeClass());
         };
-    }
-
-    private Object convertParameter(String name, Request request, Class<?> type) {
-        final Map<String, String[]> parameters = request.parameters();
-        return TypeConvertor.convert(parameters.get(name), type);
-    }
-
-    private Object convertPath(String name, List<String> pathNames, List<String> pathValues, Class<?> type) {
-        final String pathValue = pathValues.get(pathNames.indexOf(name));
-        return TypeConvertor.convert(pathValue, type);
-    }
-
-    private Object convertHeader(String name, Request request, Class<?> type) {
-        final Map<String, List<String>> headers = request.headers();
-        return TypeConvertor.convert(headers.get(name).toArray(String[]::new), type);
     }
 
     private Object convertBody(Request request, Class<?> type) {

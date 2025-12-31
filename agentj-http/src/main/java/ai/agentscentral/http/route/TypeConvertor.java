@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
  *
  * @author Rizwan Idrees
  */
-class TypeConvertor {
+public class TypeConvertor {
 
     private static final Map<Class<?>, Function<String, Object>> CONVERTERS = new HashMap<>() {{
         register(int.class, Integer.class, Integer::parseInt);
@@ -27,7 +27,7 @@ class TypeConvertor {
     }};
 
 
-    static Object convert(String[] values, Class<?> type) {
+    public static Object convert(String[] values, Class<?> type) {
 
         if (Objects.isNull(values)) {
             return null;
@@ -44,7 +44,7 @@ class TypeConvertor {
         return convert(values[0], type);
     }
 
-    static Object convert(String value, Class<?> type) {
+    public static Object convert(String value, Class<?> type) {
 
         if (CONVERTERS.containsKey(type)) {
             return CONVERTERS.get(type).apply(value);
@@ -65,7 +65,7 @@ class TypeConvertor {
         final Object array = Array.newInstance(componentType, values.length);
 
         IntStream.range(0, values.length)
-                .forEach( i ->  Array.set(array, i, convert(values[i], componentType)));
+                .forEach(i -> Array.set(array, i, convert(values[i], componentType)));
 
         return array;
     }
