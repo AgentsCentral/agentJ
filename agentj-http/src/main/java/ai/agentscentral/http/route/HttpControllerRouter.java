@@ -2,6 +2,7 @@ package ai.agentscentral.http.route;
 
 import ai.agentscentral.http.request.Request;
 import ai.agentscentral.http.response.Response;
+import ai.agentscentral.http.route.convertors.ContentConvertor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -16,17 +17,24 @@ import static java.util.Comparator.comparingInt;
  *
  * @author Rizwan Idrees
  */
-class HttpControllerRouter {
+public class HttpControllerRouter {
+
+
+    private final ContentConvertor contentConvertor;
 
 
     public static final Object[] EMPTY_ARGUMENTS = new Object[]{};
 
-    public Response route(ControllerMatchedRoute matchedRoute, Request request) {
+    public HttpControllerRouter(ContentConvertor contentConvertor) {
+        this.contentConvertor = contentConvertor;
+    }
+
+    public Response<?> route(ControllerMatchedRoute matchedRoute, Request request) {
 
         final ControllerMappedMatchedRoute mappedMatchedRoute = matchedRoute.mappedMatchedRoute();
 
         try {
-            return (Response) mappedMatchedRoute.method().invoke(matchedRoute.controller(),
+            return (Response<?>) mappedMatchedRoute.method().invoke(matchedRoute.controller(),
                     methodArguments(mappedMatchedRoute, request));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e); //TODO:: default 500 response.
@@ -65,11 +73,8 @@ class HttpControllerRouter {
             case PARAMETER -> parameterConvertor.convert(name, request, methodParameter.typeClass());
             case PATH -> pathConvertor.convert(name, pathNames, pathValues, methodParameter.typeClass());
             case HEADER -> headerConvertor.convert(name, request, methodParameter.typeClass());
-            case BODY -> convertBody(request, methodParameter.typeClass());
+            case BODY -> contentConvertor.convert(request, methodParameter.typeClass());
         };
     }
 
-    private Object convertBody(Request request, Class<?> type) {
-        return null;
-    }
 }

@@ -54,6 +54,7 @@ public class AgentJServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+
         final MessageRequest messageRequest = requestExtractor.extract(request);
         final String sessionId = sessionIdExtractor.extract(request)
                 .orElse(sessionIdGenerator.generate());
