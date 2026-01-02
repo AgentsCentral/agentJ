@@ -27,8 +27,7 @@ public class DefaultContentConvertor implements ContentConvertor {
 
     @Override
     public <T> String convert(Response<T> response) {
-        return findConvertor(response.getContentType())
-                .serialize(response.getT());
+        return findConvertor(response.contentType()).serialize(response.resource());
     }
 
     private ContentTypeConvertor findConvertor(String mediaType) {

@@ -1,6 +1,7 @@
 package ai.agentscentral.http.route;
 
 import ai.agentscentral.http.request.Request;
+import ai.agentscentral.http.response.HttpError;
 import ai.agentscentral.http.response.Response;
 import ai.agentscentral.http.route.convertors.ContentConvertor;
 import ai.agentscentral.http.route.convertors.DefaultContentConvertor;
@@ -14,6 +15,8 @@ import static java.util.Comparator.comparingInt;
 public class HttpRouter implements Router {
 
     static final Comparator<MatchedRoute> sortByPathLength = comparingInt(o -> o.path().length());
+    public static final Response<?> notfound = Response.builder().status(404)
+            .contentType("application/json").resource(new HttpError("not found")).build();
 
     private final Set<Route> routes;
     private final HttpControllerRouter controllerRouter;
@@ -33,15 +36,15 @@ public class HttpRouter implements Router {
                 .flatMap(r -> r.match(request).stream())
                 .max(sortByPathLength);
 
-        return matchedRoute.map(mr -> routeToMatched(mr, request))
-                .orElseGet(() -> null); //TODO:: 404 response
+        return matchedRoute.<Response<?>>map(mr -> routeToMatched(mr, request))
+                .orElse(notfound);
     }
 
     private Response<?> routeToMatched(MatchedRoute matchedRoute, Request request) {
         return switch (matchedRoute) {
             case HandlerMatchedRoute hmr -> hmr.handler().handle(request);
             case ControllerMatchedRoute cmr -> controllerRouter.route(cmr, request);
-            default -> null;
+            default -> notfound;
         };
     }
 

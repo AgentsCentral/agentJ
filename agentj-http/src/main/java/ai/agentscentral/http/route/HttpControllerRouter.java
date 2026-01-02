@@ -1,10 +1,10 @@
 package ai.agentscentral.http.route;
 
 import ai.agentscentral.http.request.Request;
+import ai.agentscentral.http.response.HttpError;
 import ai.agentscentral.http.response.Response;
 import ai.agentscentral.http.route.convertors.ContentConvertor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +22,6 @@ public class HttpControllerRouter {
 
     private final ContentConvertor contentConvertor;
 
-
     public static final Object[] EMPTY_ARGUMENTS = new Object[]{};
 
     public HttpControllerRouter(ContentConvertor contentConvertor) {
@@ -36,8 +35,12 @@ public class HttpControllerRouter {
         try {
             return (Response<?>) mappedMatchedRoute.method().invoke(matchedRoute.controller(),
                     methodArguments(mappedMatchedRoute, request));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e); //TODO:: default 500 response.
+        } catch (Throwable e) {
+            return Response.builder()
+                    .status(500) //TODO:: introduce constants
+                    .contentType("application/json") // introduce constants
+                    .resource(new HttpError(e.getMessage()))
+                    .build();
         }
 
     }

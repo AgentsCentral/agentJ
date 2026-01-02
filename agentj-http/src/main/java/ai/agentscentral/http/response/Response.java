@@ -1,28 +1,11 @@
 package ai.agentscentral.http.response;
 
-public class Response<T> {
+public record Response<T>(int status, String contentType, T resource) {
 
-    private final int status;
-    private final String contentType;
-    private final T resource;
-
-    public Response(int status, String contentType, T resource) {
-        this.status = status;
-        this.contentType = contentType;
-        this.resource = resource;
+    public static <T> ResponseBuilder<T> builder(){
+        return new ResponseBuilder<>();
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public T getT() {
-        return resource;
-    }
 
     public static class ResponseBuilder<T> {
 
