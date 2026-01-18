@@ -1,6 +1,6 @@
 package ai.agentscentral.http.auth;
 
-import jakarta.servlet.http.HttpServletRequest;
+import ai.agentscentral.http.request.Request;
 
 import static java.util.Optional.ofNullable;
 
@@ -27,7 +27,7 @@ public class APIKeyAuthorizer implements Authorizer {
 
 
     @Override
-    public boolean isAuthorized(HttpServletRequest request) {
+    public boolean isAuthorized(Request request) {
         return ofNullable(request.getHeader(apiKeyHeaderName))
                 .map(apiKeyValue::equals).orElse(false);
     }

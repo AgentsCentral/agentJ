@@ -43,6 +43,7 @@ public class DefaultSessionProcessor implements SessionProcessor {
     private final ContextManager contextManager;
     private final ExecutionLimits executionLimits;
 
+
     public DefaultSessionProcessor(Agentic agentic,
                                    AgentJFactory agentJFactory,
                                    ContextStateManager stateManager,

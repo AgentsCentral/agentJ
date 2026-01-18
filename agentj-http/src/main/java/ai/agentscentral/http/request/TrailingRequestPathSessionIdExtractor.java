@@ -1,6 +1,5 @@
 package ai.agentscentral.http.request;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -25,8 +24,8 @@ public class TrailingRequestPathSessionIdExtractor implements SessionIdExtractor
     }
 
     @Override
-    public Optional<String> extract(HttpServletRequest request) {
-        return extractConversationId(request.getRequestURI());
+    public Optional<String> extract(Request request) {
+        return extractConversationId(request.uri());
     }
 
     private Optional<String> extractConversationId(String requestUri) {

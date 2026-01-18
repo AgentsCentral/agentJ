@@ -1,6 +1,6 @@
 package ai.agentscentral.http.auth;
 
-import jakarta.servlet.http.HttpServletRequest;
+import ai.agentscentral.http.request.Request;
 
 /**
  * Authorizer
@@ -10,6 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @FunctionalInterface
 public interface Authorizer {
 
-    boolean isAuthorized(HttpServletRequest request);
+    boolean isAuthorized(Request request);
 
 }

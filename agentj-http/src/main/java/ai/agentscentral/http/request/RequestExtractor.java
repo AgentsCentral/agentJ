@@ -1,13 +1,12 @@
 package ai.agentscentral.http.request;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * RequestExtractor
  *
  * @author Rizwan Idrees
  */
+@FunctionalInterface
 public interface RequestExtractor {
 
-    MessageRequest extract(HttpServletRequest request);
+    MessageRequest extract(Request request);
 }

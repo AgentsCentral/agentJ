@@ -1,26 +1,10 @@
 package ai.agentscentral.jetty.runner;
 
-import ai.agentscentral.core.context.InMemoryContextManager;
-import ai.agentscentral.core.context.InMemoryContextStateManager;
-import ai.agentscentral.core.factory.AgentJFactory;
-import ai.agentscentral.core.factory.DefaultAgentJFactory;
-import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
 import ai.agentscentral.http.config.AgentJConfig;
-import ai.agentscentral.http.config.HttpConfig;
-import ai.agentscentral.http.filter.AgentJAuthorizationFilter;
-import ai.agentscentral.http.filter.CORSFilter;
-import ai.agentscentral.http.health.LivenessProbe;
-import ai.agentscentral.http.health.ReadinessProbe;
-import ai.agentscentral.http.health.response.LivenessResponse;
-import ai.agentscentral.http.health.response.ReadinessResponse;
-import ai.agentscentral.http.request.JsonRequestExtractor;
-import ai.agentscentral.http.request.TrailingRequestPathSessionIdExtractor;
-import ai.agentscentral.http.response.JsonResponseSender;
+import ai.agentscentral.http.route.convertors.DefaultContentConvertor;
 import ai.agentscentral.http.runner.AgentJHttpRunner;
 import ai.agentscentral.http.servlet.AgentJServlet;
-import ai.agentscentral.http.servlet.HealthCheckServlet;
 import ai.agentscentral.jetty.config.JettyConfig;
-import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -29,12 +13,9 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.VirtualThreadPool;
 
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
-import static ai.agentscentral.core.session.config.ExecutionLimits.defaultExecutionLimits;
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static java.util.Objects.nonNull;
 
 /**
@@ -62,8 +43,7 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(new HttpConfiguration());
         final ServletContextHandler servletContextHandler = new ServletContextHandler();
 
-        addHttpAgentSystems(servletContextHandler);
-        addHealthChecks(servletContextHandler);
+        addHttpSystems(servletContextHandler);
 
         server.setHandler(servletContextHandler);
 
@@ -86,49 +66,13 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         return threadPool;
     }
 
-    private void addHealthChecks(ServletContextHandler servletContextHandler) {
-        final LivenessProbe livenessProbe = () -> new LivenessResponse(SC_OK);
-        final ReadinessProbe readinessProbe = () -> new ReadinessResponse(SC_OK);
-        servletContextHandler.addServlet(new HealthCheckServlet(livenessProbe, readinessProbe), "/health/*");
-    }
-
-
-    private void addHttpAgentSystems(ServletContextHandler servletContextHandler) {
-
-        for (HttpConfig httpConfig : agentJConfig.httpConfigs()) {
-            AgentJFactory agentJFactory = DefaultAgentJFactory.getInstance();
-            final DefaultSessionProcessor processor = new DefaultSessionProcessor(httpConfig.agentic(),
-                    agentJFactory,
-                    new InMemoryContextStateManager(),
-                    new InMemoryContextManager(),
-                    defaultExecutionLimits()
-            );
-
-            final AgentJServlet servlet = new AgentJServlet(processor,
-                    new JsonRequestExtractor(httpConfig.objectMapper()),
-                    new JsonResponseSender(httpConfig.objectMapper()),
-                    new TrailingRequestPathSessionIdExtractor(httpConfig.path()),
-                    agentJFactory.getSessionIdGenerator(),
-                    agentJFactory.getMessageIdGenerator()
-            );
-
-            servletContextHandler.addServlet(servlet, httpConfig.path());
-
-            if (nonNull(httpConfig.authorizers()) && !httpConfig.authorizers().isEmpty()) {
-                servletContextHandler.addFilter(new AgentJAuthorizationFilter(httpConfig.authorizers()),
-                        httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
-            }
-            // Add CORS filter
-            if (nonNull(httpConfig.corsConfig())) {
-                servletContextHandler.addFilter(new CORSFilter(httpConfig.corsConfig()),
-                        httpConfig.path(), EnumSet.of(DispatcherType.REQUEST));
-            }
-        }
+    private void addHttpSystems(ServletContextHandler servletContextHandler) {
+        final AgentJServlet servlet = new AgentJServlet(agentJConfig.routes(), new DefaultContentConvertor());
+        servletContextHandler.addServlet(servlet, "/**");
     }
 
     @Override
     public void stop() throws Exception {
-
         if (nonNull(server)) {
             server.stop();
         }

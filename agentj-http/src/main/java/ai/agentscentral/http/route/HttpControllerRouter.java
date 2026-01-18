@@ -36,9 +36,7 @@ public class HttpControllerRouter {
             return (Response<?>) mappedMatchedRoute.method().invoke(matchedRoute.controller(),
                     methodArguments(mappedMatchedRoute, request));
         } catch (Throwable e) {
-            return Response.builder()
-                    .status(500) //TODO:: introduce constants
-                    .contentType("application/json") // introduce constants
+            return Response.response(500, "application/json") // TODO:: introduce constants
                     .resource(new HttpError(e.getMessage()))
                     .build();
         }

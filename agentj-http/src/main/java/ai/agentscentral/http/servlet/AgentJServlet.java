@@ -1,131 +1,71 @@
 package ai.agentscentral.http.servlet;
 
-import ai.agentscentral.core.session.id.MessageIdGenerator;
-import ai.agentscentral.core.session.id.SessionIdGenerator;
-import ai.agentscentral.core.session.message.Message;
-import ai.agentscentral.core.session.message.*;
-import ai.agentscentral.core.session.processor.SessionProcessor;
-import ai.agentscentral.http.common.MessageType;
-import ai.agentscentral.http.request.MessageRequest;
-import ai.agentscentral.http.request.RequestExtractor;
-import ai.agentscentral.http.request.SessionIdExtractor;
-import ai.agentscentral.http.response.*;
+import ai.agentscentral.http.response.Response;
+import ai.agentscentral.http.route.HttpRouter;
+import ai.agentscentral.http.route.Route;
+import ai.agentscentral.http.route.convertors.ContentConvertor;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static ai.agentscentral.core.session.message.MessagePartType.text;
-import static ai.agentscentral.core.session.message.MessagePartType.user_interrupt;
-import static ai.agentscentral.http.common.MessageType.interrupt;
-import static java.lang.System.currentTimeMillis;
-
+import static ai.agentscentral.core.convertors.Convertor.convert;
+import static ai.agentscentral.http.request.convertors.RequestConvertors.servletRequestToRequest;
+import static ai.agentscentral.http.route.HttpRouter.NOT_FOUND;
 
 /**
  * AgentJServlet
  *
  * @author Rizwan Idrees
+ * @author Mustafa Bhuiyan
+ * @author Hasnain Khan
  */
 public class AgentJServlet extends HttpServlet {
 
-    private final SessionProcessor processor;
-    private final RequestExtractor requestExtractor;
-    private final ResponseSender responseSender;
-    private final SessionIdExtractor sessionIdExtractor;
-    private final SessionIdGenerator sessionIdGenerator;
-    private final MessageIdGenerator messageIdGenerator;
+    private final HttpRouter router;
+    private final ContentConvertor convertor;
 
-    public AgentJServlet(SessionProcessor processor,
-                         RequestExtractor requestExtractor,
-                         ResponseSender responseSender,
-                         SessionIdExtractor sessionIdExtractor,
-                         SessionIdGenerator sessionIdGenerator,
-                         MessageIdGenerator messageIdGenerator) {
-        this.processor = processor;
-        this.requestExtractor = requestExtractor;
-        this.responseSender = responseSender;
-        this.sessionIdExtractor = sessionIdExtractor;
-        this.sessionIdGenerator = sessionIdGenerator;
-        this.messageIdGenerator = messageIdGenerator;
+    public AgentJServlet(List<Route> routes, ContentConvertor convertor) {
+        this.router = new HttpRouter(routes);
+        this.convertor = convertor;
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void service(HttpServletRequest request, HttpServletResponse servletResponse) {
 
-        final MessageRequest messageRequest = requestExtractor.extract(request);
-        final String sessionId = sessionIdExtractor.extract(request)
-                .orElse(sessionIdGenerator.generate());
+        final Response<?> response = Optional.of(request)
+                .map(convert(servletRequestToRequest))
+                .<Response<?>>map(router::route)
+                .orElse(NOT_FOUND);
 
-        final List<Message> messages = Optional.of(messageRequest)
-                .map(r -> new UserMessage(sessionId, messageId(), toMessageParts(r), currentTimeMillis()))
-                .map(um -> processor.process(sessionId, um, null)).orElseGet(List::of);
+        final Optional<String> body = Optional.of(response)
+                .filter(r -> Objects.nonNull(response.resource()))
+                .map(convertor::convert);
 
-        final List<ai.agentscentral.http.response.Message> responseMessages = messages.stream()
-                .map(this::toMessage)
-                .toList();
+        servletResponse.setContentType(response.contentType());
+        servletResponse.setStatus(response.status());
 
-        responseSender.send(response, new MessageResponse(sessionId, responseMessages));
+        body.ifPresent(b -> writeBody(servletResponse, b));
     }
 
-    private String messageId() {
-        return messageIdGenerator.generate();
-    }
-
-
-    private ai.agentscentral.http.response.Message toMessage(Message message) {
-        if (message instanceof AssistantMessage assistantMessage) {
-            return toTextMessage(assistantMessage.messageId(), assistantMessage.parts(),
-                    assistantMessage.timestamp());
-        } else if (message instanceof ToolInterruptMessage interruptMessage) {
-            return toInterruptMessage(interruptMessage);
+    private void writeBody(HttpServletResponse servletResponse, String body) {
+        try (PrintWriter writer = servletResponse.getWriter()) {
+            writer.print(body);
+            writer.flush();
+        } catch (IOException e) {
+            handleIOError(servletResponse);
         }
-        return null;
     }
 
-    private InterruptMessage toInterruptMessage(ToolInterruptMessage interruptMessage) {
-        final InterruptPart[] interruptParts = Stream.of(interruptMessage.parts())
-                .map(t -> (ToolInterruptPart) t)
-                .map(i -> new InterruptPart(i.interruptName(), i.toolCallId(), i.renderer(),
-                        i.toolCallParameters(), i.interruptParameters()))
-                .toArray(InterruptPart[]::new);
-
-        return new InterruptMessage(interrupt, interruptMessage.messageId(), interruptParts,
-                interruptMessage.timestamp());
-    }
-
-    private TextMessage toTextMessage(String id, MessagePart[] parts, long timestamp) {
-        final String[] text = Stream.of(parts)
-                .filter(messagePart -> messagePart.type() == MessagePartType.text)
-                .map(t -> (TextPart) t)
-                .map(TextPart::text).toArray(String[]::new);
-
-        return new TextMessage(MessageType.text, id, text, timestamp);
-    }
-
-    private MessagePart[] toMessageParts(MessageRequest messageRequest) {
-        return messageRequest.messages().stream()
-                .map(this::toMessagePart).toArray(MessagePart[]::new);
-
-    }
-
-    private MessagePart toMessagePart(ai.agentscentral.http.request.Message message) {
-        return switch (message) {
-            case ai.agentscentral.http.request.TextMessage m -> toTextPart(m);
-            case ai.agentscentral.http.request.InterruptMessage m -> toUserInterruptPart(m);
-            default -> throw new RuntimeException("Unknown message part type");
-        };
-    }
-
-    private static TextPart toTextPart(ai.agentscentral.http.request.TextMessage message) {
-        return new TextPart(text, message.text());
-    }
-
-    private static UserInterruptPart toUserInterruptPart(ai.agentscentral.http.request.InterruptMessage message) {
-        final List<InterruptParameterValue> parameterValues = message.interruptParameters().stream()
-                .map(p -> new InterruptParameterValue(p.name(), p.value())).toList();
-        return new UserInterruptPart(user_interrupt, message.toolCallId(), message.name(), parameterValues);
+    private void handleIOError(HttpServletResponse response) {
+        if (!response.isCommitted()) {
+            response.reset();
+            response.setStatus(500);
+        }
     }
 }

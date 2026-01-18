@@ -4,8 +4,8 @@ import ai.agentscentral.http.request.Request;
 import ai.agentscentral.http.response.Response;
 
 @FunctionalInterface
-public interface HttpHandler extends Handler {
+public interface HttpHandler<T> extends Handler {
 
-    Response handle(Request request);
+    Response<T> handle(Request request);
 
 }

@@ -1,7 +1,5 @@
 package ai.agentscentral.http.request;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
 
 /**
@@ -9,9 +7,10 @@ import java.util.Optional;
  *
  * @author Rizwan Idrees
  */
+@FunctionalInterface
 public interface SessionIdExtractor {
 
 
-    Optional<String> extract(HttpServletRequest request);
+    Optional<String> extract(Request request);
 
 }
