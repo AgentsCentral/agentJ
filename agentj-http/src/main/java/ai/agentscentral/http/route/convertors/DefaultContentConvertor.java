@@ -2,11 +2,19 @@ package ai.agentscentral.http.route.convertors;
 
 import ai.agentscentral.http.request.Request;
 import ai.agentscentral.http.response.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+/**
+ * DefaultContentConvertor
+ *
+ * @author Rizwan Idrees
+ */
 public class DefaultContentConvertor implements ContentConvertor {
 
+    private static final List<ContentTypeConvertor> DEFAULT_CONVERTORS =
+            List.of(new JacksonJsonContentTypeConvertor(new ObjectMapper()));
     private static final String CONTENT_TYPE = "Content-Type";
 
     private final List<ContentTypeConvertor> contentTypeConvertors;

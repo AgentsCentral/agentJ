@@ -15,7 +15,6 @@ import java.util.Map;
  */
 public class TypeConvertors {
 
-
     private TypeConvertors() {
     }
 
