@@ -10,14 +10,14 @@ import java.util.Optional;
  *
  * @author Rizwan Idrees
  */
-public class HttpHandlerRoute implements Route {
+public class HttpHandlerRoute<T> implements Route {
 
     private final String path;
     private final HttpMethod method;
-    private final HttpHandler handler;
+    private final HttpHandler<T> handler;
     private final PathPattern pathPattern;
 
-    public HttpHandlerRoute(String path, HttpMethod method, HttpHandler handler) {
+    public HttpHandlerRoute(String path, HttpMethod method, HttpHandler<T> handler) {
         this.path = path;
         this.method = method;
         this.handler = handler;

@@ -9,10 +9,12 @@ import java.util.Map;
  * @param type
  * @param name
  * @param input
+ * @param caller
  * @author Rizwan Idrees
  */
 public record ToolUseResponseContent(String id,
                                      ResponseContentType type,
                                      String name,
-                                     Map<String, Object> input) implements ResponseContent {
+                                     Map<String, Object> input,
+                                     ToolUseCaller caller) implements ResponseContent {
 }

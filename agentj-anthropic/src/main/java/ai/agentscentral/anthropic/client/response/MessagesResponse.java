@@ -15,6 +15,7 @@ import java.util.List;
  * @param content
  * @param model
  * @param stopReason
+ * @param stopDetails
  * @param stopSequence
  * @param container
  * @param usage
@@ -26,6 +27,7 @@ public record MessagesResponse(String id,
                                List<ResponseContent> content,
                                String model,
                                @JsonProperty("stop_reason") StopReason stopReason,
+                               @JsonProperty("stop_details") String stopDetails,
                                @JsonProperty("stop_sequence") String stopSequence,
                                Container container,
                                Usage usage) {

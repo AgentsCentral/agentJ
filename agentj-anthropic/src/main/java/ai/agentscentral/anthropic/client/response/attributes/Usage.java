@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param cacheReadInputTokens
  * @param cacheCreation
  * @param serviceTier
+ * @param inferenceGeo
  * @author Rizwan Idrees
  */
 public record Usage(@JsonProperty("input_tokens") Integer inputTokens,
@@ -18,5 +19,6 @@ public record Usage(@JsonProperty("input_tokens") Integer inputTokens,
                     @JsonProperty("cache_creation_input_tokens") Integer cacheCreationInputTokens,
                     @JsonProperty("cache_read_input_tokens") Integer cacheReadInputTokens,
                     @JsonProperty("cache_creation") UsageCacheCreation cacheCreation,
-                    @JsonProperty("service_tier") UsageServiceTier serviceTier) {
+                    @JsonProperty("service_tier") UsageServiceTier serviceTier,
+                    @JsonProperty("inference_geo") String inferenceGeo) {
 }
