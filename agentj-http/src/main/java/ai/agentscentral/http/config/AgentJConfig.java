@@ -26,10 +26,10 @@ import static ai.agentscentral.http.route.HttpMethod.POST;
 public record AgentJConfig(List<Route> routes) {
 
     private static final Probe defaultProbe = request -> new ProbeResponse(200, Map.of());
-    private static final ProbeHandler DEFAULT_PROBE_HANDLER = new ProbeHandler(defaultProbe);
-    private static final HttpHandlerRoute DEFAULT_LIVENESS_ROUTE = new HttpHandlerRoute("/liveness", GET,
+    private static final HttpHandler<ProbeResponse> DEFAULT_PROBE_HANDLER = new ProbeHandler(defaultProbe);
+    private static final HttpHandlerRoute<ProbeResponse> DEFAULT_LIVENESS_ROUTE = new HttpHandlerRoute<>("/liveness", GET,
             DEFAULT_PROBE_HANDLER);
-    private static final HttpHandlerRoute DEFAULT_READINESS_ROUTE = new HttpHandlerRoute("/readiness", GET,
+    private static final HttpHandlerRoute<ProbeResponse> DEFAULT_READINESS_ROUTE = new HttpHandlerRoute<>("/readiness", GET,
             DEFAULT_PROBE_HANDLER);
 
     public static AgentJConfigBuilder agentJConfig() {
@@ -49,22 +49,22 @@ public record AgentJConfig(List<Route> routes) {
         }
 
         public AgentJConfigBuilder livenessRoute(String path) {
-            this.livenessRoute = new HttpHandlerRoute(path, GET, DEFAULT_PROBE_HANDLER);
+            this.livenessRoute = new HttpHandlerRoute<>(path, GET, DEFAULT_PROBE_HANDLER);
             return this;
         }
 
         public AgentJConfigBuilder livenessRoute(String path, HttpHandler<ProbeResponse> handler) {
-            this.livenessRoute = new HttpHandlerRoute(path, GET, handler);
+            this.livenessRoute = new HttpHandlerRoute<>(path, GET, handler);
             return this;
         }
 
         public AgentJConfigBuilder readinessRoute(String path) {
-            this.readinesRoute = new HttpHandlerRoute(path, GET, DEFAULT_PROBE_HANDLER);
+            this.readinesRoute = new HttpHandlerRoute<>(path, GET, DEFAULT_PROBE_HANDLER);
             return this;
         }
 
         public AgentJConfigBuilder readinessRoute(String path, HttpHandler<ProbeResponse> handler) {
-            this.readinesRoute = new HttpHandlerRoute(path, GET, handler);
+            this.readinesRoute = new HttpHandlerRoute<>(path, GET, handler);
             return this;
         }
 
@@ -72,7 +72,7 @@ public record AgentJConfig(List<Route> routes) {
             final AgenticConfig agenticConfig = AgenticConfig.builder()
                     .defaultConfig(path, agentic).build();
 
-            routes.add(new HttpHandlerRoute(path, POST, new AgenticHttpHandler(agenticConfig)));
+            routes.add(new HttpHandlerRoute<>(path, POST, new AgenticHttpHandler(agenticConfig)));
             return this;
         }
 
@@ -80,7 +80,7 @@ public record AgentJConfig(List<Route> routes) {
         public AgentJConfigBuilder httpRoute(String path,
                                              HttpMethod method,
                                              HttpHandler<?> handler) {
-            routes.add(new HttpHandlerRoute(path, method, handler));
+            routes.add(new HttpHandlerRoute<>(path, method, handler));
             return this;
         }
 
