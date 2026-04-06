@@ -1,6 +1,7 @@
 package ai.agentscentral.http.config;
 
 import ai.agentscentral.core.agentic.Agentic;
+import ai.agentscentral.core.agentic.AgenticModule;
 import ai.agentscentral.http.handler.AgenticHttpHandler;
 import ai.agentscentral.http.handler.HttpHandler;
 import ai.agentscentral.http.handler.ProbeHandler;
@@ -38,6 +39,7 @@ public record AgentJConfig(List<Route> routes) {
 
     public static class AgentJConfigBuilder {
 
+        private AgenticModule agenticModule = AgenticModule.defaultAgenticModule();
         private Route livenessRoute = DEFAULT_LIVENESS_ROUTE;
         private Route readinesRoute = DEFAULT_READINESS_ROUTE;
         private final List<Route> routes = new ArrayList<>();
@@ -70,7 +72,7 @@ public record AgentJConfig(List<Route> routes) {
 
         public AgentJConfigBuilder agenticRoute(String path, Agentic agentic) {
             final AgenticConfig agenticConfig = AgenticConfig.builder()
-                    .defaultConfig(path, agentic).build();
+                    .defaultConfig(path, agentic, agenticModule).build();
 
             routes.add(new HttpHandlerRoute<>(path, POST, new AgenticHttpHandler(agenticConfig)));
             return this;

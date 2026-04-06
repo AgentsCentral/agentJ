@@ -15,7 +15,7 @@ import org.testcontainers.mongodb.MongoDBContainer;
  *
  * @author Mustafa Bhuiyan
  */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 public class MongoDBTestConfig {
     @Container
     private static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:latest");
@@ -39,6 +39,7 @@ public class MongoDBTestConfig {
         }
         return agentJMongoDB;
     }
+
 
     /**
      * Clears a specific collection from the test database.

@@ -2,9 +2,9 @@ package ai.agentscentral.core.agentic.executor;
 
 import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.context.ContextManager;
-import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;
+import ai.agentscentral.core.agentic.AgenticModule;
 import ai.agentscentral.core.provider.ProviderAgentExecutor;
 import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.message.*;
@@ -40,23 +40,23 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private final Map<String, ToolCall> tools;
 
     public DefaultAgentExecutor(Agent agent,
-                                AgentJFactory agentJFactory,
+                                AgenticModule agenticModule,
                                 ContextManager contextManager,
                                 HandoffExecutor handoffExecutor) {
         this.agent = agent;
-        this.tools = agentJFactory.getToolBagToolsExtractor().extractTools(agent.toolBags());
-        this.toolCallExecutor = agentJFactory.getToolCallExecutor();
+        this.tools = agenticModule.toolModule().toolsExtractor().extractTools(agent.toolBags());
+        this.toolCallExecutor = agenticModule.toolModule().toolCallExecutor();
         this.contextManager = contextManager;
         this.handoffExecutor = handoffExecutor;
 
 
-        final Map<String, Handoff> handOffs = agentJFactory.getHandoffsExtractor()
+        final Map<String, Handoff> handOffs = agenticModule.handoffModule().handoffsExtractor()
                 .extractHandOffs(agent.handoffs());
 
         this.providerAgentExecutor = agent.model().config()
                 .getFactory().createAgentExecutor(agent, tools, handOffs);
 
-        this.messageIdGenerator = agentJFactory.getMessageIdGenerator();
+        this.messageIdGenerator = agenticModule.sessionModule().messageIdGenerator();
 
     }
 

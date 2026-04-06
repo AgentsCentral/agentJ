@@ -1,12 +1,8 @@
 package ai.agentscentral.http.config;
 
 import ai.agentscentral.core.agentic.Agentic;
-import ai.agentscentral.core.context.InMemoryContextManager;
-import ai.agentscentral.core.context.InMemoryContextStateManager;
-import ai.agentscentral.core.factory.DefaultAgentJFactory;
+import ai.agentscentral.core.agentic.AgenticModule;
 import ai.agentscentral.core.session.config.ExecutionLimits;
-import ai.agentscentral.core.session.id.DefaultMessageIdGenerator;
-import ai.agentscentral.core.session.id.DefaultSessionIdGenerator;
 import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.id.SessionIdGenerator;
 import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
@@ -46,16 +42,18 @@ public record AgenticConfig(SessionProcessor processor,
                     messageIdGenerator);
         }
 
-        public AgenticConfigBuilder defaultConfig(String path, Agentic agentic) {
+        public AgenticConfigBuilder defaultConfig(String path,
+                                                  Agentic agentic,
+                                                  AgenticModule agenticModule) {
             this.processor = new DefaultSessionProcessor(agentic,
-                    DefaultAgentJFactory.getInstance(),
-                    new InMemoryContextStateManager(),
-                    new InMemoryContextManager(),
+                    agenticModule,
+                    agenticModule.contextModule().contextStateManager(),
+                    agenticModule.contextModule().contextManager(),
                     ExecutionLimits.defaultExecutionLimits());
             this.requestExtractor = new JsonRequestExtractor(new ObjectMapper());
             this.sessionIdExtractor = new TrailingRequestPathSessionIdExtractor(path);
-            this.sessionIdGenerator = DefaultSessionIdGenerator.getInstance();
-            this.messageIdGenerator = DefaultMessageIdGenerator.getInstance();
+            this.sessionIdGenerator = agenticModule.sessionModule().sessionIdGenerator();
+            this.messageIdGenerator = agenticModule.sessionModule().messageIdGenerator();
             return this;
         }
 

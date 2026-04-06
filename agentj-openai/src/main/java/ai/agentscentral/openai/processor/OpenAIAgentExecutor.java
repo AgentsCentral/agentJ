@@ -2,7 +2,6 @@ package ai.agentscentral.openai.processor;
 
 import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.agent.instructor.Instructor;
-import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.provider.ProviderAgentExecutor;
 import ai.agentscentral.core.session.message.AssistantMessage;

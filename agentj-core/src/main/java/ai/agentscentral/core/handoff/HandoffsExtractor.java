@@ -13,11 +13,6 @@ import static java.util.stream.Collectors.toMap;
  */
 public class HandoffsExtractor {
 
-    private static final HandoffsExtractor instance = new HandoffsExtractor();
-
-    private HandoffsExtractor() {
-    }
-
     public Map<String, Handoff> extractHandOffs(List<Handoff> handoffs) {
 
         if (isNull(handoffs) || handoffs.isEmpty()) {
@@ -26,10 +21,5 @@ public class HandoffsExtractor {
 
         return handoffs.stream().collect(toMap(Handoff::id, handoff -> handoff));
     }
-
-    public static HandoffsExtractor getInstance() {
-        return instance;
-    }
-
 
 }

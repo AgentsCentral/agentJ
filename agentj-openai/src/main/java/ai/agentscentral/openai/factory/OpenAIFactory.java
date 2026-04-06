@@ -1,7 +1,6 @@
 package ai.agentscentral.openai.factory;
 
 import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.core.tool.ToolCall;

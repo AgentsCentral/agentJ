@@ -10,7 +10,7 @@ import ai.agentscentral.core.agentic.executor.register.DefaultAgenticRegistrar;
 import ai.agentscentral.core.agentic.executor.register.RegisteredAgentic;
 import ai.agentscentral.core.context.ContextManager;
 import ai.agentscentral.core.context.ContextStateManager;
-import ai.agentscentral.core.factory.AgentJFactory;
+import ai.agentscentral.core.agentic.AgenticModule;
 import ai.agentscentral.core.session.config.ExecutionLimits;
 import ai.agentscentral.core.session.message.AssistantMessage;
 import ai.agentscentral.core.session.message.Message;
@@ -45,14 +45,14 @@ public class DefaultSessionProcessor implements SessionProcessor {
 
 
     public DefaultSessionProcessor(Agentic agentic,
-                                   AgentJFactory agentJFactory,
+                                   AgenticModule agentJModule,
                                    ContextStateManager stateManager,
                                    ContextManager contextManager,
                                    ExecutionLimits executionLimits) {
 
         this.stateManager = stateManager;
         this.contextManager = contextManager;
-        this.agenticExecutor = initializeExecutor(agentic, agentJFactory);
+        this.agenticExecutor = initializeExecutor(agentic, agentJModule);
         this.executionLimits = executionLimits;
     }
 
@@ -76,10 +76,10 @@ public class DefaultSessionProcessor implements SessionProcessor {
                 .toList();
     }
 
-    private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgentJFactory agentJFactory) {
-        final AgenticExecutorInitializer agenticExecutorInitializer = new AgenticExecutorInitializer(registrar);
+    private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgenticModule agenticModule) {
+        final AgenticExecutorInitializer agenticExecutorInitializer = new AgenticExecutorInitializer(agenticModule, registrar);
         return agenticExecutorInitializer.initialize(agentic, null,
-                stateManager, contextManager, new DefaultHandoffExecutor(registrar, stateManager), agentJFactory);
+                stateManager, contextManager, new DefaultHandoffExecutor(registrar, stateManager));
     }
 
     private Optional<AgenticExecutor<? extends Agentic>> findExecutor(String sessionId) {

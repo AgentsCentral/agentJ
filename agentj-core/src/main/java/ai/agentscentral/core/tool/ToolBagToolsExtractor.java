@@ -23,12 +23,7 @@ import static java.util.Objects.isNull;
  */
 public class ToolBagToolsExtractor implements ToolsExtractor {
 
-    private static final ToolBagToolsExtractor instance = new ToolBagToolsExtractor();
-
     private final Predicate<Method> toolMethods = method -> method.isAnnotationPresent(Tool.class);
-
-    private ToolBagToolsExtractor() {
-    }
 
     public Map<String, ToolCall> extractTools(List<ToolBag> toolBags) {
 
@@ -143,10 +138,4 @@ public class ToolBagToolsExtractor implements ToolsExtractor {
 
         return Stream.of(paramNames).map(parameters::get).toList();
     }
-
-    public static ToolBagToolsExtractor getInstance() {
-        return instance;
-    }
-
-
 }

@@ -3,7 +3,6 @@ package ai.agentscentral.anthropic.factory;
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.processor.AnthropicAgentExecutor;
 import ai.agentscentral.core.agent.Agent;
-import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.core.tool.ToolCall;

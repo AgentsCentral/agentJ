@@ -4,7 +4,6 @@ import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.agentic.Agentic;
 import ai.agentscentral.core.context.ContextManager;
 import ai.agentscentral.core.context.ContextStateManager;
-import ai.agentscentral.core.factory.AgentJFactory;
 import ai.agentscentral.core.session.message.Message;
 import ai.agentscentral.core.session.message.UserMessage;
 import ai.agentscentral.core.session.user.User;
@@ -35,7 +34,6 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
     public RoutingModeTeamExecutor(Team team,
                                    ContextStateManager stateManager,
                                    ContextManager contextManager,
-                                   AgentJFactory agentJFactory,
                                    AgenticExecutorInitializer executorInitializer,
                                    HandoffExecutor handoffExecutor) {
         this.team = team;
@@ -46,9 +44,9 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
         this.handoffExecutor = handoffExecutor;
 
         Optional.of(team.leader())
-                .ifPresent(l -> agentExecutors.put(l.name(), initializeExecutor(leader, agentJFactory)));
+                .ifPresent(l -> agentExecutors.put(l.name(), initializeExecutor(leader)));
 
-        team.members().forEach(a -> agentExecutors.put(a.name(), initializeExecutor(a, agentJFactory)));
+        team.members().forEach(a -> agentExecutors.put(a.name(), initializeExecutor(a)));
     }
 
 
@@ -78,9 +76,8 @@ public class RoutingModeTeamExecutor implements TeamExecutor {
         return ofNullable(agenticName).map(agentExecutors::get);
     }
 
-    private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic, AgentJFactory agentJFactory) {
-        return executorInitializer.initialize(agentic, team, stateManager, contextManager,
-                handoffExecutor, agentJFactory);
+    private AgenticExecutor<? extends Agentic> initializeExecutor(Agentic agentic) {
+        return executorInitializer.initialize(agentic, team, stateManager, contextManager, handoffExecutor);
     }
 
 }
