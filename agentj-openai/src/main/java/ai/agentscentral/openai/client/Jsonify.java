@@ -1,8 +1,8 @@
 package ai.agentscentral.openai.client;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Jsonify
@@ -11,18 +11,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 class Jsonify {
 
-    private static final ObjectMapper mapper = new ObjectMapper() {{
-        setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    }};
+    private static final JsonMapper mapper = JsonMapper.builder()
+            .changeDefaultPropertyInclusion(incl -> incl
+                    .withValueInclusion(JsonInclude.Include.NON_NULL)
+                    .withContentInclusion(JsonInclude.Include.NON_NULL))
+            .build();
 
     private Jsonify() {
     }
 
-    static String asJson(Object o) throws JsonProcessingException {
+    static String asJson(Object o) throws JacksonException {
         return mapper.writeValueAsString(o);
     }
 
-    static <T> T asObject(String stringValue, Class<T> clazz) throws JsonProcessingException {
+    static <T> T asObject(String stringValue, Class<T> clazz) throws JacksonException {
         return mapper.readValue(stringValue, clazz);
     }
 }

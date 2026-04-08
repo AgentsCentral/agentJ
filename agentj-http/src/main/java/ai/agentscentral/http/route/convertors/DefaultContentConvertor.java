@@ -2,7 +2,7 @@ package ai.agentscentral.http.route.convertors;
 
 import ai.agentscentral.http.request.Request;
 import ai.agentscentral.http.response.Response;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 

@@ -1,8 +1,7 @@
 package ai.agentscentral.http.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * JsonRequestExtractor
@@ -22,7 +21,7 @@ public class JsonRequestExtractor implements RequestExtractor {
     public MessageRequest extract(Request request) {
         try {
             return objectMapper.readValue(request.body(), MessageRequest.class);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
 

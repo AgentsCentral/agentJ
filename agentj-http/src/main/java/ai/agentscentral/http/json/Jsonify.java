@@ -1,7 +1,7 @@
 package ai.agentscentral.http.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Jsonify
@@ -15,11 +15,11 @@ public class Jsonify {
     private Jsonify() {
     }
 
-    public static String asJson(Object o) throws JsonProcessingException {
+    public static String asJson(Object o) throws JacksonException {
         return mapper.writeValueAsString(o);
     }
 
-    public static <T> T asObject(String stringValue, Class<T> clazz) throws JsonProcessingException {
+    public static <T> T asObject(String stringValue, Class<T> clazz) throws JacksonException {
         return mapper.readValue(stringValue, clazz);
     }
 }

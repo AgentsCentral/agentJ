@@ -43,9 +43,9 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jetty-ee.version>12.0.20</jetty-ee.version>
+        <jetty-ee.version>12.1.8</jetty-ee.version>
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
-        <jackson.version>2.19.0</jackson.version>
+        <jackson.version>3.1.1</jackson.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
         <httpclient5.version>5.4.4</httpclient5.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -54,10 +54,19 @@
         <mongodb-driver-sync.version>5.6.1</mongodb-driver-sync.version>
         <testcontainers.mongodb.version>2.0.2</testcontainers.mongodb.version>
         <testcontainers.junit-jupiter.version>1.21.3</testcontainers.junit-jupiter.version>
+        <jackson-annotations.version>2.21</jackson-annotations.version>
     </properties>
 
     <dependencyManagement>
+
         <dependencies>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty.ee10</groupId>
                 <artifactId>jetty-ee10-servlet</artifactId>
@@ -75,24 +84,8 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jsonSchema</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>

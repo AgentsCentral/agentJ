@@ -7,9 +7,9 @@ import ai.agentscentral.core.tool.ToolCall;
 import ai.agentscentral.core.tool.ToolCallInstruction;
 import ai.agentscentral.core.tool.ToolParameter;
 import ai.agentscentral.openai.client.request.attributes.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import tools.jackson.module.jsonSchema.JsonSchema;
+import tools.jackson.module.jsonSchema.JsonSchemaGenerator;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.*;
 

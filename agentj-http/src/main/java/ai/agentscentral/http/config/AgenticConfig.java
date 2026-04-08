@@ -11,7 +11,7 @@ import ai.agentscentral.http.request.JsonRequestExtractor;
 import ai.agentscentral.http.request.RequestExtractor;
 import ai.agentscentral.http.request.SessionIdExtractor;
 import ai.agentscentral.http.request.TrailingRequestPathSessionIdExtractor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public record AgenticConfig(SessionProcessor processor,
                             RequestExtractor requestExtractor,
