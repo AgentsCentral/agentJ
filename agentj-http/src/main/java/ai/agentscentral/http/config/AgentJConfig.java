@@ -7,6 +7,7 @@ import ai.agentscentral.http.handler.HttpHandler;
 import ai.agentscentral.http.handler.ProbeHandler;
 import ai.agentscentral.http.health.Probe;
 import ai.agentscentral.http.health.ProbeResponse;
+import ai.agentscentral.http.response.MessageResponse;
 import ai.agentscentral.http.route.ControllerRoute;
 import ai.agentscentral.http.route.HttpHandlerRoute;
 import ai.agentscentral.http.route.HttpMethod;
@@ -42,12 +43,21 @@ public record AgentJConfig(List<Route> routes) {
         private AgenticModule agenticModule = AgenticModule.defaultAgenticModule();
         private Route livenessRoute = DEFAULT_LIVENESS_ROUTE;
         private Route readinesRoute = DEFAULT_READINESS_ROUTE;
+        private final List<AgenticRouteInternal> agenticRoutes = new ArrayList<>();
         private final List<Route> routes = new ArrayList<>();
 
         public AgentJConfig build() {
             routes.add(livenessRoute);
             routes.add(readinesRoute);
+
+            agenticRoutes.forEach(ar -> routes.add(toHttpHandlerRoute(ar)));
+
             return new AgentJConfig(routes);
+        }
+
+        public AgentJConfigBuilder agenticModule(AgenticModule agenticModule){
+            this.agenticModule = agenticModule;
+            return this;
         }
 
         public AgentJConfigBuilder livenessRoute(String path) {
@@ -71,13 +81,9 @@ public record AgentJConfig(List<Route> routes) {
         }
 
         public AgentJConfigBuilder agenticRoute(String path, Agentic agentic) {
-            final AgenticConfig agenticConfig = AgenticConfig.builder()
-                    .defaultConfig(path, agentic, agenticModule).build();
-
-            routes.add(new HttpHandlerRoute<>(path, POST, new AgenticHttpHandler(agenticConfig)));
+            agenticRoutes.add(new AgenticRouteInternal(path, agentic));
             return this;
         }
-
 
         public AgentJConfigBuilder httpRoute(String path,
                                              HttpMethod method,
@@ -91,6 +97,15 @@ public record AgentJConfig(List<Route> routes) {
             routes.add(new ControllerRoute(path, controller));
             return this;
         }
+
+        private HttpHandlerRoute<MessageResponse> toHttpHandlerRoute(AgenticRouteInternal internal){
+            final AgenticConfig agenticConfig = AgenticConfig.builder()
+                    .defaultConfig(internal.path(), internal.agentic, agenticModule).build();
+            return new HttpHandlerRoute<>(internal.path(), POST, new AgenticHttpHandler(agenticConfig));
+        }
+
     }
+
+    private record AgenticRouteInternal(String path, Agentic agentic){}
 
 }

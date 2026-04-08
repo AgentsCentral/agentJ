@@ -35,9 +35,13 @@ public class AgenticHttpHandler implements HttpHandler<MessageResponse> {
     private final SessionIdGenerator sessionIdGenerator;
     private final MessageIdGenerator messageIdGenerator;
 
-    public AgenticHttpHandler(AgenticConfig config){
-        this(config.processor(), config.requestExtractor(), config.sessionIdExtractor(), config.sessionIdGenerator(),
-                config.messageIdGenerator());
+    public AgenticHttpHandler(AgenticConfig config) {
+        this(config.processor(),
+                config.requestExtractor(),
+                config.sessionIdExtractor(),
+                config.sessionIdGenerator(),
+                config.messageIdGenerator()
+        );
     }
 
     public AgenticHttpHandler(SessionProcessor processor,

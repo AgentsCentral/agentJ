@@ -46,12 +46,10 @@ public class DefaultSessionProcessor implements SessionProcessor {
 
     public DefaultSessionProcessor(Agentic agentic,
                                    AgenticModule agentJModule,
-                                   ContextStateManager stateManager,
-                                   ContextManager contextManager,
                                    ExecutionLimits executionLimits) {
 
-        this.stateManager = stateManager;
-        this.contextManager = contextManager;
+        this.stateManager = agentJModule.contextModule().contextStateManager();
+        this.contextManager = agentJModule.contextModule().contextManager();
         this.agenticExecutor = initializeExecutor(agentic, agentJModule);
         this.executionLimits = executionLimits;
     }
@@ -95,7 +93,6 @@ public class DefaultSessionProcessor implements SessionProcessor {
         } else if (message instanceof ToolInterruptMessage interruptMessage) {
             return interruptMessage.timestamp() > timestampAfter;
         }
-
         return false;
     }
 

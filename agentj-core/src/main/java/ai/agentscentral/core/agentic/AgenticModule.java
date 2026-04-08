@@ -4,11 +4,12 @@ import ai.agentscentral.core.context.ContextModule;
 import ai.agentscentral.core.handoff.HandoffModule;
 import ai.agentscentral.core.session.SessionModule;
 import ai.agentscentral.core.tool.ToolModule;
+import jakarta.annotation.Nonnull;
 
-public record AgenticModule(ContextModule contextModule,
-                            SessionModule sessionModule,
-                            ToolModule toolModule,
-                            HandoffModule handoffModule) {
+public record AgenticModule(@Nonnull ContextModule contextModule,
+                            @Nonnull SessionModule sessionModule,
+                            @Nonnull ToolModule toolModule,
+                            @Nonnull HandoffModule handoffModule) {
 
 
     public static AgenticModule defaultAgenticModule(){

@@ -45,11 +45,10 @@ public record AgenticConfig(SessionProcessor processor,
         public AgenticConfigBuilder defaultConfig(String path,
                                                   Agentic agentic,
                                                   AgenticModule agenticModule) {
-            this.processor = new DefaultSessionProcessor(agentic,
-                    agenticModule,
-                    agenticModule.contextModule().contextStateManager(),
-                    agenticModule.contextModule().contextManager(),
-                    ExecutionLimits.defaultExecutionLimits());
+
+           final ExecutionLimits executionLimits = ExecutionLimits.defaultExecutionLimits();
+            this.processor = new DefaultSessionProcessor(agentic, agenticModule, executionLimits);
+
             this.requestExtractor = new JsonRequestExtractor(new ObjectMapper());
             this.sessionIdExtractor = new TrailingRequestPathSessionIdExtractor(path);
             this.sessionIdGenerator = agenticModule.sessionModule().sessionIdGenerator();
