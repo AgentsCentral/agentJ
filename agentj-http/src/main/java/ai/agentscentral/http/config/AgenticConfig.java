@@ -7,10 +7,7 @@ import ai.agentscentral.core.session.id.MessageIdGenerator;
 import ai.agentscentral.core.session.id.SessionIdGenerator;
 import ai.agentscentral.core.session.processor.DefaultSessionProcessor;
 import ai.agentscentral.core.session.processor.SessionProcessor;
-import ai.agentscentral.http.request.JsonRequestExtractor;
-import ai.agentscentral.http.request.RequestExtractor;
-import ai.agentscentral.http.request.SessionIdExtractor;
-import ai.agentscentral.http.request.TrailingRequestPathSessionIdExtractor;
+import ai.agentscentral.http.request.*;
 import tools.jackson.databind.ObjectMapper;
 
 public record AgenticConfig(SessionProcessor processor,
@@ -42,15 +39,14 @@ public record AgenticConfig(SessionProcessor processor,
                     messageIdGenerator);
         }
 
-        public AgenticConfigBuilder defaultConfig(String path,
-                                                  Agentic agentic,
+        public AgenticConfigBuilder defaultConfig(Agentic agentic,
                                                   AgenticModule agenticModule) {
 
-           final ExecutionLimits executionLimits = ExecutionLimits.defaultExecutionLimits();
+            final ExecutionLimits executionLimits = ExecutionLimits.defaultExecutionLimits();
             this.processor = new DefaultSessionProcessor(agentic, agenticModule, executionLimits);
 
             this.requestExtractor = new JsonRequestExtractor(new ObjectMapper());
-            this.sessionIdExtractor = new TrailingRequestPathSessionIdExtractor(path);
+            this.sessionIdExtractor = new SessionIdHeaderExtractor();
             this.sessionIdGenerator = agenticModule.sessionModule().sessionIdGenerator();
             this.messageIdGenerator = agenticModule.sessionModule().messageIdGenerator();
             return this;

@@ -5,6 +5,7 @@ import ai.agentscentral.http.route.convertors.DefaultContentConvertor;
 import ai.agentscentral.http.runner.AgentJHttpRunner;
 import ai.agentscentral.http.servlet.AgentJServlet;
 import ai.agentscentral.jetty.config.JettyConfig;
+import jakarta.annotation.Nonnull;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -31,7 +32,7 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     private final AgentJConfig agentJConfig;
     private final Server server;
 
-    public JettyHttpRunner(JettyConfig jettyConfig, AgentJConfig agentJConfig) {
+    public JettyHttpRunner(@Nonnull JettyConfig jettyConfig, @Nonnull AgentJConfig agentJConfig) {
         this.jettyConfig = Objects.requireNonNull(jettyConfig, "JettyConfig cannot be null");
         this.agentJConfig = Objects.requireNonNull(agentJConfig, "AgentJConfig cannot be null");
         this.server = new Server(queuedThreadPool());

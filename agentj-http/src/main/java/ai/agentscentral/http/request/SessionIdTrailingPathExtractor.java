@@ -13,13 +13,13 @@ import static org.apache.commons.lang3.Strings.CS;
  *
  * @author Rizwan Idrees
  */
-public class TrailingRequestPathSessionIdExtractor implements SessionIdExtractor {
+public class SessionIdTrailingPathExtractor implements SessionIdExtractor {
 
     private static final String WILDCARD = "*";
     private static final String SLASH = "/";
     private final String path;
 
-    public TrailingRequestPathSessionIdExtractor(String path) {
+    public SessionIdTrailingPathExtractor(String path) {
         this.path = cleanPath(path);
     }
 

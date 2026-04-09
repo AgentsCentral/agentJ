@@ -100,7 +100,7 @@ public record AgentJConfig(List<Route> routes) {
 
         private HttpHandlerRoute<MessageResponse> toHttpHandlerRoute(AgenticRouteInternal internal){
             final AgenticConfig agenticConfig = AgenticConfig.builder()
-                    .defaultConfig(internal.path(), internal.agentic, agenticModule).build();
+                    .defaultConfig(internal.agentic, agenticModule).build();
             return new HttpHandlerRoute<>(internal.path(), POST, new AgenticHttpHandler(agenticConfig));
         }
 
