@@ -1,5 +1,6 @@
 package ai.agentscentral.anthropic.client;
 
+import ai.agentscentral.anthropic.client.common.Role;
 import ai.agentscentral.anthropic.client.request.MessagesRequest;
 import ai.agentscentral.anthropic.client.request.attributes.*;
 import ai.agentscentral.anthropic.client.response.MessagesResponse;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static ai.agentscentral.anthropic.client.request.attributes.AnthropicUserMessage.USER;
 import static ai.agentscentral.anthropic.client.response.attributes.ResponseContentType.text;
 import static ai.agentscentral.anthropic.client.response.attributes.ResponseContentType.tool_use;
 import static org.apache.commons.lang3.Strings.CI;
@@ -34,7 +34,7 @@ class AnthropicClientTest {
     void should_respond_to_user_message_without_tools() {
         //Given
         final MessageContent content = new TextContent("What is the capital of United States");
-        final List<AnthropicMessage> messages = List.of(new AnthropicUserMessage(USER, content));
+        final List<AnthropicMessage> messages = List.of(new AnthropicUserMessage(Role.user, content));
 
         final SystemPrompt prompt = new TextSystemPrompt("You are an assistant. You are supposed to answer questions from users");
         final MessagesRequest request = MessagesRequest.from(MODEL, config, prompt, "123", null, messages);
@@ -71,7 +71,7 @@ class AnthropicClientTest {
 
 
         final MessageContent content = new TextContent("How is the weather at New York");
-        final List<AnthropicMessage> messages = List.of(new AnthropicUserMessage(USER, content));
+        final List<AnthropicMessage> messages = List.of(new AnthropicUserMessage(Role.user, content));
 
         final SystemPrompt prompt = new TextSystemPrompt("You are a weather assistant. You are supposed to answer questions from users about the weather in different cities");
         final MessagesRequest request = MessagesRequest.from(MODEL, config, prompt, "123", List.of(tool), messages);

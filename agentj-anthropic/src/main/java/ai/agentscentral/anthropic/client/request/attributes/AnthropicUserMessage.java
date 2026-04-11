@@ -1,5 +1,6 @@
 package ai.agentscentral.anthropic.client.request.attributes;
 
+import ai.agentscentral.anthropic.client.common.Role;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
@@ -9,13 +10,12 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  * @param content
  * @author Rizwan Idrees
  */
-public record AnthropicUserMessage(String role,
+public record AnthropicUserMessage(Role role,
                                    @JsonUnwrapped MessageContent content) implements AnthropicMessage {
 
-    public static final String USER = "user";
 
-    public String role() {
-        return USER;
+    public Role role() {
+        return Role.user;
     }
 
 }

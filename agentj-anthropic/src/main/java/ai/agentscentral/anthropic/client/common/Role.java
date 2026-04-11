@@ -6,5 +6,5 @@ package ai.agentscentral.anthropic.client.common;
  * @author Rizwan Idrees
  */
 public enum Role {
-    assistant
+    user, assistant
 }

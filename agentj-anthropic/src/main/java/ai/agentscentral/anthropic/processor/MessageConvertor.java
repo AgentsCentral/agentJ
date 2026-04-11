@@ -1,5 +1,6 @@
 package ai.agentscentral.anthropic.processor;
 
+import ai.agentscentral.anthropic.client.common.Role;
 import ai.agentscentral.anthropic.client.request.attributes.*;
 import ai.agentscentral.anthropic.client.response.MessagesResponse;
 import ai.agentscentral.anthropic.client.response.attributes.ResponseContent;
@@ -21,8 +22,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static ai.agentscentral.anthropic.client.common.Role.assistant;
-import static ai.agentscentral.anthropic.client.request.attributes.AnthropicAssistantMessage.ASSISTANT;
-import static ai.agentscentral.anthropic.client.request.attributes.AnthropicUserMessage.USER;
 import static ai.agentscentral.anthropic.client.request.attributes.TextContentPart.TEXT;
 import static ai.agentscentral.anthropic.client.request.attributes.ToolResultContentPart.TOOL_RESULT;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -94,12 +93,12 @@ class MessageConvertor {
     private AnthropicMessage toAnthropicMessage(@Nonnull Message message) {
 
         return switch (message) {
-            case UserMessage um -> new AnthropicUserMessage(USER, toTextMessageContent(um.parts()));
-            case AssistantMessage am -> new AnthropicAssistantMessage(ASSISTANT, toTextMessageContent(am.parts()));
+            case UserMessage um -> new AnthropicUserMessage(Role.user, toTextMessageContent(um.parts()));
+            case AssistantMessage am -> new AnthropicAssistantMessage(assistant, toTextMessageContent(am.parts()));
             case ToolMessage tm ->
-                    new AnthropicUserMessage(USER, toToolResultMessageContent(tm.toolCallId(), tm.parts()));
+                    new AnthropicUserMessage(Role.user, toToolResultMessageContent(tm.toolCallId(), tm.parts()));
             case HandOffMessage ho ->
-                    new AnthropicUserMessage(USER, toToolResultMessageContent(ho.handOffId(), ho.parts()));
+                    new AnthropicUserMessage(Role.user, toToolResultMessageContent(ho.handOffId(), ho.parts()));
             default -> throw new RuntimeException("Cannot convert message of type " + message.getClass());
         };
     }

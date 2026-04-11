@@ -1,13 +1,14 @@
 package ai.agentscentral.anthropic.client.request.attributes;
 
+
+import ai.agentscentral.anthropic.client.common.Role;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-public record AnthropicAssistantMessage(String role,
+public record AnthropicAssistantMessage(Role role,
                                         @JsonUnwrapped MessageContent content) implements AnthropicMessage {
 
-    public static final String ASSISTANT = "assistant";
 
-    public String role() {
-        return ASSISTANT;
+    public Role role() {
+        return Role.assistant;
     }
 }
