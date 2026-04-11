@@ -26,7 +26,7 @@ public class AnthropicFactory implements ProviderFactory<AnthropicAgentExecutor>
     }
 
 
-    // @Override
+    @Override
     public AnthropicAgentExecutor createAgentExecutor(@Nonnull Agent agent,
                                                       Map<String, ToolCall> tools,
                                                       Map<String, Handoff> handOffs) {
