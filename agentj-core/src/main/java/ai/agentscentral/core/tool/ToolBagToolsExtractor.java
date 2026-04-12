@@ -17,7 +17,24 @@ import static ai.agentscentral.core.tool.ReflectionUtil.*;
 import static java.util.Objects.isNull;
 
 /**
- * ToolBagToolsExtractor
+ * Default implementation of {@link ToolsExtractor} that discovers tools via reflection.
+ *
+ * <p>For each {@link ToolBag} instance, {@code ToolBagToolsExtractor} scans all declared
+ * methods for the {@link ai.agentscentral.core.annotation.Tool} annotation and builds a
+ * {@link ToolCall} descriptor for each one. Parameter metadata is extracted as follows:
+ * <ul>
+ *   <li>Parameters annotated with {@link ai.agentscentral.core.annotation.ToolParam} are
+ *       extracted as {@link ToolParameter}s (LLM-supplied values).</li>
+ *   <li>Parameters annotated with {@link ai.agentscentral.core.annotation.InterruptParam}
+ *       are extracted as {@link InterruptParameter}s (user-supplied values).</li>
+ *   <li>Pre-call interrupts declared via
+ *       {@link ai.agentscentral.core.annotation.Tool#interruptsBefore()} are extracted as
+ *       {@link ToolInterrupt}s, with their parameters resolved by name from the interrupt
+ *       parameter map.</li>
+ * </ul>
+ * Type-specific parameter records ({@link TypedToolParameter}, {@link CollectionToolParameter},
+ * {@link ArrayToolParameter}, {@link EnumToolParameter} and their interrupt counterparts)
+ * are selected by {@link ReflectionUtil} based on the Java type of each parameter.</p>
  *
  * @author Rizwan Idrees
  */

@@ -12,7 +12,16 @@ import java.util.stream.Stream;
 import static java.util.Optional.ofNullable;
 
 /**
- * ReflectionUtil
+ * Utility class that creates typed {@link ToolParameter} and {@link InterruptParameter}
+ * descriptors from reflected {@link java.lang.reflect.Parameter} instances.
+ *
+ * <p>Called by {@link ToolBagToolsExtractor} to select the most specific parameter
+ * record based on the parameter's Java type. Two overloaded sets of factory methods are
+ * provided — one set accepting a {@link ToolParam} annotation (for LLM-supplied
+ * parameters) and a parallel set accepting an {@link InterruptParam} annotation (for
+ * user-supplied interrupt parameters).</p>
+ *
+ * <p>This is a utility class and cannot be instantiated.</p>
  *
  * @author Rizwan Idrees
  */
@@ -21,6 +30,14 @@ public class ReflectionUtil {
     private ReflectionUtil() {
     }
 
+    /**
+     * Creates an {@link EnumToolParameter} for an enum-typed {@link ToolParam} parameter.
+     *
+     * @param index     zero-based parameter index
+     * @param parameter the reflected parameter
+     * @param toolParam the {@link ToolParam} annotation on the parameter
+     * @return a fully populated {@link EnumToolParameter}
+     */
     public static EnumToolParameter extractEnumParameter(int index, Parameter parameter, ToolParam toolParam) {
         try {
             return new EnumToolParameter(index,
@@ -37,6 +54,14 @@ public class ReflectionUtil {
         }
     }
 
+    /**
+     * Creates a {@link TypedToolParameter} for a primitive {@link ToolParam} parameter.
+     *
+     * @param index     zero-based parameter index
+     * @param parameter the reflected parameter
+     * @param toolParam the {@link ToolParam} annotation on the parameter
+     * @return a fully populated {@link TypedToolParameter}
+     */
     public static TypedToolParameter extractPrimitiveParameter(int index, Parameter parameter, ToolParam toolParam) {
         return new TypedToolParameter(index,
                 parameter.getType(),
@@ -47,6 +72,14 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates an {@link ArrayToolParameter} for an array-typed {@link ToolParam} parameter.
+     *
+     * @param index     zero-based parameter index
+     * @param parameter the reflected parameter
+     * @param toolParam the {@link ToolParam} annotation on the parameter
+     * @return a fully populated {@link ArrayToolParameter}
+     */
     public static ArrayToolParameter extractArrayParameter(int index, Parameter parameter, ToolParam toolParam) {
 
         final Class<?> componentType = ofNullable(parameter.getType()).map(Class::getComponentType)
@@ -62,6 +95,15 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates a {@link CollectionToolParameter} for a {@link java.util.Collection}-typed
+     * {@link ToolParam} parameter, resolving the generic element type.
+     *
+     * @param index     zero-based parameter index
+     * @param parameter the reflected parameter
+     * @param toolParam the {@link ToolParam} annotation on the parameter
+     * @return a fully populated {@link CollectionToolParameter}
+     */
     public static CollectionToolParameter extractCollectionParameter(int index, Parameter parameter, ToolParam toolParam) {
 
         final ParameterizedType parameterizedType = (ParameterizedType) parameter.getParameterizedType();
@@ -80,6 +122,14 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates a {@link TypedToolParameter} for a general object {@link ToolParam} parameter.
+     *
+     * @param index     zero-based parameter index
+     * @param parameter the reflected parameter
+     * @param toolParam the {@link ToolParam} annotation on the parameter
+     * @return a fully populated {@link TypedToolParameter}
+     */
     public static TypedToolParameter extractTypedParameter(int index, Parameter parameter, ToolParam toolParam) {
         return new TypedToolParameter(index,
                 parameter.getType(),
@@ -90,6 +140,14 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates an {@link EnumInterruptParameter} for an enum-typed {@link InterruptParam} parameter.
+     *
+     * @param index          zero-based parameter index
+     * @param parameter      the reflected parameter
+     * @param interruptParam the {@link InterruptParam} annotation on the parameter
+     * @return a fully populated {@link EnumInterruptParameter}
+     */
     public static EnumInterruptParameter extractEnumParameter(int index,
                                                               Parameter parameter,
                                                               InterruptParam interruptParam) {
@@ -107,6 +165,14 @@ public class ReflectionUtil {
         }
     }
 
+    /**
+     * Creates a {@link TypedInterruptParameter} for a primitive {@link InterruptParam} parameter.
+     *
+     * @param index          zero-based parameter index
+     * @param parameter      the reflected parameter
+     * @param interruptParam the {@link InterruptParam} annotation on the parameter
+     * @return a fully populated {@link TypedInterruptParameter}
+     */
     public static TypedInterruptParameter extractPrimitiveParameter(int index,
                                                                     Parameter parameter,
                                                                     InterruptParam interruptParam) {
@@ -119,6 +185,14 @@ public class ReflectionUtil {
     }
 
 
+    /**
+     * Creates an {@link ArrayInterruptParameter} for an array-typed {@link InterruptParam} parameter.
+     *
+     * @param index          zero-based parameter index
+     * @param parameter      the reflected parameter
+     * @param interruptParam the {@link InterruptParam} annotation on the parameter
+     * @return a fully populated {@link ArrayInterruptParameter}
+     */
     public static ArrayInterruptParameter extractArrayParameter(int index,
                                                                 Parameter parameter,
                                                                 InterruptParam interruptParam) {
@@ -136,6 +210,15 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates a {@link CollectionInterruptParameter} for a {@link java.util.Collection}-typed
+     * {@link InterruptParam} parameter, resolving the generic element type.
+     *
+     * @param index          zero-based parameter index
+     * @param parameter      the reflected parameter
+     * @param interruptParam the {@link InterruptParam} annotation on the parameter
+     * @return a fully populated {@link CollectionInterruptParameter}
+     */
     public static CollectionInterruptParameter extractCollectionParameter(int index,
                                                                           Parameter parameter,
                                                                           InterruptParam interruptParam) {
@@ -155,6 +238,14 @@ public class ReflectionUtil {
         );
     }
 
+    /**
+     * Creates a {@link TypedInterruptParameter} for a general object {@link InterruptParam} parameter.
+     *
+     * @param index          zero-based parameter index
+     * @param parameter      the reflected parameter
+     * @param interruptParam the {@link InterruptParam} annotation on the parameter
+     * @return a fully populated {@link TypedInterruptParameter}
+     */
     public static TypedInterruptParameter extractTypedParameter(int index,
                                                                 Parameter parameter,
                                                                 InterruptParam interruptParam) {

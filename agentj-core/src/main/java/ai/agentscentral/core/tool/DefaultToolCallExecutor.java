@@ -15,7 +15,22 @@ import static ai.agentscentral.core.tool.ResultOrError.ofResult;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * DefaultToolExecutor
+ * Default implementation of {@link ToolCallExecutor} that invokes tool methods via
+ * reflection.
+ *
+ * <p>On {@link #execute}, the executor builds the full parameter array by merging
+ * LLM-supplied argument values (matched to {@link ToolParameter}s by name) with
+ * user-supplied interrupt values (matched to {@link InterruptParameter}s by name),
+ * sorted by parameter index before invocation. Any {@link IllegalAccessException} or
+ * {@link java.lang.reflect.InvocationTargetException} is caught and converted into a
+ * {@link ToolCallExecutionError}.</p>
+ *
+ * <p>On {@link #executePreCall}, the executor delegates to the registered
+ * {@link PreInterruptCall} function via
+ * {@link ai.agentscentral.core.agentic.executor.register.InterruptPreCallRegistrar}.</p>
+ *
+ * @param <T> the message type produced after result/error conversion (typically
+ *            {@link ai.agentscentral.core.session.message.ToolMessage})
  *
  * @author Rizwan Idrees
  */
@@ -25,6 +40,12 @@ public class DefaultToolCallExecutor<T> implements ToolCallExecutor<T> {
 
     private final InterruptPreCallRegistrar preCallRegistrar;
 
+    /**
+     * Creates a new {@code DefaultToolCallExecutor}.
+     *
+     * @param preCallRegistrar the registrar used to look up named
+     *                         {@link PreInterruptCall} functions
+     */
     public DefaultToolCallExecutor(InterruptPreCallRegistrar preCallRegistrar) {
         this.preCallRegistrar = preCallRegistrar;
     }
