@@ -21,7 +21,7 @@ import static java.util.Comparator.comparing;
  *
  * <p>{@link #addContext} is implemented as a delegating call to {@link #getContext}
  * followed by {@link List#addAll}, so context creation and appending share the same
- * lazy-initialisation path.</p>
+ * lazy-initialization path.</p>
  *
  * <p>This implementation is suitable for single-node deployments and testing.  For
  * clustered or durable storage, provide an alternative {@link ContextManager}
