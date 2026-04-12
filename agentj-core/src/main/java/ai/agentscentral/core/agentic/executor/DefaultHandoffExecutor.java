@@ -16,17 +16,27 @@ import jakarta.annotation.Nonnull;
 import java.util.Optional;
 
 /**
- * DefaultHandoffExecutor
+ * Default implementation of {@link HandoffExecutor}.
+ *
+ * <p>Resolves the target agentic by name using an {@link AgenticRegistrar}, then updates
+ * the conversation's context state via a {@link ContextStateManager} to reflect the new
+ * active agent or team. The updated state and the target's executor are returned as a
+ * {@link HandedOff} so the caller can continue the turn under the new entity.</p>
  *
  * @author Rizwan Idrees
  */
-
 public class DefaultHandoffExecutor implements HandoffExecutor {
 
     private final AgenticRegistrar agenticRegistrar;
     private final ContextStateManager stateManager;
 
 
+    /**
+     * Creates a new {@code DefaultHandoffExecutor}.
+     *
+     * @param agenticRegistrar registry used to look up the target agent or team by name
+     * @param stateManager     manager used to persist the updated context state after a handoff
+     */
     public DefaultHandoffExecutor(AgenticRegistrar agenticRegistrar, ContextStateManager stateManager) {
         this.agenticRegistrar = agenticRegistrar;
         this.stateManager = stateManager;

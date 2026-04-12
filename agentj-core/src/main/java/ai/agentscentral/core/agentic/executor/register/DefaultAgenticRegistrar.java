@@ -14,6 +14,16 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+/**
+ * Default implementation of {@link AgenticRegistrar}.
+ *
+ * <p>Maintains two separate maps — one for teams and one for agents — both keyed by a
+ * {@link RegistrationKey} that combines the entity name with the name of its parent team
+ * (empty string for top-level entities). Registrations are idempotent: a second call for
+ * the same key is silently ignored.</p>
+ *
+ * @author Rizwan Idrees
+ */
 public class DefaultAgenticRegistrar implements AgenticRegistrar {
 
     private final Map<RegistrationKey, RegisteredAgentic> teamRegistry = new HashMap<>();

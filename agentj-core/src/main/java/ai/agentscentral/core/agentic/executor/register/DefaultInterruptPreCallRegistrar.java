@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * DefaultInterruptPreCallRegistrar
+ * Default implementation of {@link InterruptPreCallRegistrar} backed by a {@link java.util.HashMap}.
+ *
+ * <p>Registrations are idempotent: a second {@link #register} call for the same name is
+ * silently ignored, preserving the first-registered function.</p>
  *
  * @author Rizwan Idrees
  */

@@ -25,7 +25,28 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
- * DefaultAgentExecutor
+ * Default implementation of {@link AgentExecutor} for a single {@link Agent}.
+ *
+ * <p>On construction, tools are extracted from the agent's {@link ai.agentscentral.core.tool.ToolBag}s
+ * and handoffs from its {@link ai.agentscentral.core.handoff.Handoff} list; a
+ * {@link ProviderAgentExecutor} is then obtained from the agent's model configuration.</p>
+ *
+ * <p>Each call to {@link #execute} drives one conversational turn:
+ * <ol>
+ *   <li>If the incoming user message contains unprocessed interrupt responses, tool calls
+ *       are resumed with those values ({@code resumeToolCallsWithInterrupt}).</li>
+ *   <li>Otherwise the provider is invoked and the assistant response is inspected:
+ *     <ul>
+ *       <li>Handoffs are processed via {@link HandoffExecutor}, transitioning to the
+ *           target executor.</li>
+ *       <li>Tool calls that declare pre-call interrupts are paused and a
+ *           {@link ai.agentscentral.core.session.message.ToolInterruptMessage} is emitted.</li>
+ *       <li>Regular tool calls are executed immediately and the turn recurses.</li>
+ *     </ul>
+ *   </li>
+ * </ol>
+ * Execution stops when no tool calls or handoffs remain, or when an
+ * {@link MessageExecutionContext} limit is exceeded.</p>
  *
  * @author Rizwan Idrees
  */
@@ -39,6 +60,16 @@ public class DefaultAgentExecutor implements AgentExecutor {
     private final MessageIdGenerator messageIdGenerator;
     private final Map<String, ToolCall> tools;
 
+    /**
+     * Creates a new {@code DefaultAgentExecutor}, extracting tools and handoffs from the
+     * agent and obtaining the provider executor from the model configuration.
+     *
+     * @param agent           the agent to execute
+     * @param agenticModule   shared module providing tool extractor, handoff extractor,
+     *                        session ID generator, and other helpers
+     * @param contextManager  used to persist messages produced during execution
+     * @param handoffExecutor used to resolve and perform handoffs to other agents or teams
+     */
     public DefaultAgentExecutor(Agent agent,
                                 AgenticModule agenticModule,
                                 ContextManager contextManager,
