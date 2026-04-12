@@ -27,7 +27,7 @@ import static java.lang.System.currentTimeMillis;
  *
  * <p>On each {@link #handle} call the handler:
  * <ol>
- *   <li>Deserialises the request body into a {@link ai.agentscentral.http.request.MessageRequest}
+ *   <li>Deserializes the request body into a {@link ai.agentscentral.http.request.MessageRequest}
  *       via the configured {@link ai.agentscentral.http.request.RequestExtractor}.</li>
  *   <li>Resolves or generates a session identifier using the
  *       {@link ai.agentscentral.http.request.SessionIdExtractor} and
@@ -69,11 +69,11 @@ public class AgenticHttpHandler implements HttpHandler<MessageResponse> {
     /**
      * Creates an {@code AgenticHttpHandler} from individual dependencies.
      *
-     * @param processor           the session processor that drives agent execution
-     * @param requestExtractor    deserialises the HTTP request body
-     * @param sessionIdExtractor  extracts an existing session ID from the request
-     * @param sessionIdGenerator  generates a new session ID when none is present
-     * @param messageIdGenerator  generates unique IDs for each user message
+     * @param processor          the session processor that drives agent execution
+     * @param requestExtractor   deserializes the HTTP request body
+     * @param sessionIdExtractor extracts an existing session ID from the request
+     * @param sessionIdGenerator generates a new session ID when none is present
+     * @param messageIdGenerator generates unique IDs for each user message
      */
     public AgenticHttpHandler(SessionProcessor processor,
                               RequestExtractor requestExtractor,
@@ -92,7 +92,7 @@ public class AgenticHttpHandler implements HttpHandler<MessageResponse> {
     public Response<MessageResponse> handle(Request request) {
         final MessageRequest messageRequest = requestExtractor.extract(request);
         final String sessionId = sessionIdExtractor.extract(request)
-                .orElse(sessionIdGenerator.generate());
+                .orElseGet(sessionIdGenerator::generate);
 
         final List<Message> messages = Optional.of(messageRequest)
                 .map(r -> new UserMessage(sessionId, messageId(), toMessageParts(r), currentTimeMillis()))

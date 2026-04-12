@@ -9,6 +9,7 @@ import java.util.List;
  *
  * @param taskId
  * @param messageParts
+ * @author Rizwan Idrees
  */
 public record TaskMessage(String taskId,
                           List<? extends MessagePart> messageParts,
