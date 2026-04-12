@@ -3,7 +3,7 @@ package ai.agentscentral.anthropic.client.request.attributes;
 /**
  * Service-tier preference for an Anthropic Messages request.
  *
- * <p>Sent as the {@code service_tier} field when set on {@link AnthropicConfig}.</p>
+ * <p>Sent as the {@code service_tier} field when set on {@link ai.agentscentral.anthropic.config.AnthropicConfig}.</p>
  *
  * @author Rizwan Idrees
  */
