@@ -59,6 +59,12 @@ public record AgenticConfig(SessionProcessor processor,
      */
     public static class AgenticConfigBuilder {
 
+        /**
+         * Creates a builder with all fields initially unset.
+         */
+        public AgenticConfigBuilder() {
+        }
+
         private SessionProcessor processor;
         private RequestExtractor requestExtractor;
         private SessionIdExtractor sessionIdExtractor;

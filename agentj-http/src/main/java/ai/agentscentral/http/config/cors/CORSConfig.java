@@ -3,12 +3,15 @@ package ai.agentscentral.http.config.cors;
 import java.util.Set;
 
 /**
- * Configuration Class for CORS (Cross-Origin Resource Sharing)
+ * Immutable configuration record for CORS (Cross-Origin Resource Sharing).
  *
- * @param allowedOrigins
- * @param allowedHeaders
- * @param allowedMethods
- * @param allowCredentials
+ * @param allowedOrigins   set of origin strings whose cross-origin requests are permitted;
+ *                         empty by default — must be explicitly configured for production
+ * @param allowedHeaders   set of header names browsers may send in cross-origin requests
+ * @param allowedMethods   set of HTTP method strings allowed in cross-origin requests
+ * @param allowCredentials {@code true} to send
+ *                         {@code Access-Control-Allow-Credentials: true}, permitting
+ *                         cookies and HTTP authentication in cross-origin requests
  *
  * @author Mustafa Bhuiyan
  */

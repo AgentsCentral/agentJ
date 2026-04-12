@@ -70,6 +70,12 @@ public record JettyConfig(
         private int reservedThreads = DEFAULT_RESERVED_THREADS;
 
         /**
+         * Creates a builder pre-populated with all default values.
+         */
+        public JettyConfigBuilder() {
+        }
+
+        /**
          * Sets the bind address.
          *
          * @param host network interface address (e.g. {@code "0.0.0.0"} or

@@ -66,6 +66,15 @@ public class AgenticHttpHandler implements HttpHandler<MessageResponse> {
         );
     }
 
+    /**
+     * Creates an {@code AgenticHttpHandler} from individual dependencies.
+     *
+     * @param processor           the session processor that drives agent execution
+     * @param requestExtractor    deserialises the HTTP request body
+     * @param sessionIdExtractor  extracts an existing session ID from the request
+     * @param sessionIdGenerator  generates a new session ID when none is present
+     * @param messageIdGenerator  generates unique IDs for each user message
+     */
     public AgenticHttpHandler(SessionProcessor processor,
                               RequestExtractor requestExtractor,
                               SessionIdExtractor sessionIdExtractor,

@@ -41,6 +41,8 @@ import static ai.agentscentral.http.route.HttpRouter.NOT_FOUND;
 public class AgentJServlet extends HttpServlet {
 
     private final HttpRouter router;
+
+    /** Serializes response bodies to strings using the configured content-type strategy. */
     private final ContentConvertor convertor;
 
     /**

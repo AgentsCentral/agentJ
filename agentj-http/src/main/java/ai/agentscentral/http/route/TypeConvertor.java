@@ -21,6 +21,12 @@ import java.util.stream.IntStream;
  */
 public class TypeConvertor {
 
+    /**
+     * This is a utility class and cannot be instantiated.
+     */
+    private TypeConvertor() {
+    }
+
     private static final Map<Class<?>, Function<String, Object>> CONVERTERS = new HashMap<>() {{
         register(int.class, Integer.class, Integer::parseInt);
         register(long.class, Long.class, Long::parseLong);
@@ -33,6 +39,19 @@ public class TypeConvertor {
     }};
 
 
+    /**
+     * Converts an array of raw string values to the specified target type.
+     *
+     * <p>If {@code type} is an array type the entire {@code values} array is converted
+     * element-by-element.  If {@code type} is an enum the first element is matched by
+     * {@code toString()}.  Otherwise {@code values[0]} is converted via
+     * {@link #convert(String, Class)}.</p>
+     *
+     * @param values raw string values from the request; {@code null} returns {@code null}
+     * @param type   the target Java type
+     * @return the converted value, or {@code null} if {@code values} is {@code null} or
+     *         no convertor is registered for {@code type}
+     */
     public static Object convert(String[] values, Class<?> type) {
 
         if (Objects.isNull(values)) {
@@ -50,6 +69,15 @@ public class TypeConvertor {
         return convert(values[0], type);
     }
 
+    /**
+     * Converts a single raw string value to the specified target type.
+     *
+     * @param value the raw string value to convert
+     * @param type  the target Java type; must be registered in the internal converters
+     *              map or be an enum type
+     * @return the converted value, or {@code null} if no convertor is registered for
+     *         {@code type}
+     */
     public static Object convert(String value, Class<?> type) {
 
         if (CONVERTERS.containsKey(type)) {

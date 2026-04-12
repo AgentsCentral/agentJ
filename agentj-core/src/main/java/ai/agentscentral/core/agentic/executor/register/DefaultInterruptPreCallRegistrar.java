@@ -16,16 +16,17 @@ import java.util.Optional;
  */
 public class DefaultInterruptPreCallRegistrar implements InterruptPreCallRegistrar {
 
-    private final Map<String, PreInterruptCall> preCallsRegister = new HashMap<>();
+    private final Map<String, PreInterruptCall<?>> preCallsRegister = new HashMap<>();
 
     @Override
-    public void register(String name, PreInterruptCall preInterruptCall) {
+    public <T> void register(String name, PreInterruptCall<T> preInterruptCall) {
         preCallsRegister.putIfAbsent(name, preInterruptCall);
     }
 
 
     @Override
-    public Optional<PreInterruptCall> findByName(String name) {
-        return Optional.ofNullable(preCallsRegister.get(name));
+    @SuppressWarnings("unchecked")
+    public <T> Optional<PreInterruptCall<T>> findByName(String name) {
+        return Optional.ofNullable( (PreInterruptCall<T>) preCallsRegister.get(name));
     }
 }

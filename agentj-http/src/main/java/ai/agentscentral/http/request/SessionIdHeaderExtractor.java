@@ -19,6 +19,12 @@ public class SessionIdHeaderExtractor implements SessionIdExtractor {
 
     private static final String SESSION_ID_HEADER_NAME = "X-Session-Id";
 
+    /**
+     * Creates a new {@code SessionIdHeaderExtractor}.
+     */
+    public SessionIdHeaderExtractor() {
+    }
+
     @Override
     public Optional<String> extract(Request request) {
         return request.headers().entrySet()

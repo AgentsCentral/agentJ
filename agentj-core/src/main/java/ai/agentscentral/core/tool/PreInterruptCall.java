@@ -24,7 +24,7 @@ public interface PreInterruptCall<T> {
     /**
      * Fetches contextual data for the interrupt prompt.
      *
-     * @param user the current end-user; may be used to personalise or restrict the data
+     * @param user the current end-user; may be used to personalize or restrict the data
      * @return the contextual data to attach to the interrupt prompt; may be {@code null}
      */
     T call(User user);

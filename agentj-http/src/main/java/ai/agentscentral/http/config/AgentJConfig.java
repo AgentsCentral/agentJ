@@ -63,6 +63,13 @@ public record AgentJConfig(List<Route> routes) {
      */
     public static class AgentJConfigBuilder {
 
+        /**
+         * Creates a builder pre-populated with the default {@link AgenticModule} and
+         * default liveness/readiness health-check routes.
+         */
+        public AgentJConfigBuilder() {
+        }
+
         private AgenticModule agenticModule = AgenticModule.defaultAgenticModule();
         private Route livenessRoute = DEFAULT_LIVENESS_ROUTE;
         private Route readinesRoute = DEFAULT_READINESS_ROUTE;
