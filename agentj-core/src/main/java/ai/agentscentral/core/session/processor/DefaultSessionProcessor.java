@@ -29,7 +29,26 @@ import static java.util.Comparator.comparing;
 import static java.util.Optional.of;
 
 /**
- * DefaultSessionProcessor
+ * Default implementation of {@link SessionProcessor}.
+ *
+ * <p>On construction, the provided {@link ai.agentscentral.core.agentic.Agentic} (agent
+ * or team) is fully initialised via {@link ai.agentscentral.core.agentic.executor.AgenticExecutorInitializer},
+ * which wires all executors and registers them with an internal
+ * {@link ai.agentscentral.core.agentic.executor.register.AgenticRegistrar}.</p>
+ *
+ * <p>On each call to {@link #process}, the processor:
+ * <ol>
+ *   <li>Persists the incoming {@link ai.agentscentral.core.session.message.UserMessage}.</li>
+ *   <li>Retrieves and sorts the full conversation context by timestamp.</li>
+ *   <li>Resolves the currently active executor from context state (falls back to the
+ *       root executor if no state is recorded).</li>
+ *   <li>Delegates execution to the resolved executor.</li>
+ *   <li>Filters the resulting messages to return only those displayable to the caller
+ *       (non-tool-call, non-handoff {@link ai.agentscentral.core.session.message.AssistantMessage}s
+ *       and {@link ai.agentscentral.core.session.message.ToolInterruptMessage}s produced
+ *       after the current user message timestamp).</li>
+ * </ol>
+ * </p>
  *
  * @author Rizwan Idrees
  */
@@ -44,6 +63,16 @@ public class DefaultSessionProcessor implements SessionProcessor {
     private final ExecutionLimits executionLimits;
 
 
+    /**
+     * Creates a new {@code DefaultSessionProcessor}, initialising all executors for the
+     * given agentic entity.
+     *
+     * @param agentic         the root agent or team to execute; all members are recursively
+     *                        initialised and registered at construction time
+     * @param agentJModule    shared infrastructure module (context, session ids, tools,
+     *                        handoffs)
+     * @param executionLimits per-message limits on tool-call rounds and handoffs
+     */
     public DefaultSessionProcessor(Agentic agentic,
                                    AgenticModule agentJModule,
                                    ExecutionLimits executionLimits) {
