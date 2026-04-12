@@ -29,7 +29,6 @@ import java.lang.annotation.Target;
  *     }
  * }
  * }</pre>
- * </p>
  *
  * @author Rizwan Idrees
  */

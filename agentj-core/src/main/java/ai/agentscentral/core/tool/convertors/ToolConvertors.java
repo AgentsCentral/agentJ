@@ -21,6 +21,9 @@ import static java.lang.System.currentTimeMillis;
  */
 public class ToolConvertors {
 
+    private ToolConvertors(){
+    }
+
     /**
      * Converts a successful {@link ToolCallResult} into a {@link ToolMessage}.
      *

@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.groupingBy;
  *     </ul>
  *   </li>
  * </ol>
- * Execution stops when no tool calls or handoffs remain, or when an
+ * <p>Execution stops when no tool calls or handoffs remain, or when an
  * {@link MessageExecutionContext} limit is exceeded.</p>
  *
  * @author Rizwan Idrees
