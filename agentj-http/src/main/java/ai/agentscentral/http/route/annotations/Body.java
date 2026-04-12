@@ -6,7 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Body
+ * Marks a controller method parameter (or field) as being bound from the HTTP request
+ * body.
+ *
+ * <p>The body is deserialised by the configured
+ * {@link ai.agentscentral.http.route.convertors.ContentConvertor}.</p>
  *
  * @author Rizwan Idrees
  */

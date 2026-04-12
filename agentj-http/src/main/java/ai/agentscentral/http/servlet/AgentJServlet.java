@@ -19,7 +19,20 @@ import static ai.agentscentral.http.request.convertors.RequestConvertors.servlet
 import static ai.agentscentral.http.route.HttpRouter.NOT_FOUND;
 
 /**
- * AgentJServlet
+ * Central Jakarta Servlet that dispatches every HTTP request through the AgentJ routing
+ * layer.
+ *
+ * <p>On each request, the servlet:
+ * <ol>
+ *   <li>Converts the {@link HttpServletRequest} to an AgentJ {@link ai.agentscentral.http.request.Request}
+ *       using {@link ai.agentscentral.http.request.convertors.RequestConvertors#servletRequestToRequest}.</li>
+ *   <li>Passes the request to the {@link HttpRouter}, which matches it against the
+ *       registered {@link ai.agentscentral.http.route.Route}s.</li>
+ *   <li>Serialises the resulting {@link ai.agentscentral.http.response.Response} body via
+ *       the {@link ai.agentscentral.http.route.convertors.ContentConvertor}.</li>
+ *   <li>Writes the status, content-type, and body to the {@link HttpServletResponse}.</li>
+ * </ol>
+ * Unmatched requests receive a {@code 404 application/json} response.
  *
  * @author Rizwan Idrees
  * @author Mustafa Bhuiyan
@@ -30,6 +43,12 @@ public class AgentJServlet extends HttpServlet {
     private final HttpRouter router;
     private final ContentConvertor convertor;
 
+    /**
+     * Creates an {@code AgentJServlet} with the given routes and content convertor.
+     *
+     * @param routes    the list of routes to register with the internal {@link HttpRouter}
+     * @param convertor the convertor used to serialise response bodies to strings
+     */
     public AgentJServlet(List<Route> routes, ContentConvertor convertor) {
         this.router = new HttpRouter(routes);
         this.convertor = convertor;

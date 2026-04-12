@@ -9,7 +9,8 @@ import java.io.PrintWriter;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 /**
- * JsonResponseSender
+ * {@link ResponseSender} implementation that serialises a {@link MessageResponse} to JSON
+ * using a Jackson {@link ObjectMapper} and writes it as {@code application/json}.
  *
  * @author Rizwan Idrees
  */
@@ -18,6 +19,11 @@ public class JsonResponseSender implements ResponseSender {
     private static final String CONTENT_TYPE = "application/json";
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a {@code JsonResponseSender} with the given {@link ObjectMapper}.
+     *
+     * @param objectMapper the mapper used to serialise the response body
+     */
     public JsonResponseSender(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }

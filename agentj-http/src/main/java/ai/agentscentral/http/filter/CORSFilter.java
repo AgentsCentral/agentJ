@@ -13,7 +13,20 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * CORSFilter
+ * Jakarta Servlet {@link Filter} that enforces the CORS policy defined in
+ * {@link CORSConfig}.
+ *
+ * <p>For each request that carries an {@code Origin} header the filter:
+ * <ol>
+ *   <li>Rejects requests from origins not listed in {@link CORSConfig#allowedOrigins()}
+ *       with {@code 403 Forbidden}.</li>
+ *   <li>Handles preflight ({@code OPTIONS}) requests by validating the requested
+ *       method and headers against the configuration and responding with
+ *       {@code 204 No Content} plus the appropriate {@code Access-Control-*} headers.</li>
+ *   <li>Adds {@code Access-Control-*} headers to all non-preflight requests from
+ *       allowed origins and passes them to the next filter in the chain.</li>
+ * </ol>
+ * Requests without an {@code Origin} header are passed through unmodified.
  *
  * @author Mustafa Bhuiyan
  */
@@ -21,6 +34,11 @@ public class CORSFilter implements Filter {
 
     private final CORSConfig corsConfig;
 
+    /**
+     * Creates a {@code CORSFilter} with the given CORS configuration.
+     *
+     * @param corsConfig the policy to enforce; must not be {@code null}
+     */
     public CORSFilter(CORSConfig corsConfig) {
         this.corsConfig = corsConfig;
     }

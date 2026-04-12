@@ -7,6 +7,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * {@link SessionIdExtractor} that reads the session identifier from the
+ * {@code X-Session-Id} request header (case-insensitive).
+ *
+ * <p>Returns {@link java.util.Optional#empty()} if the header is absent or blank.</p>
+ *
+ * @author Rizwan Idrees
+ */
 public class SessionIdHeaderExtractor implements SessionIdExtractor {
 
     private static final String SESSION_ID_HEADER_NAME = "X-Session-Id";

@@ -8,7 +8,16 @@ import java.util.stream.IntStream;
 import static org.apache.commons.lang3.Strings.CS;
 
 /**
- * PathPatternExtractor
+ * Package-private utility that compiles a route path template into a
+ * {@link PathPattern}.
+ *
+ * <p>Each {@code {variable}} placeholder in the template is replaced with the regex
+ * capture group {@code ([^/]+)}, and the resulting expression is anchored with {@code ^}
+ * to produce an exact-prefix match.  The variable names are extracted in declaration
+ * order so that capture-group indices align with the name list.</p>
+ *
+ * <p>Example: {@code /users/{id}} becomes {@code ^/users/([^/]+)$} with variable names
+ * {@code [id]}.</p>
  *
  * @author Rizwan Idrees
  */

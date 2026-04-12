@@ -6,7 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * PathVariable
+ * Binds a controller method parameter (or field) to a URI path variable.
+ *
+ * <p>The {@link #name()} must match a {@code {variable}} placeholder in the route
+ * path (e.g. {@code /users/{id}} with {@code @PathVariable("id")}).</p>
  *
  * @author Rizwan Idrees
  */
@@ -14,5 +17,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PathVariable {
 
+    /**
+     * The name of the path variable as it appears in the route template.
+     *
+     * @return the path variable name
+     */
     String name();
 }

@@ -13,7 +13,21 @@ import static ai.agentscentral.http.route.convertors.TypeConvertors.*;
 import static java.util.Comparator.comparingInt;
 
 /**
- * HttpControllerRouter
+ * Internal router that invokes the Java method associated with a
+ * {@link ControllerMatchedRoute} by reflectively binding request parameters, path
+ * variables, headers, and the request body to the method's parameters.
+ *
+ * <p>Parameter binding is determined by the annotation present on each method parameter:
+ * <ul>
+ *   <li>{@link ai.agentscentral.http.route.annotations.RequestParam} — from the query string</li>
+ *   <li>{@link ai.agentscentral.http.route.annotations.PathVariable} — from the URI path</li>
+ *   <li>{@link ai.agentscentral.http.route.annotations.Header} — from request headers</li>
+ *   <li>{@link ai.agentscentral.http.route.annotations.Body} — deserialised from the
+ *       request body using the configured {@link ContentConvertor}</li>
+ * </ul>
+ *
+ * <p>If the controller method throws, a 500 response containing the exception message is
+ * returned.</p>
  *
  * @author Rizwan Idrees
  */
@@ -22,8 +36,15 @@ public class HttpControllerRouter {
 
     private final ContentConvertor contentConvertor;
 
+    /** Empty argument array used when a controller method has no parameters. */
     public static final Object[] EMPTY_ARGUMENTS = new Object[]{};
 
+    /**
+     * Creates an {@code HttpControllerRouter} with the given {@link ContentConvertor}.
+     *
+     * @param contentConvertor convertor used to deserialise request bodies and
+     *                         serialise response bodies
+     */
     public HttpControllerRouter(ContentConvertor contentConvertor) {
         this.contentConvertor = contentConvertor;
     }

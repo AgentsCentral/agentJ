@@ -9,7 +9,16 @@ import java.util.Optional;
 
 
 /**
- * Request
+ * Framework-internal representation of an HTTP request.
+ *
+ * <p>Created by {@link ai.agentscentral.http.request.convertors.RequestConvertors#servletRequestToRequest} from a
+ * Jakarta {@link jakarta.servlet.http.HttpServletRequest} and passed to every
+ * {@link ai.agentscentral.http.route.Route} and
+ * {@link ai.agentscentral.http.handler.HttpHandler} in the processing chain.</p>
+ *
+ * <p>The request body is read lazily and cached on the first call to {@link #body()},
+ * {@link #bytes()}, or {@link #stream()} to allow multiple reads without consuming the
+ * underlying {@link java.io.InputStream} more than once.</p>
  *
  * @author Rizwan Idrees
  */
@@ -25,6 +34,18 @@ public class Request {
 
     private CachedContent cachedContent;
 
+    /**
+     * Creates a new {@code Request}.
+     *
+     * @param method        the HTTP method of the request
+     * @param path          the servlet path (without query string)
+     * @param stream        the raw body input stream; read lazily and cached
+     * @param contentLength the value of the {@code Content-Length} header, or
+     *                      {@code -1} if unknown
+     * @param uri           the full request URI including path and query string
+     * @param parameters    the parsed query/form parameters
+     * @param headers       all request headers, each name mapped to its value list
+     */
     public Request(HttpMethod method,
                    String path,
                    InputStream stream,

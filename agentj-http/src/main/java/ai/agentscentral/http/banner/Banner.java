@@ -1,7 +1,10 @@
 package ai.agentscentral.http.banner;
 
 /**
- * Banner
+ * Utility class that prints the AgentJ ASCII-art startup banner to standard output.
+ *
+ * <p>Called once by {@link ai.agentscentral.http.runner.AgentJStarter#run} before the
+ * HTTP server starts.  This is a utility class and cannot be instantiated.</p>
  *
  * @author Rizwan Idrees
  */
@@ -24,6 +27,9 @@ public class Banner {
 """;
 
 
+    /**
+     * Prints the AgentJ startup banner to {@link System#out}.
+     */
     public static void printBanner(){
         System.out.println(banner);
     }

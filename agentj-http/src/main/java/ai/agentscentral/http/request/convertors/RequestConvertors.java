@@ -15,11 +15,24 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Pre-built {@link Convertor} constants for adapting Jakarta Servlet types to AgentJ
+ * HTTP types.
+ *
+ * <p>This is a utility class and cannot be instantiated.</p>
+ *
+ * @author Rizwan Idrees
+ */
 public class RequestConvertors {
 
     private RequestConvertors() {
     }
 
+    /**
+     * Converts an {@link HttpServletRequest} to an AgentJ {@link Request}, reading all
+     * headers into a case-preserving map and wrapping the body input stream for lazy
+     * buffering.
+     */
     public static Convertor<HttpServletRequest, Request> servletRequestToRequest = servletRequest -> new Request(
             HttpMethod.valueOf(servletRequest.getMethod()),
             servletRequest.getServletPath(),

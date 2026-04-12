@@ -9,7 +9,14 @@ import static org.apache.commons.lang3.StringUtils.replaceEach;
 import static org.apache.commons.lang3.Strings.CS;
 
 /**
- * TrailingRequestPathConversationIdExtractor
+ * {@link SessionIdExtractor} that extracts the session identifier from the trailing
+ * segment of the request URI.
+ *
+ * <p>Given a registered base path such as {@code /agent/chat/*}, this extractor strips
+ * the base path (with the wildcard removed) from the incoming URI and returns the
+ * remainder as the session ID.  For example, if the base path is {@code /agent/chat/*}
+ * and the URI is {@code /agent/chat/abc123}, the extracted session ID is {@code abc123}.
+ * Returns {@link java.util.Optional#empty()} if the remainder is blank.</p>
  *
  * @author Rizwan Idrees
  */
@@ -19,6 +26,12 @@ public class SessionIdTrailingPathExtractor implements SessionIdExtractor {
     private static final String SLASH = "/";
     private final String path;
 
+    /**
+     * Creates a {@code SessionIdTrailingPathExtractor} for the given base path.
+     *
+     * @param path the registered route path, optionally ending with {@code *}
+     *             (e.g. {@code /agent/chat/*})
+     */
     public SessionIdTrailingPathExtractor(String path) {
         this.path = cleanPath(path);
     }

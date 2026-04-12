@@ -18,7 +18,16 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.substringBeforeLast;
 
 /**
- * ControllerMappedRoutesExtractor
+ * Package-private utility that reflects over a controller object and builds a
+ * {@link ControllerMappedRoute} for each HTTP-method-annotated method.
+ *
+ * <p>Supported method annotations: {@link Delete}, {@link Get}, {@link Patch},
+ * {@link Post}, {@link Put}.  Each annotated method's parameters are inspected for
+ * {@link ai.agentscentral.http.route.annotations.RequestParam},
+ * {@link ai.agentscentral.http.route.annotations.PathVariable},
+ * {@link ai.agentscentral.http.route.annotations.Header}, and
+ * {@link ai.agentscentral.http.route.annotations.Body} annotations to build
+ * {@link MethodParameter} descriptors.</p>
  *
  * @author Rizwan Idrees
  */

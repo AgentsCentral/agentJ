@@ -9,7 +9,13 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 /**
- * TypeConvertor
+ * Utility class that converts raw {@code String} (or {@code String[]}) values to typed
+ * Java objects for controller method parameter binding.
+ *
+ * <p>Supports the following target types out of the box: {@code int}/{@code Integer},
+ * {@code long}/{@code Long}, {@code double}/{@code Double}, {@code boolean}/{@code Boolean},
+ * {@code float}/{@code Float}, {@code short}/{@code Short}, {@code byte}/{@code Byte},
+ * {@code String}, any {@code enum} type, and single-type arrays of the above.</p>
  *
  * @author Rizwan Idrees
  */

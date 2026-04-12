@@ -8,7 +8,12 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * ControllerMappedRoute
+ * Package-private {@link Route} created by {@link ControllerMappedRoutesExtractor} for a
+ * single HTTP-method annotation on a controller method.
+ *
+ * <p>At match time the request URI is tested against the compiled {@link PathPattern}.
+ * A successful match produces a {@link ControllerMappedMatchedRoute} carrying the
+ * reflected method and parameter metadata needed for invocation.</p>
  *
  * @author Rizwan Idrees
  */

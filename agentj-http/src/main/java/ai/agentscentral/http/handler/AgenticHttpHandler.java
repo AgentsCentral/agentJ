@@ -23,7 +23,24 @@ import static ai.agentscentral.http.common.MessageType.interrupt;
 import static java.lang.System.currentTimeMillis;
 
 /**
- * AgenticHttpHandler
+ * {@link HttpHandler} that bridges an HTTP request to an AgentJ agentic session.
+ *
+ * <p>On each {@link #handle} call the handler:
+ * <ol>
+ *   <li>Deserialises the request body into a {@link ai.agentscentral.http.request.MessageRequest}
+ *       via the configured {@link ai.agentscentral.http.request.RequestExtractor}.</li>
+ *   <li>Resolves or generates a session identifier using the
+ *       {@link ai.agentscentral.http.request.SessionIdExtractor} and
+ *       {@link ai.agentscentral.core.session.id.SessionIdGenerator}.</li>
+ *   <li>Converts each request message part into a
+ *       {@link ai.agentscentral.core.session.message.MessagePart} (text or interrupt)
+ *       and wraps them in a {@link ai.agentscentral.core.session.message.UserMessage}.</li>
+ *   <li>Passes the user message to the {@link ai.agentscentral.core.session.processor.SessionProcessor}.</li>
+ *   <li>Maps the resulting {@link ai.agentscentral.core.session.message.Message}s back to
+ *       HTTP response message types ({@link ai.agentscentral.http.response.TextMessage}
+ *       or {@link ai.agentscentral.http.response.InterruptMessage}) and returns a
+ *       {@code 200 application/json} response.</li>
+ * </ol>
  *
  * @author Rizwan Idrees
  */
@@ -35,6 +52,11 @@ public class AgenticHttpHandler implements HttpHandler<MessageResponse> {
     private final SessionIdGenerator sessionIdGenerator;
     private final MessageIdGenerator messageIdGenerator;
 
+    /**
+     * Creates an {@code AgenticHttpHandler} from a fully assembled {@link AgenticConfig}.
+     *
+     * @param config the agentic configuration supplying all required dependencies
+     */
     public AgenticHttpHandler(AgenticConfig config) {
         this(config.processor(),
                 config.requestExtractor(),

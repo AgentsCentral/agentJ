@@ -6,7 +6,12 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.function.Predicate;
 
 /**
- * JacksonJsonContentConvertor
+ * {@link ContentTypeConvertor} that serialises and deserialises JSON using a Jackson
+ * {@link ObjectMapper}.
+ *
+ * <p>By default, matches {@code application/json} and vendor JSON types of the form
+ * {@code application/vnd.*+json}.  A custom {@link java.util.function.Predicate} can be
+ * supplied via the two-argument constructor to override the matching logic.</p>
  *
  * @author Rizwan Idrees
  */
@@ -23,10 +28,22 @@ public class JacksonJsonContentTypeConvertor implements ContentTypeConvertor {
     private final ObjectMapper objectMapper;
     private final Predicate<String> matcher;
 
+    /**
+     * Creates a convertor with the default matcher ({@code application/json} and
+     * {@code application/vnd.*+json}).
+     *
+     * @param objectMapper the Jackson mapper for serialisation and deserialisation
+     */
     public JacksonJsonContentTypeConvertor(ObjectMapper objectMapper) {
         this(objectMapper, applicationJsonContent.or(vendorAPIJsonContent));
     }
 
+    /**
+     * Creates a convertor with a custom content-type matcher.
+     *
+     * @param objectMapper the Jackson mapper for serialisation and deserialisation
+     * @param matcher      predicate that returns {@code true} for handled content-types
+     */
     public JacksonJsonContentTypeConvertor(ObjectMapper objectMapper, Predicate<String> matcher) {
         this.objectMapper = objectMapper;
         this.matcher = matcher;

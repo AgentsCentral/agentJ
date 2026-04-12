@@ -7,7 +7,13 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 
 /**
- * DefaultContentConvertor
+ * Default {@link ContentConvertor} implementation that delegates to a list of
+ * {@link ContentTypeConvertor}s, selecting the first one whose
+ * {@link ContentTypeConvertor#matches(String)} returns {@code true} for the request or
+ * response content-type.
+ *
+ * <p>When constructed with no arguments, a single {@link JacksonJsonContentTypeConvertor}
+ * is pre-registered to handle {@code application/json} and vendor JSON types.</p>
  *
  * @author Rizwan Idrees
  */
@@ -19,10 +25,19 @@ public class DefaultContentConvertor implements ContentConvertor {
 
     private final List<ContentTypeConvertor> contentTypeConvertors;
 
+    /**
+     * Creates a {@code DefaultContentConvertor} pre-configured with a
+     * {@link JacksonJsonContentTypeConvertor} for {@code application/json}.
+     */
     public DefaultContentConvertor() {
         this(DEFAULT_CONVERTORS);
     }
 
+    /**
+     * Creates a {@code DefaultContentConvertor} with a custom list of convertors.
+     *
+     * @param contentTypeConvertors ordered list of convertors; the first match wins
+     */
     public DefaultContentConvertor(List<ContentTypeConvertor> contentTypeConvertors) {
         this.contentTypeConvertors = contentTypeConvertors;
     }

@@ -5,7 +5,16 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * Message
+ * Polymorphic base interface for a single message part within an inbound HTTP
+ * {@link MessageRequest}.
+ *
+ * <p>Jackson uses the {@code type} field to deserialise each element of the request's
+ * {@code messages} array into one of:
+ * <ul>
+ *   <li>{@link TextMessage} ({@code "text"}) — a plain text turn from the user</li>
+ *   <li>{@link InterruptMessage} ({@code "interrupt"}) — the user's response to a
+ *       tool-call interrupt, carrying parameter values</li>
+ * </ul>
  *
  * @author Rizwan Idrees
  */
@@ -16,5 +25,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Message {
 
+    /**
+     * Returns the message type discriminator used for polymorphic deserialisation.
+     *
+     * @return the {@link MessageType} of this message
+     */
     MessageType type();
 }
