@@ -18,6 +18,12 @@ import java.util.Optional;
  */
 public class InMemoryContextStateManager implements ContextStateManager {
 
+    /**
+     * Creates a new {@code InMemoryContextStateManager} with no initial state.
+     */
+    public InMemoryContextStateManager() {
+    }
+
     private ContextState currentState;
 
     /**

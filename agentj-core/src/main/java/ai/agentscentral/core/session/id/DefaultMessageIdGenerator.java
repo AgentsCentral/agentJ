@@ -9,6 +9,12 @@ package ai.agentscentral.core.session.id;
  */
 public class DefaultMessageIdGenerator implements MessageIdGenerator {
 
+    /**
+     * Creates a new {@code DefaultMessageIdGenerator}.
+     */
+    public DefaultMessageIdGenerator() {
+    }
+
     private static final String PREFIX = "msg_";
 
     /**

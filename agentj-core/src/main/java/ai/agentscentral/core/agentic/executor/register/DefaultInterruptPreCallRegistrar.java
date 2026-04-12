@@ -16,6 +16,12 @@ import java.util.Optional;
  */
 public class DefaultInterruptPreCallRegistrar implements InterruptPreCallRegistrar {
 
+    /**
+     * Creates a new {@code DefaultInterruptPreCallRegistrar} with an empty registry.
+     */
+    public DefaultInterruptPreCallRegistrar() {
+    }
+
     private final Map<String, PreInterruptCall<?>> preCallsRegister = new HashMap<>();
 
     @Override

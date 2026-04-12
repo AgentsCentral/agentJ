@@ -9,6 +9,12 @@ package ai.agentscentral.core.session.id;
  */
 public class DefaultSessionIdGenerator implements SessionIdGenerator {
 
+    /**
+     * Creates a new {@code DefaultSessionIdGenerator}.
+     */
+    public DefaultSessionIdGenerator() {
+    }
+
     private static final String PREFIX = "session_";
 
     /**

@@ -13,7 +13,7 @@ import static java.util.Comparator.comparing;
 /**
  * In-memory {@link ContextManager} implementation backed by a {@link ConcurrentHashMap}.
  *
- * <p>Each context entry is a {@link java.util.Collections#synchronizedList synchronized}
+ * <p>Each context entry is a {@link java.util.Collections#synchronizedList(List)}  synchronized}
  * {@link ArrayList} that is created lazily on the first access.  Messages are sorted by
  * {@link ai.agentscentral.core.session.message.Message#timestamp()} on every
  * {@link #getContext} call, ensuring callers always receive a temporally ordered view
@@ -31,12 +31,18 @@ import static java.util.Comparator.comparing;
  */
 public class InMemoryContextManager implements ContextManager {
 
+    /**
+     * Creates a new, empty {@code InMemoryContextManager}.
+     */
+    public InMemoryContextManager() {
+    }
+
     final Map<String, List<Message>> contexts = new ConcurrentHashMap<>();
 
     /**
      * {@inheritDoc}
      *
-     * <p>Creates a new {@link java.util.Collections#synchronizedList synchronized list}
+     * <p>Creates a new {@link java.util.Collections#synchronizedList(List)}  synchronized list}
      * for {@code contextId} if none exists, then sorts and returns the list.</p>
      */
     @Override

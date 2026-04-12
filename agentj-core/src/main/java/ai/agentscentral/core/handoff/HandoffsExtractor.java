@@ -19,6 +19,12 @@ import static java.util.stream.Collectors.toMap;
 public class HandoffsExtractor {
 
     /**
+     * Creates a new {@code HandoffsExtractor}.
+     */
+    public HandoffsExtractor() {
+    }
+
+    /**
      * Converts a list of {@link Handoff} declarations into a map keyed by
      * {@link Handoff#id()}.
      *
