@@ -3,9 +3,14 @@ package ai.agentscentral.openai.client.request.attributes;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JSONSchemaResponseFormat
- * @param type
- * @param jsonSchema
+ * {@link ResponseFormat} that instructs the model to produce structured JSON output
+ * constrained by a JSON Schema.
+ *
+ * <p>The {@code type} component always returns {@code "json_schema"} via the
+ * {@link #type()} override.</p>
+ *
+ * @param type       always {@code "json_schema"}
+ * @param jsonSchema {@code json_schema} — the schema definition string
  *
  * @author Rizwan Idrees
  */

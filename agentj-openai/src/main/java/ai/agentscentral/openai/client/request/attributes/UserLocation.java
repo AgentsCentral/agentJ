@@ -1,10 +1,15 @@
 package ai.agentscentral.openai.client.request.attributes;
 
 /**
- * UserLocation
+ * Geographic location hint within {@link WebSearchOptions}, used to localise web search
+ * results.
  *
- * @param type
- * @param approximate
+ * <p>The {@code type} component always returns {@code "approximate"} via the
+ * {@link #type()} override.</p>
+ *
+ * @param type        always {@code "approximate"}
+ * @param approximate coarse-grained location details (city, country, region, timezone)
+ *
  * @author Rizwan Idrees
  */
 public record UserLocation(String type, ApproximateLocation approximate) {
