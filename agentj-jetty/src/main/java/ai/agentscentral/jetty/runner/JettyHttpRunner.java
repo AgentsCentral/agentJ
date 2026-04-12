@@ -20,8 +20,19 @@ import java.util.concurrent.Executors;
 import static java.util.Objects.nonNull;
 
 /**
- * JettyHttpRunner
- * Jetty implementation of AgentJHttpRunner
+ * Jetty 12 implementation of {@link AgentJHttpRunner}.
+ *
+ * <p>Starts a Jetty {@link Server} backed by a virtual-thread pool and registers the
+ * {@link AgentJServlet} to handle all inbound requests under {@code /**}.  The server
+ * is configured to stop gracefully on JVM shutdown.</p>
+ *
+ * <p>Typical usage:
+ * <pre>{@code
+ * AgentJHttpRunner runner = new JettyHttpRunner(
+ *         JettyConfig.defaultConfig(),
+ *         agentJConfig);
+ * runner.start();
+ * }</pre>
  *
  * @author Rizwan Idrees
  * @author Mustafa Bhuiyan
@@ -32,6 +43,16 @@ public class JettyHttpRunner implements AgentJHttpRunner {
     private final AgentJConfig agentJConfig;
     private final Server server;
 
+    /**
+     * Creates a {@code JettyHttpRunner} with the given server and application
+     * configuration.
+     *
+     * @param jettyConfig  Jetty-specific settings (host, port, thread pool); must not be
+     *                     {@code null}
+     * @param agentJConfig AgentJ application configuration (routes, handlers, filters);
+     *                     must not be {@code null}
+     * @throws NullPointerException if either argument is {@code null}
+     */
     public JettyHttpRunner(@Nonnull JettyConfig jettyConfig, @Nonnull AgentJConfig agentJConfig) {
         this.jettyConfig = Objects.requireNonNull(jettyConfig, "JettyConfig cannot be null");
         this.agentJConfig = Objects.requireNonNull(agentJConfig, "AgentJConfig cannot be null");
@@ -61,7 +82,7 @@ public class JettyHttpRunner implements AgentJHttpRunner {
         final QueuedThreadPool threadPool = new QueuedThreadPool();
         threadPool.setVirtualThreadsExecutor(Executors.newVirtualThreadPerTaskExecutor());
         VirtualThreadPool virtualExecutor = new VirtualThreadPool();
-        virtualExecutor.setMaxThreads(jettyConfig.maxVirtualThreads());
+        virtualExecutor.setMaxConcurrentTasks(jettyConfig.maxVirtualThreads());
         threadPool.setVirtualThreadsExecutor(virtualExecutor);
         threadPool.setReservedThreads(jettyConfig.reservedThreads());
         return threadPool;
