@@ -29,7 +29,15 @@ import static ai.agentscentral.openai.executor.ArgumentExtractor.extractFromJson
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * MessageConvertor
+ * Package-private bidirectional convertor between AgentJ session messages and OpenAI
+ * wire types.
+ *
+ * <p>{@link #toOpenAIMessages} converts a list of {@link Message}s (plus the agent's
+ * system prompt) into the {@link OpenAIMessage} list required by
+ * {@link ai.agentscentral.openai.client.request.CompletionRequest}.
+ * {@link #toAssistantMessage} converts a list of {@link ChoiceMessage}s from the
+ * completion response back into an AgentJ {@link AssistantMessage}, extracting tool-call
+ * and handoff instructions in the process.</p>
  *
  * @author Rizwan Idrees
  */
@@ -38,6 +46,13 @@ class MessageConvertor {
     private final Map<String, ai.agentscentral.core.tool.ToolCall> tools;
     private final Map<String, Handoff> handOffs;
 
+    /**
+     * Creates a {@code MessageConvertor}.
+     *
+     * @param tools    map of tool name → {@link ai.agentscentral.core.tool.ToolCall};
+     *                 used to distinguish tool-call results from handoff results
+     * @param handOffs map of handoff id → {@link Handoff}
+     */
     public MessageConvertor(Map<String, ai.agentscentral.core.tool.ToolCall> tools,
                             Map<String, Handoff> handOffs) {
         this.tools = tools;

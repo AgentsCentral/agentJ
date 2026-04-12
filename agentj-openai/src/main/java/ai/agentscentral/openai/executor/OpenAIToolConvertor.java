@@ -17,7 +17,11 @@ import static ai.agentscentral.openai.client.request.attributes.OpenAITool.FUNCT
 import static java.util.stream.Collectors.toSet;
 
 /**
- * OpenAIToolConvertor
+ * Package-private utility that converts AgentJ {@link ToolCall} and {@link Handoff}
+ * definitions to OpenAI {@link OpenAITool} wire objects, and converts response-side
+ * {@link ai.agentscentral.core.tool.ToolCallInstruction} /
+ * {@link ai.agentscentral.core.handoff.HandoffInstruction} back to
+ * {@link OpenAIToolCall} objects for inclusion in the next request turn.
  *
  * @author Rizwan Idrees
  */

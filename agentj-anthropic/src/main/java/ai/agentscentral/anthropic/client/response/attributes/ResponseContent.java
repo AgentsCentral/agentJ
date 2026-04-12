@@ -36,7 +36,7 @@ public interface ResponseContent {
 
     /**
      * Returns the content-block type discriminator used by Jackson for polymorphic
-     * deserialisation.
+     * deserialization.
      *
      * @return the {@link ResponseContentType} of this block
      */

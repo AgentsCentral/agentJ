@@ -3,12 +3,16 @@ package ai.agentscentral.openai.client.response.parameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * CompletionTokenDetails
+ * Fine-grained breakdown of completion token counts within a {@link Usage} record.
  *
- * @param acceptedPredictionTokens
- * @param audioTokens
- * @param reasoningTokens
- * @param rejectedPredictionTokens
+ * @param acceptedPredictionTokens {@code accepted_prediction_tokens} — tokens from
+ *                                  accepted speculative predictions
+ * @param audioTokens              {@code audio_tokens} — tokens used for audio output
+ * @param reasoningTokens          {@code reasoning_tokens} — tokens used for internal
+ *                                  chain-of-thought reasoning
+ * @param rejectedPredictionTokens {@code rejected_prediction_tokens} — tokens from
+ *                                  rejected speculative predictions
+ *
  * @author Rizwan Idrees
  */
 public record CompletionTokenDetails(@JsonProperty("accepted_prediction_tokens") Integer acceptedPredictionTokens,

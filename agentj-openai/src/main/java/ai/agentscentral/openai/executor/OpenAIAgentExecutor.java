@@ -30,7 +30,19 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 
 /**
- * OpenAISimpleAgentExecutor
+ * {@link ProviderAgentExecutor} implementation for the OpenAI Chat Completions API.
+ *
+ * <p>On each call to {@link #execute}, this executor:
+ * <ol>
+ *   <li>Builds a {@link DeveloperMessage} from the agent's instructors as the system
+ *       prompt.</li>
+ *   <li>Converts all session messages and the system prompt to
+ *       {@link ai.agentscentral.openai.client.request.attributes.OpenAIMessage}s via
+ *       {@link MessageConvertor}.</li>
+ *   <li>Sends a {@link CompletionRequest} to OpenAI via {@link OpenAIClient}.</li>
+ *   <li>Parses tool calls and handoff instructions from the response choices and
+ *       returns a single {@link AssistantMessage} to the session.</li>
+ * </ol>
  *
  * @author Rizwan Idrees
  */
@@ -44,6 +56,16 @@ public class OpenAIAgentExecutor implements ProviderAgentExecutor {
     private final OpenAIClient client;
     private final MessageConvertor messageConvertor;
 
+    /**
+     * Creates an {@code OpenAIAgentExecutor}.
+     *
+     * @param agent    the agent definition providing model name, instructors, and config
+     * @param tools    map of tool name → {@link ToolCall} for callable tools; may be
+     *                 {@code null} or empty
+     * @param handOffs map of handoff id → {@link Handoff} for delegation targets; may be
+     *                 {@code null} or empty
+     * @param client   the {@link OpenAIClient} used to send requests
+     */
     public OpenAIAgentExecutor(Agent agent,
                                Map<String, ToolCall> tools,
                                Map<String, Handoff> handOffs,

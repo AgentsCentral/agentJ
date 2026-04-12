@@ -9,7 +9,10 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.Map;
 
 /**
- * ArgumentExtractor
+ * Package-private utility that deserialises a JSON string of tool-call arguments into a
+ * {@code Map<String, Object>}.
+ *
+ * <p>Returns an empty map if the input is blank or cannot be parsed.</p>
  *
  * @author Rizwan Idrees
  */

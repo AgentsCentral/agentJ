@@ -1,10 +1,15 @@
 package ai.agentscentral.openai.client.request.attributes;
 
 /**
- * ToolChoiceMode
+ * String-mode values for the {@link ToolChoice} discriminator.
  *
  * @author Rizwan Idrees
  */
 public enum ToolChoiceMode implements ToolChoice {
-    auto, none
+
+    /** Let the model decide whether to call a tool ({@code "auto"}). */
+    auto,
+
+    /** Prevent the model from calling any tools ({@code "none"}). */
+    none
 }

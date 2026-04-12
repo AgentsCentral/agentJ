@@ -15,12 +15,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OpenAIConfig
+ * {@link ModelConfig} implementation for the OpenAI Chat Completions API.
+ *
+ * <p>Holds the API key, endpoint URL, and all optional request parameters supported by
+ * the {@code /v1/chat/completions} endpoint.  Implements
+ * {@link ModelConfig#createAgentExecutor} to wire an {@link OpenAIAgentExecutor}
+ * backed by an {@link OpenAIClient}.</p>
+ *
+ * <p>Minimal setup:
+ * <pre>{@code
+ * ModelConfig config = new OpenAIConfig("sk-...");
+ * }</pre>
  *
  * @author Rizwan Idrees
  */
 public class OpenAIConfig implements ModelConfig {
 
+    /** Default Chat Completions endpoint URL. */
     public static final String DEFAULT_URL = "https://api.openai.com/v1/chat/completions";
     private final OpenAIClient client;
 
@@ -47,14 +58,35 @@ public class OpenAIConfig implements ModelConfig {
     private Double topP;
     private WebSearchOptions webSearchOptions;
 
+    /**
+     * Creates a config with the given API key, no temperature override, and the default
+     * endpoint URL.
+     *
+     * @param apiKey OpenAI API key (prefixed with {@code Bearer} when sent)
+     */
     public OpenAIConfig(String apiKey) {
         this(apiKey, null);
     }
 
+    /**
+     * Creates a config with the given API key and temperature, using the default endpoint
+     * URL.
+     *
+     * @param apiKey      OpenAI API key
+     * @param temperature sampling temperature ({@code 0.0}–{@code 2.0}); {@code null}
+     *                    defers to the model default
+     */
     public OpenAIConfig(String apiKey, Double temperature) {
         this(apiKey, DEFAULT_URL, temperature);
     }
 
+    /**
+     * Creates a fully specified config.
+     *
+     * @param apiKey      OpenAI API key
+     * @param url         Chat Completions endpoint URL
+     * @param temperature sampling temperature; {@code null} defers to the model default
+     */
     public OpenAIConfig(String apiKey, String url, Double temperature) {
         this.apiKey = apiKey;
         this.url = url;

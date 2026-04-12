@@ -3,11 +3,13 @@ package ai.agentscentral.openai.client.request.attributes;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- * OpenAIUserMessage
+ * {@link OpenAIMessage} with role {@value #USER}, representing a turn from the human
+ * participant.
  *
- * @param role
- * @param name
- * @param content
+ * @param role    always {@value #USER}
+ * @param name    optional end-user display name for multi-participant scenarios
+ * @param content the message body; unwrapped into the enclosing JSON object
+ *
  * @author Rizwan Idrees
  */
 public record OpenAIUserMessage(String role,

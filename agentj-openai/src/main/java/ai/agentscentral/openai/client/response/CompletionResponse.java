@@ -7,16 +7,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * CompletionResponse
+ * Wire record for the OpenAI {@code POST /v1/chat/completions} response body.
  *
- * @param id
- * @param object
- * @param created
- * @param model
- * @param choices
- * @param serviceTier
- * @param systemFingerprint
- * @param usage
+ * @param id                unique completion identifier (e.g. {@code chatcmpl-...})
+ * @param object            object type; always {@code "chat.completion"}
+ * @param created           Unix timestamp of when the completion was created
+ * @param model             model that generated the completion
+ * @param choices           list of generated completion choices
+ * @param serviceTier       {@code service_tier} — routing tier used for this request
+ * @param systemFingerprint {@code system_fingerprint} — backend configuration
+ *                          fingerprint for determinism tracking
+ * @param usage             token usage statistics for this request
+ *
  * @author Rizwan Idrees
  */
 public record CompletionResponse(String id,

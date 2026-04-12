@@ -3,11 +3,13 @@ package ai.agentscentral.openai.client.request.attributes;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
- * OpenAIDeveloperMessage
+ * {@link OpenAIMessage} with role {@value #DEVELOPER}, used to inject system-level
+ * instructions into the conversation (equivalent to the older {@code "system"} role).
  *
- * @param role
- * @param name
- * @param content
+ * @param role    always {@value #DEVELOPER}
+ * @param name    optional display name for the instruction source
+ * @param content the developer instructions; unwrapped into the enclosing JSON object
+ *
  * @author Rizwan Idrees
  */
 public record OpenAIDeveloperMessage(String role, String name,
