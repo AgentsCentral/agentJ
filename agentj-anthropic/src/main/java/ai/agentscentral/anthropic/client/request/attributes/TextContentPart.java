@@ -1,10 +1,14 @@
 package ai.agentscentral.anthropic.client.request.attributes;
 
 /**
- * TextContentPart
+ * {@link ContentPart} representing a plain-text block.
  *
- * @param type
- * @param text
+ * <p>The {@link #type()} override always returns {@link #TEXT} ({@code "text"}),
+ * ignoring the value supplied to the constructor.</p>
+ *
+ * @param type the type discriminator; always overridden to {@link #TEXT}
+ * @param text the text content of this block
+ *
  * @author Rizwan Idrees
  */
 public record TextContentPart(String type, String text) implements ContentPart {

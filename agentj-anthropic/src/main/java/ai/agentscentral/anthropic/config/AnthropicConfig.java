@@ -14,7 +14,17 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * AnthropicConfig
+ * {@link ModelConfig} implementation for the Anthropic Claude API.
+ *
+ * <p>Holds all connection and inference settings needed to call the Anthropic Messages
+ * endpoint, and creates an {@link AnthropicAgentExecutor} for each agent that uses this
+ * configuration.  A single {@code AnthropicConfig} instance can be shared across multiple
+ * agents.</p>
+ *
+ * <p>The constructor that omits {@code url} defaults to {@link #DEFAULT_URL}.
+ * All optional inference parameters ({@code serviceTier}, {@code stopSequences},
+ * {@code stream}, {@code temperature}, {@code topK}, {@code topP}) are left at their
+ * Java defaults and can be set via the corresponding setter methods after construction.</p>
  *
  * @author Rizwan Idrees
  */
@@ -34,12 +44,27 @@ public class AnthropicConfig implements ModelConfig {
     private Double topP;
 
 
+    /**
+     * Creates an {@code AnthropicConfig} using the default Anthropic Messages URL.
+     *
+     * @param apiKey            the Anthropic API key (sent as {@code x-api-key})
+     * @param anthropicVersion  the API version header value (e.g. {@code "2023-06-01"})
+     * @param maxTokens         maximum number of tokens to generate in a response
+     */
     public AnthropicConfig(@Nonnull String apiKey,
                            @Nonnull String anthropicVersion,
                            @Nonnull Integer maxTokens) {
         this(DEFAULT_URL, apiKey, anthropicVersion, maxTokens);
     }
 
+    /**
+     * Creates an {@code AnthropicConfig} with an explicit endpoint URL.
+     *
+     * @param url               the full URL of the Anthropic Messages endpoint
+     * @param apiKey            the Anthropic API key (sent as {@code x-api-key})
+     * @param anthropicVersion  the API version header value (e.g. {@code "2023-06-01"})
+     * @param maxTokens         maximum number of tokens to generate in a response
+     */
     public AnthropicConfig(@Nonnull String url,
                            @Nonnull String apiKey,
                            @Nonnull String anthropicVersion,
@@ -131,6 +156,12 @@ public class AnthropicConfig implements ModelConfig {
         this.topP = topP;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Creates an {@link AnthropicAgentExecutor} that uses the shared
+     * {@link AnthropicClient} held by this configuration.</p>
+     */
     @Override
     public ProviderAgentExecutor createAgentExecutor(Agent agent,
                                                      Map<String, ToolCall> tools,

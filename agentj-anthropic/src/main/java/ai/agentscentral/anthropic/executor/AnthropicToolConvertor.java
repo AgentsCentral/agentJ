@@ -14,7 +14,19 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * AnthropicToolConvertor
+ * Converts AgentJ tool and handoff definitions to Anthropic
+ * {@link AnthropicTool} descriptors.
+ *
+ * <p>Tool parameters are translated to a JSON Schema {@link InputSchema}: primitive and
+ * object types are mapped via Jackson's {@link tools.jackson.module.jsonSchema.JsonSchemaGenerator};
+ * enum-typed parameters produce an {@link EnumSchemaProperty} with the allowed values;
+ * all other parameters produce a {@link TypedSchemaProperty}.  Required parameters are
+ * collected into the schema's {@code required} set.</p>
+ *
+ * <p>Handoffs are represented as Anthropic tools with no input schema, because the LLM
+ * signals a handoff by "calling" the handoff tool with its identifier.</p>
+ *
+ * <p>This is a package-private utility class and cannot be instantiated.</p>
  *
  * @author Rizwan Idrees
  */
@@ -24,6 +36,14 @@ class AnthropicToolConvertor {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator(mapper);
 
+    /**
+     * Converts a map of AgentJ {@link ToolCall}s to a map of {@link AnthropicTool}s,
+     * preserving the tool name as the key.
+     *
+     * @param tools AgentJ tool definitions keyed by name; may be {@code null} or empty
+     * @return a map of {@link AnthropicTool}s, or {@code null} if {@code tools} is null
+     *         or empty
+     */
     static Map<String, AnthropicTool> toolsToAnthropicTool(Map<String, ToolCall> tools) {
 
         if (Objects.isNull(tools) || tools.isEmpty()) {
@@ -38,6 +58,15 @@ class AnthropicToolConvertor {
     }
 
 
+    /**
+     * Converts a map of AgentJ {@link Handoff}s to a map of {@link AnthropicTool}s.
+     * Each handoff is represented as a tool with no input schema.
+     *
+     * @param handOffs AgentJ handoff definitions keyed by handoff id; may be {@code null}
+     *                 or empty
+     * @return a map of {@link AnthropicTool}s, or {@code null} if {@code handOffs} is
+     *         null or empty
+     */
     static Map<String, AnthropicTool> handOffsToAnthropicTool(Map<String, Handoff> handOffs) {
 
         if (Objects.isNull(handOffs) || handOffs.isEmpty()) {

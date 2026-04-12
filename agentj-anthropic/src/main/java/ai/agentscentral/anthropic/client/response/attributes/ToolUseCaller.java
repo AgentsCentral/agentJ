@@ -5,7 +5,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 
 /**
- * ToolUseCaller
+ * Polymorphic interface describing how a tool-use block was triggered in an Anthropic
+ * response.
+ *
+ * <p>Jackson deserialises this field using the {@code type} property:
+ * <ul>
+ *   <li>{@link ToolUseDirectCaller} ({@code "direct"}) — the tool was called directly
+ *       by the user's request</li>
+ *   <li>{@link ToolUseServerCaller} ({@code "code_execution_*"}) — the tool was called
+ *       by a server-side execution environment</li>
+ * </ul>
+ * If no type matches, {@link ToolUseServerCaller} is used as the default implementation.
  *
  * @author Rizwan Idrees
  */
@@ -16,5 +26,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface ToolUseCaller {
 
+    /**
+     * Returns the caller-type discriminator used by Jackson for polymorphic
+     * deserialisation.
+     *
+     * @return the caller type string
+     */
     String type();
 }

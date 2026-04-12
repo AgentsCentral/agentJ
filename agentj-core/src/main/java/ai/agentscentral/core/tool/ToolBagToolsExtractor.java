@@ -40,6 +40,12 @@ import static java.util.Objects.isNull;
  */
 public class ToolBagToolsExtractor implements ToolsExtractor {
 
+    /**
+     * Creates a new {@code ToolBagToolsExtractor}.
+     */
+    public ToolBagToolsExtractor() {
+    }
+
     private final Predicate<Method> toolMethods = method -> method.isAnnotationPresent(Tool.class);
 
     public Map<String, ToolCall> extractTools(List<ToolBag> toolBags) {

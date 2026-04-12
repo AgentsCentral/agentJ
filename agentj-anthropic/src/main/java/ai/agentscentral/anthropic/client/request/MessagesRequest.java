@@ -15,20 +15,34 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 
 /**
- * MessagesRequest
+ * Wire-format record for the Anthropic Messages API request body.
  *
- * @param model
- * @param messages
- * @param maxTokens
- * @param metaData
- * @param serviceTier
- * @param stopSequences
- * @param stream
- * @param system
- * @param temperature
- * @param tools
- * @param topK
- * @param topP
+ * <p>Serialised directly to JSON via Jackson; {@code null} fields are omitted thanks to
+ * {@link ai.agentscentral.anthropic.client.Jsonify}'s NON_NULL configuration.
+ * The {@code system} field is {@link com.fasterxml.jackson.annotation.JsonUnwrapped} so
+ * its properties are inlined rather than nested.</p>
+ *
+ * <p>Use the static factory {@link #from} to construct instances from an
+ * {@link AnthropicConfig}.</p>
+ *
+ * @param model         the Claude model identifier (e.g. {@code "claude-opus-4-6"})
+ * @param messages      the ordered conversation history to send
+ * @param maxTokens     maximum number of tokens to generate; mapped to {@code max_tokens}
+ * @param metaData      optional user metadata (e.g. end-user identifier); mapped to
+ *                      {@code metadata}
+ * @param serviceTier   optional service tier preference; mapped to {@code service_tier}
+ * @param stopSequences optional set of sequences that stop generation early; mapped to
+ *                      {@code stop_sequences}
+ * @param stream        whether to stream the response; currently must be {@code false}
+ *                      for AgentJ's synchronous client
+ * @param system        the system prompt, either a plain string or a list of typed
+ *                      prompts; unwrapped into the JSON root
+ * @param temperature   sampling temperature; {@code null} defers to API default
+ * @param tools         the list of available tools and handoff pseudo-tools to expose to
+ *                      the model
+ * @param topK          top-K sampling parameter; mapped to {@code top_k}
+ * @param topP          nucleus sampling parameter; mapped to {@code top_p}
+ *
  * @author Rizwan Idrees
  */
 public record MessagesRequest(String model,
@@ -44,6 +58,18 @@ public record MessagesRequest(String model,
                               @JsonProperty("top_k") Integer topK,
                               @JsonProperty("top_p") Double topP) {
 
+    /**
+     * Factory method that assembles a {@code MessagesRequest} from an
+     * {@link AnthropicConfig} and the per-call arguments.
+     *
+     * @param model    the model identifier
+     * @param config   the config providing inference parameters
+     * @param system   the resolved system prompt
+     * @param userId   optional end-user identifier; wrapped in {@link MetaData} if present
+     * @param tools    the tools to expose to the model
+     * @param messages the conversation history
+     * @return a fully populated {@code MessagesRequest}
+     */
     public static MessagesRequest from(String model,
                                        AnthropicConfig config,
                                        SystemPrompt system,

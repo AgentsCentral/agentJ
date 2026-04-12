@@ -27,7 +27,26 @@ import static ai.agentscentral.anthropic.client.request.attributes.ToolResultCon
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * MessageConvertor
+ * Bidirectional converter between AgentJ {@link Message} types and Anthropic
+ * {@link AnthropicMessage} wire types.
+ *
+ * <p>Outbound conversion ({@link #toAnthropicMessages}) maps each AgentJ message to the
+ * appropriate Anthropic request format:
+ * <ul>
+ *   <li>{@link ai.agentscentral.core.session.message.UserMessage} → {@code user} role with
+ *       text content parts</li>
+ *   <li>{@link ai.agentscentral.core.session.message.AssistantMessage} → {@code assistant}
+ *       role with text content parts</li>
+ *   <li>{@link ai.agentscentral.core.session.message.ToolMessage} and
+ *       {@link ai.agentscentral.core.session.message.HandOffMessage} → {@code user} role
+ *       with {@code tool_result} content parts</li>
+ * </ul>
+ *
+ * <p>Inbound conversion ({@link #toAssistantMessage}) maps a {@link MessagesResponse} back
+ * to an {@link ai.agentscentral.core.session.message.AssistantMessage}, separating
+ * {@link ai.agentscentral.anthropic.client.response.attributes.ToolUseResponseContent}
+ * blocks into tool-call and handoff instruction lists based on whether the tool name
+ * is found in the tools or handoffs map.</p>
  *
  * @author Rizwan Idrees
  */
@@ -36,6 +55,14 @@ class MessageConvertor {
     private final Map<String, ToolCall> tools;
     private final Map<String, Handoff> handOffs;
 
+    /**
+     * Creates a {@code MessageConvertor} scoped to the given tool and handoff maps.
+     *
+     * @param tools    AgentJ tool definitions keyed by name; used to classify
+     *                 {@code tool_use} response blocks as tool calls
+     * @param handOffs AgentJ handoff definitions keyed by handoff id; used to classify
+     *                 {@code tool_use} response blocks as handoff instructions
+     */
     public MessageConvertor(Map<String, ToolCall> tools,
                             Map<String, Handoff> handOffs) {
         this.tools = tools;
@@ -43,11 +70,31 @@ class MessageConvertor {
     }
 
 
+    /**
+     * Converts a list of AgentJ {@link Message}s to a list of
+     * {@link AnthropicMessage}s suitable for the request body.
+     *
+     * @param messages the conversation history to convert
+     * @return the converted list in the same order
+     */
     List<AnthropicMessage> toAnthropicMessages(List<Message> messages) {
         return messages.stream().map(this::toAnthropicMessage).toList();
     }
 
 
+    /**
+     * Converts an Anthropic {@link MessagesResponse} to an AgentJ
+     * {@link ai.agentscentral.core.session.message.AssistantMessage}.
+     *
+     * <p>Text and thinking blocks become {@link TextPart}s; tool-use blocks are split
+     * into tool-call instructions (if the name matches a known tool) or handoff
+     * instructions (if the name matches a known handoff).</p>
+     *
+     * @param contextId the conversation context the message belongs to
+     * @param response  the raw API response to convert
+     * @return the corresponding {@link ai.agentscentral.core.session.message.AssistantMessage}
+     * @throws UnsupportedOperationException if the response role is not {@code assistant}
+     */
     AssistantMessage toAssistantMessage(String contextId, MessagesResponse response) {
 
         if (!assistant.equals(response.role())) {

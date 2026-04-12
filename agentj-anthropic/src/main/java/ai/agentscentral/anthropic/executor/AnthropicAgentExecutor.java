@@ -24,7 +24,17 @@ import static ai.agentscentral.anthropic.executor.AnthropicToolConvertor.toolsTo
 import static java.util.Optional.ofNullable;
 
 /**
- * AnthropicAgentExecutor
+ * {@link ProviderAgentExecutor} implementation for the Anthropic Claude API.
+ *
+ * <p>On construction, all AgentJ {@link ToolCall}s and {@link Handoff}s are converted
+ * once into {@link AnthropicTool} descriptors and cached.  On each call to
+ * {@link #execute}, the agent's instructors are evaluated to form the system prompt,
+ * the conversation messages are converted to Anthropic's wire format, and the assembled
+ * {@link ai.agentscentral.anthropic.client.request.MessagesRequest} is sent via
+ * {@link AnthropicClient}.  The response content is mapped back to AgentJ
+ * {@link AssistantMessage}s.</p>
+ *
+ * <p>Instances are created by {@link AnthropicConfig#createAgentExecutor}.</p>
  *
  * @author Rizwan Idrees
  */
@@ -37,6 +47,15 @@ public class AnthropicAgentExecutor implements ProviderAgentExecutor {
     private final AnthropicClient client;
     private final MessageConvertor messageConvert;
 
+    /**
+     * Creates a new {@code AnthropicAgentExecutor}, converting all tools and handoffs to
+     * Anthropic format eagerly.
+     *
+     * @param agent    the agent whose model, instructors, tools, and handoffs are used
+     * @param tools    AgentJ tool definitions keyed by tool name; may be empty
+     * @param handOffs AgentJ handoff definitions keyed by handoff id; may be empty
+     * @param client   the shared {@link AnthropicClient} used to call the API
+     */
     public AnthropicAgentExecutor(Agent agent,
                                   Map<String, ToolCall> tools,
                                   Map<String, Handoff> handOffs,
@@ -55,6 +74,14 @@ public class AnthropicAgentExecutor implements ProviderAgentExecutor {
         this.messageConvert = new MessageConvertor(tools, handOffs);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Builds the system prompt from the agent's instructors, constructs a
+     * {@link ai.agentscentral.anthropic.client.request.MessagesRequest}, sends it via the
+     * {@link AnthropicClient}, and maps each response content block to an
+     * {@link AssistantMessage}.</p>
+     */
     public List<AssistantMessage> execute(String contextId, User user, List<Message> messages) {
 
 
