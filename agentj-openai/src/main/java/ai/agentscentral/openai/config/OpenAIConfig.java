@@ -1,18 +1,18 @@
 package ai.agentscentral.openai.config;
 
+import ai.agentscentral.core.agent.Agent;
+import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.ModelConfig;
-import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.core.provider.ProviderAgentExecutor;
+import ai.agentscentral.core.tool.ToolCall;
 import ai.agentscentral.openai.client.OpenAIClient;
 import ai.agentscentral.openai.client.request.attributes.ResponseFormat;
 import ai.agentscentral.openai.client.request.attributes.ToolChoice;
 import ai.agentscentral.openai.client.request.attributes.WebSearchOptions;
-import ai.agentscentral.openai.factory.OpenAIFactory;
+import ai.agentscentral.openai.processor.OpenAIAgentExecutor;
 
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * OpenAIConfig
@@ -21,9 +21,10 @@ import static java.util.Optional.ofNullable;
  */
 public class OpenAIConfig implements ModelConfig {
 
-    private OpenAIFactory factory;
+    public static final String DEFAULT_URL = "https://api.openai.com/v1/chat/completions";
+    private final OpenAIClient client;
 
-    private String url = "https://api.openai.com/v1/chat/completions";
+    private String url;
     private String apiKey;
     private Double frequencyPenalty;
     private Map<Integer, Integer> logitBias;
@@ -47,17 +48,18 @@ public class OpenAIConfig implements ModelConfig {
     private WebSearchOptions webSearchOptions;
 
     public OpenAIConfig(String apiKey) {
+        this(apiKey, null);
+    }
+
+    public OpenAIConfig(String apiKey, Double temperature) {
+        this(apiKey, DEFAULT_URL, temperature);
+    }
+
+    public OpenAIConfig(String apiKey, String url, Double temperature) {
         this.apiKey = apiKey;
-    }
-
-    public OpenAIConfig(Double temperature, String apiKey) {
-        this(apiKey);
-        this.temperature = temperature;
-    }
-
-    public OpenAIConfig(Double temperature, String apiKey, String url) {
-        this(temperature, apiKey);
         this.url = url;
+        this.temperature = temperature;
+        this.client = new OpenAIClient(this.url, this.apiKey);
     }
 
     public String getUrl() {
@@ -236,9 +238,9 @@ public class OpenAIConfig implements ModelConfig {
         this.webSearchOptions = webSearchOptions;
     }
 
+
     @Override
-    public ProviderFactory<? extends ProviderAgentExecutor> getFactory() {
-        factory = ofNullable(factory).orElseGet(() -> new OpenAIFactory(new OpenAIClient(this.url, this.apiKey)));
-        return factory;
+    public ProviderAgentExecutor createAgentExecutor(Agent agent, Map<String, ToolCall> tools, Map<String, Handoff> handOffs) {
+        return new OpenAIAgentExecutor(agent, tools, handOffs, this.client);
     }
 }

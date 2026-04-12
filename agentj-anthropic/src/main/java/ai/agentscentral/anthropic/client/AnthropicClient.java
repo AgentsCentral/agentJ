@@ -3,7 +3,7 @@ package ai.agentscentral.anthropic.client;
 import ai.agentscentral.anthropic.client.request.MessagesRequest;
 import ai.agentscentral.anthropic.client.response.MessagesResponse;
 import ai.agentscentral.anthropic.config.AnthropicConfig;
-import ai.agentscentral.core.model.ProviderClient;
+import ai.agentscentral.core.provider.ProviderClient;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

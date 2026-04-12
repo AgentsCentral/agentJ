@@ -53,8 +53,7 @@ public class DefaultAgentExecutor implements AgentExecutor {
         final Map<String, Handoff> handOffs = agenticModule.handoffModule().handoffsExtractor()
                 .extractHandOffs(agent.handoffs());
 
-        this.providerAgentExecutor = agent.model().config()
-                .getFactory().createAgentExecutor(agent, tools, handOffs);
+        this.providerAgentExecutor = agent.model().config().createAgentExecutor(agent, tools, handOffs);
 
         this.messageIdGenerator = agenticModule.sessionModule().messageIdGenerator();
 

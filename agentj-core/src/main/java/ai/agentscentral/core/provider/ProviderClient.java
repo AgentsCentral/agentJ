@@ -1,4 +1,4 @@
-package ai.agentscentral.core.model;
+package ai.agentscentral.core.provider;
 
 /**
  * ProviderClient

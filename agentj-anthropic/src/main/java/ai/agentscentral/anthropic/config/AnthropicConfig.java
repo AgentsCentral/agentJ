@@ -2,15 +2,16 @@ package ai.agentscentral.anthropic.config;
 
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.attributes.ServiceTier;
-import ai.agentscentral.anthropic.factory.AnthropicFactory;
+import ai.agentscentral.anthropic.processor.AnthropicAgentExecutor;
+import ai.agentscentral.core.agent.Agent;
+import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.ModelConfig;
-import ai.agentscentral.core.model.ProviderFactory;
 import ai.agentscentral.core.provider.ProviderAgentExecutor;
+import ai.agentscentral.core.tool.ToolCall;
 import jakarta.annotation.Nonnull;
 
+import java.util.Map;
 import java.util.Set;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * AnthropicConfig
@@ -20,8 +21,7 @@ import static java.util.Optional.ofNullable;
 public class AnthropicConfig implements ModelConfig {
 
     public static final String DEFAULT_URL = "https://api.anthropic.com/v1/messages";
-    private AnthropicFactory factory;
-
+    private final AnthropicClient client;
     private String url;
     private String apiKey;
     private String anthropicVersion;
@@ -34,7 +34,9 @@ public class AnthropicConfig implements ModelConfig {
     private Double topP;
 
 
-    public AnthropicConfig(@Nonnull String apiKey, @Nonnull String anthropicVersion, @Nonnull Integer maxTokens) {
+    public AnthropicConfig(@Nonnull String apiKey,
+                           @Nonnull String anthropicVersion,
+                           @Nonnull Integer maxTokens) {
         this(DEFAULT_URL, apiKey, anthropicVersion, maxTokens);
     }
 
@@ -46,6 +48,7 @@ public class AnthropicConfig implements ModelConfig {
         this.apiKey = apiKey;
         this.anthropicVersion = anthropicVersion;
         this.maxTokens = maxTokens;
+        this.client = new AnthropicClient(url, apiKey, anthropicVersion);
     }
 
     public String getUrl() {
@@ -129,9 +132,9 @@ public class AnthropicConfig implements ModelConfig {
     }
 
     @Override
-    public ProviderFactory<? extends ProviderAgentExecutor> getFactory() {
-        factory = ofNullable(factory)
-                .orElseGet(() -> new AnthropicFactory(new AnthropicClient(url, apiKey, anthropicVersion)));
-        return factory;
+    public ProviderAgentExecutor createAgentExecutor(Agent agent,
+                                                     Map<String, ToolCall> tools,
+                                                     Map<String, Handoff> handOffs) {
+        return new AnthropicAgentExecutor(agent, tools, handOffs, this.client);
     }
 }

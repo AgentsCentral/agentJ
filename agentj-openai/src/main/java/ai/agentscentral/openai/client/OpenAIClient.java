@@ -1,6 +1,6 @@
 package ai.agentscentral.openai.client;
 
-import ai.agentscentral.core.model.ProviderClient;
+import ai.agentscentral.core.provider.ProviderClient;
 import ai.agentscentral.openai.client.request.CompletionRequest;
 import ai.agentscentral.openai.client.response.CompletionResponse;
 import org.apache.hc.client5.http.HttpResponseException;
