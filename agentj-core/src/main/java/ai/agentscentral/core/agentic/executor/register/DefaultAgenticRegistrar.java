@@ -26,6 +26,12 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  */
 public class DefaultAgenticRegistrar implements AgenticRegistrar {
 
+    /**
+     * Creates a new {@code DefaultAgenticRegistrar} with empty team and agent registries.
+     */
+    public DefaultAgenticRegistrar() {
+    }
+
     private final Map<RegistrationKey, RegisteredAgentic> teamRegistry = new HashMap<>();
     private final Map<RegistrationKey, RegisteredAgentic> agentRegistry = new HashMap<>();
 

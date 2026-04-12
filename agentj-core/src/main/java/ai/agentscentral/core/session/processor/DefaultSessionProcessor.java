@@ -48,7 +48,6 @@ import static java.util.Optional.of;
  *       and {@link ai.agentscentral.core.session.message.ToolInterruptMessage}s produced
  *       after the current user message timestamp).</li>
  * </ol>
- * </p>
  *
  * @author Rizwan Idrees
  */

@@ -32,7 +32,7 @@ import static java.util.Objects.isNull;
  *       {@link ToolInterrupt}s, with their parameters resolved by name from the interrupt
  *       parameter map.</li>
  * </ul>
- * Type-specific parameter records ({@link TypedToolParameter}, {@link CollectionToolParameter},
+ * <p>Type-specific parameter records ({@link TypedToolParameter}, {@link CollectionToolParameter},
  * {@link ArrayToolParameter}, {@link EnumToolParameter} and their interrupt counterparts)
  * are selected by {@link ReflectionUtil} based on the Java type of each parameter.</p>
  *
