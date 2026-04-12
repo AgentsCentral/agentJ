@@ -1,4 +1,4 @@
-package ai.agentscentral.openai.processor;
+package ai.agentscentral.openai.executor;
 
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.handoff.HandoffInstruction;

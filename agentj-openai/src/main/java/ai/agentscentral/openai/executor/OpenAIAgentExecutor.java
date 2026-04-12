@@ -1,4 +1,4 @@
-package ai.agentscentral.openai.processor;
+package ai.agentscentral.openai.executor;
 
 import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.agent.instructor.Instructor;
@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static ai.agentscentral.core.session.message.MessagePartType.text;
-import static ai.agentscentral.openai.processor.OpenAIToolConvertor.handOffsToOpenAITools;
-import static ai.agentscentral.openai.processor.OpenAIToolConvertor.toolsToOpenAITools;
+import static ai.agentscentral.openai.executor.OpenAIToolConvertor.handOffsToOpenAITools;
+import static ai.agentscentral.openai.executor.OpenAIToolConvertor.toolsToOpenAITools;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 

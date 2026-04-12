@@ -9,7 +9,7 @@ import ai.agentscentral.openai.client.OpenAIClient;
 import ai.agentscentral.openai.client.request.attributes.ResponseFormat;
 import ai.agentscentral.openai.client.request.attributes.ToolChoice;
 import ai.agentscentral.openai.client.request.attributes.WebSearchOptions;
-import ai.agentscentral.openai.processor.OpenAIAgentExecutor;
+import ai.agentscentral.openai.executor.OpenAIAgentExecutor;
 
 import java.util.List;
 import java.util.Map;

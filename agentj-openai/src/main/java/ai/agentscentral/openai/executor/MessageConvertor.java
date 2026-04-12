@@ -1,4 +1,4 @@
-package ai.agentscentral.openai.processor;
+package ai.agentscentral.openai.executor;
 
 import ai.agentscentral.core.handoff.DefaultHandoffInstruction;
 import ai.agentscentral.core.handoff.Handoff;
@@ -25,7 +25,7 @@ import static ai.agentscentral.openai.client.request.attributes.OpenAIDeveloperM
 import static ai.agentscentral.openai.client.request.attributes.OpenAIToolMessage.TOOL;
 import static ai.agentscentral.openai.client.request.attributes.OpenAIUserMessage.USER;
 import static ai.agentscentral.openai.client.request.attributes.TextContentPart.TEXT;
-import static ai.agentscentral.openai.processor.ArgumentExtractor.extractFromJson;
+import static ai.agentscentral.openai.executor.ArgumentExtractor.extractFromJson;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**

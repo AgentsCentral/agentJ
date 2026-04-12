@@ -1,4 +1,4 @@
-package ai.agentscentral.anthropic.processor;
+package ai.agentscentral.anthropic.executor;
 
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.MessagesRequest;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static ai.agentscentral.anthropic.client.request.attributes.TextPrompt.TYPE;
-import static ai.agentscentral.anthropic.processor.AnthropicToolConvertor.handOffsToAnthropicTool;
-import static ai.agentscentral.anthropic.processor.AnthropicToolConvertor.toolsToAnthropicTool;
+import static ai.agentscentral.anthropic.executor.AnthropicToolConvertor.handOffsToAnthropicTool;
+import static ai.agentscentral.anthropic.executor.AnthropicToolConvertor.toolsToAnthropicTool;
 import static java.util.Optional.ofNullable;
 
 /**

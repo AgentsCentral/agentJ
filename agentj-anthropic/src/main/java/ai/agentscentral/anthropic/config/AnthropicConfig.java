@@ -2,7 +2,7 @@ package ai.agentscentral.anthropic.config;
 
 import ai.agentscentral.anthropic.client.AnthropicClient;
 import ai.agentscentral.anthropic.client.request.attributes.ServiceTier;
-import ai.agentscentral.anthropic.processor.AnthropicAgentExecutor;
+import ai.agentscentral.anthropic.executor.AnthropicAgentExecutor;
 import ai.agentscentral.core.agent.Agent;
 import ai.agentscentral.core.handoff.Handoff;
 import ai.agentscentral.core.model.ModelConfig;
